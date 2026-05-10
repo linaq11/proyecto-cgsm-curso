@@ -1,0 +1,9 @@
+estacion,fuente,naturaleza,dist_a_aoi_m,dentro_aoi,asociada_aoi,ndvi_mediano
+Isla_Boqueron,INVEMAR,limnologica,4522,False,False,0.244
+Punta_Cerro,INVEMAR,limnologica,5966,False,False,0.141
+Punta_Chino,INVEMAR,limnologica,5210,False,False,0.278
+Rio_Sevilla,INVEMAR,limnologica,1215,False,True,0.158
+CP_Aguas_Negras,Complementaria,manglar,4544,False,False,0.522
+CP_Luna,Complementaria,manglar,2179,False,False,0.379
+Cano_Clarin,Complementaria,manglar,837,False,True,0.746
+Cano_Palos,INVEMAR,manglar,0,True,True,0.708

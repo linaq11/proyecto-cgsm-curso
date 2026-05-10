@@ -1,0 +1,9 @@
+naturaleza,lag_meses,rho_precip_vs_ndvi_z,rho_t2m_vs_ndvi_z,n
+manglar,0,-0.081,0.022,86
+manglar,1,-0.081,0.04,85
+manglar,2,-0.123,-0.018,84
+manglar,3,-0.02,-0.087,83
+limnologica,0,0.082,-0.173,72
+limnologica,1,0.108,-0.149,71
+limnologica,2,0.292,-0.144,70
+limnologica,3,0.271,-0.201,69

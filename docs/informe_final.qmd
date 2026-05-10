@@ -142,6 +142,63 @@ function compute_metrics(periodo, base_dir)
 end
 ```
 
+## Aplicacion de patrones del curso (Tareas 18, 19 y Cap. 16)
+
+Como cierre de la Metodologia se incorporan tres patrones validados durante los talleres del curso de Programacion en SIG, de modo que el proyecto final dialogue de manera explicita con los capitulos mas recientes del libro de la materia.
+
+En primer lugar, los rasters de mascara producidos por SamGeo se inspeccionan mediante **lectura perezosa** ---patron documentado en la Tarea 18---, abriendo el archivo con `rasterio.open()` para extraer dimensiones, CRS, resolucion y valor de NoData sin materializar la grilla en memoria. Este patron resulta especialmente pertinente en este proyecto, toda vez que la carga completa de los TIF de RGB de la CGSM provoco previamente el colapso del kernel de Jupyter al intentar usar SamGeo con el backbone vit_h, razon por la cual se opto por el modelo vit_b y por la lectura por ventanas en las verificaciones posteriores.
+
+En segundo lugar, los GeoJSON resultantes de la segmentacion se reproyectan al sistema oficial colombiano **MAGNA-SIRGAS Origen Nacional (EPSG:9377)** mediante el bloque verificado en la Tarea 19, que aplica `rasterio.warp.calculate_default_transform` y `geopandas.to_crs`. Esta reproyeccion permite que el calculo del area en hectareas se realice sobre una proyeccion equivalente para el territorio colombiano, sustituyendo las aproximaciones esfericas tipo $\text{area}_{deg} \cdot 111.000 \cdot \cos(\phi) \cdot 111.000$ que se empleaban inicialmente en el script Julia y que solo son exactas en el centro del paisaje. La eleccion del EPSG:9377 obedece, ademas, al estandar oficial del IGAC desde la Resolucion 471 de 2020, lo que facilita la integracion futura del producto con la cartografia base nacional.
+
+En tercer lugar, sobre los parches reproyectados se aplican dos **predicados topologicos DE-9IM** ---patron del Cap. 16 y de la Practica 2 de vectores---, calculados con `geopandas` y `shapely` que delegan en GEOS los mismos predicados que reconocen PostGIS y JTS. El primer predicado, `intersects(parche, frontera_AOI)` con tolerancia de 30 metros, identifica los parches truncados por el limite del area de estudio, cuya geometria responde mas a una decision cartografica externa que a la dinamica del manglar; el segundo, `contains(parche, estacion_INVEMAR)`, evalua si los parches segmentados envuelven los puntos de muestreo utilizados en el analisis bfast, lo que ofrece una validacion cualitativa adicional al F1-score contra GMW.
+```python
+from src.python.utils import (
+    raster_metadata, vector_to_9377, area_ha_9377,
+    parches_borde, parches_con_punto, EPSG_NACIONAL,
+)
+# Tarea 18 — verificacion lazy de los TIF de mascara
+meta = raster_metadata('data/processed/samgeo/mask_actual.tif')
+# Tarea 19 — reproyeccion al sistema oficial colombiano
+vector_to_9377('data/processed/samgeo/manglar_actual.geojson',
+               'data/processed/samgeo/manglar_actual_9377.geojson')
+# Cap. 16 — predicados topologicos DE-9IM
+gdf = area_ha_9377(gpd.read_file('.../manglar_actual_9377.geojson'))
+gdf = parches_borde(gdf, aoi)            # intersects con frontera
+gdf = parches_con_punto(gdf, estaciones) # contains con puntos INVEMAR
+```
+
+## Forzamiento climatico ERA5-Land (Cap. 20)
+
+Para validar cuantitativamente la hipotesis de que la mortandad de manglar de septiembre 2020 estuvo asociada a la fase La Nina 2020--2021, se acopla el reanalisis **ERA5-Land** del Centro Europeo de Previsiones Meteorologicas a Plazo Medio --ECMWF, Hersbach et al. 2020-- como forzante climatico sobre las series temporales NDVI calculadas en la Fase 2. La descarga se realiza con `cdsapi` directamente desde el Climate Data Store, solicitando precipitacion total y temperatura a dos metros sobre un bounding box que envuelve la CGSM con buffer (11,20 N--10,30 N, 75,05 W--74,05 W) en escala mensual entre 2018 y 2025.
+
+Los datos se reciben en formato NetCDF con convenciones CF y se cargan con `xarray.open_dataset(chunks=...)` aplicando el patron de evaluacion perezosa documentado en el Cap. 20: las dimensiones (`time`, `latitude`, `longitude`) y las unidades originales --metros por dia para precipitacion, kelvin para temperatura-- se decodifican automaticamente, y solo se materializa el resultado final con `.compute()`. Se calcula la climatologia mensual sobre el periodo disponible y la anomalia respecto a esa climatologia, se promedia espacialmente sobre el AOI acotado y se cruza con la anomalia NDVI promediada sobre las ocho estaciones para diferentes rezagos temporales --0, 1, 2 y 3 meses-- de modo que se identifique el lag optimo entre forzante y respuesta del manglar.
+```python
+import cdsapi, xarray as xr
+c = cdsapi.Client()
+c.retrieve('reanalysis-era5-land-monthly-means', {
+    'product_type': 'monthly_averaged_reanalysis',
+    'variable': ['total_precipitation', '2m_temperature'],
+    'year': [str(y) for y in range(2018, 2026)],
+    'month': [f'{m:02d}' for m in range(1, 13)],
+    'time': '00:00', 'area': [11.20, -75.05, 10.30, -74.05],
+    'format': 'netcdf'}, 'data/raw/era5_land_cgsm_monthly.nc')
+ds = xr.open_dataset('data/raw/era5_land_cgsm_monthly.nc', chunks={'time': 12})
+anom = ds.groupby('time.month') - ds.groupby('time.month').mean('time')
+```
+
+## Validacion cruzada multilingue con cubo stars (Cap. 21)
+
+Como contraparte local del flujo Python+GEE de la Fase 2, se construye un **cubo stars** con los composites trimestrales Sentinel-2 ya descargados, siguiendo el patron del Cap. 21 del curso. Los TIFs se ordenan cronologicamente y se ensamblan con `read_stars(tifs, along = list(time = fechas), proxy = TRUE)`, lo que produce un cubo de tres dimensiones --x, y, time-- evaluado de manera perezosa hasta que la operacion `st_extract` materializa los valores sobre las ocho estaciones de muestreo INVEMAR. La extraccion devuelve una serie temporal por estacion, que se exporta como `series_temporales_stars.csv` para comparacion contra `serie_temporal_ndvi_definitiva.csv` --la version producida por `reduceRegions` en GEE--.
+
+El proposito de este ejercicio no es sustituir el flujo de la nube sino validarlo: si las dos series coinciden con $\rho > 0{,}95$ y RMSE < 0{,}05 unidades NDVI, queda demostrado que la serie temporal del proyecto no depende del entorno computacional ni de la implementacion. Discrepancias mayores indicarian sesgos sistematicos --diferencias en el enmascaramiento de nubes, en el remuestreo al armar el composite trimestral, o en el manejo de pixeles mixtos en la frontera del buffer de extraccion-- que conviene reportar como limitacion metodologica.
+```r
+library(stars); library(sf); library(dplyr)
+tifs   <- list.files("data/processed/s2", pattern = "NDVI.*\\.tif$", full.names = TRUE)
+fechas <- as.Date(stringr::str_match(basename(tifs), "(\\d{4})_Q(\\d)")[, c(2, 3)])
+cubo   <- read_stars(tifs, along = list(time = fechas), proxy = TRUE)
+serie  <- st_extract(cubo, st_transform(estaciones_sf, st_crs(cubo)))
+```
+
 ## Fase 5: Validacion con datos NASA y dashboard
 
 Como componente de validacion cruzada, se integran datos de la Global Flood Database ---que registra 16 eventos de inundacion historicos en la CGSM entre 2001 y 2017--- y del JRC Global Surface Water ---que identifica 977,4 km2 de agua superficial permanente (ocurrencia > 50%) en el area de estudio---. Para el evento de septiembre 2020, se realiza una deteccion de inundacion mediante Sentinel-1 SAR (banda VH, modo IW), comparando el backscatter medio del periodo seco de referencia (enero--marzo 2020, 49 imagenes) contra el periodo de inundacion (septiembre--octubre 2020, 36 imagenes). Se aplica un umbral de diferencia de 3 dB para inundacion en agua abierta y se identifica inundacion bajo dosel de manglar mediante valores negativos de diferencia SAR ---donde el aumento del backscatter refleja el scattering de doble rebote caracteristico de la interaccion agua-tronco---.
@@ -163,8 +220,12 @@ flood_canopy = sar_diff.lt(-2).selfMask() # bajo dosel
 | 2. Series de tiempo | pandas + bfast | Python / R | Indices + estaciones | Z-scores, periodos (.csv) |
 | 3. Segmentacion | SamGeo + umbrales | Python | Composites RGB | Parches manglar (.geojson) |
 | 4. Metricas | DataFrames.jl | Julia | Parches vectoriales | Tabla de metricas (.csv) |
+| 4b. Topologia DE-9IM | geopandas + shapely | Python | Parches en EPSG:9377 | Tabla parches_topologia (.csv) |
 | 5. Inundacion SAR | GEE Sentinel-1 | Python | SAR VH seco vs humedo | Mapa inundacion (.tif) |
 | 6. Dashboard | geemap | Python | Todas las capas | Dashboard (.html) |
+| 7. Forzamiento ERA5 | cdsapi + xarray | Python | NetCDF ERA5-Land | Anomalias y correlacion (.csv) |
+| 8. Cubo stars | stars + sf | R | TIFs trimestrales S2 | Series por estacion (.csv) |
+| 9. Validacion multilingue | pandas | Python | Series Python + R | RMSE/rho (.csv) |
 
 : Flujo de datos del pipeline multilenguaje. {#tbl-flujo}
 
@@ -244,6 +305,66 @@ El analisis de fragmentacion computado en Julia revelo una tendencia clara de co
 | NND medio (km) | 0,46 | 0,52 | 1,24 |
 
 : Metricas de fragmentacion del paisaje de manglar por periodo. {#tbl-fragmentacion}
+
+## Recalculo en EPSG:9377 y analisis topologico de parches
+
+La reproyeccion de los GeoJSON al sistema oficial colombiano y la consecuente sustitucion de la aproximacion esferica por el calculo directo del area en metros redefine las cifras de cobertura por periodo, de modo que las hectareas reportadas a continuacion corresponden a una proyeccion equivalente y son comparables con la cartografia base del IGAC. En el periodo de degradacion (julio--diciembre 2020) se identificaron 100 parches en el rango de 1 a 5.000 hectareas con un area total de 8.829,1 ha y un area media de 88,3 ha; en el periodo de recuperacion (enero--junio 2022) se redujo el numero de parches a 67 pero el area total ascendio a 13.088,2 ha con un area media de 195,4 ha, lo que es consistente con un proceso de fusion de parches pequenos en unidades mas grandes; y en el periodo actual (julio 2024 a junio 2025) se contabilizaron 104 parches con un area total de 17.075,8 ha y un area media de 164,2 ha, valores que confirman tanto la expansion espacial del manglar como la consolidacion observada en el analisis bfast.
+
+| Periodo | Parches | Area total (ha) | Area media (ha) |
+|---------|---------|-----------------|-----------------|
+| Degradacion (2020-S2) | 100 | 8.829,1 | 88,3 |
+| Recuperacion (2022-S1) | 67 | 13.088,2 | 195,4 |
+| Actual (2024--2025) | 104 | 17.075,8 | 164,2 |
+
+: Areas de manglar recalculadas sobre EPSG:9377 (MAGNA-SIRGAS Origen Nacional). {#tbl-areas-9377}
+
+El analisis topologico complementa estas cifras con dos lecturas adicionales sobre los mismos parches. La aplicacion del predicado `intersects` entre cada parche y la frontera del AOI con una tolerancia de 30 metros identifico una proporcion variable de parches truncados por el borde del area de estudio: 24,0 % en el periodo de degradacion ---equivalentes a 2.238,1 ha---, 7,5 % en el periodo de recuperacion ---1.640,0 ha--- y 18,3 % en el periodo actual ---2.076,2 ha---. Esta diferencia sugiere que los parches del periodo de recuperacion estan mas agrupados al interior del sistema lagunar, mientras que los de degradacion y los actuales se extienden hasta el limite cartografico del AOI, de modo que sus metricas de fragmentacion globales reflejan tambien el efecto del recorte. La aplicacion del predicado `contains` con los ocho puntos de monitoreo no devolvio parches que envolvieran las estaciones bajo el filtro de tamano 1--5.000 ha, lo cual se explica porque las estaciones INVEMAR estan ubicadas sobre cuerpos de agua o en bordes inmediatos al manglar, donde la segmentacion devuelve parches menores a 1 ha o el agua misma; la representatividad espacial de las estaciones, en consecuencia, debe discutirse en escalas de buffer y no de contenencia estricta.
+
+| Periodo | Parches | Parches en borde | % en borde | Area en borde (ha) |
+|---------|---------|------------------|------------|--------------------|
+| Degradacion | 100 | 24 | 24,0 | 2.238,1 |
+| Recuperacion | 67 | 5 | 7,5 | 1.640,0 |
+| Actual | 104 | 19 | 18,3 | 2.076,2 |
+
+: Parches de manglar truncados por la frontera del AOI (predicado DE-9IM `intersects`). {#tbl-topologia}
+
+## Comparacion dinamica dentro y fuera del area protegida
+
+Una observacion metodologica importante surge al cruzar las ocho estaciones de muestreo con el AOI acotado (SFF CGSM + VPI Salamanca, 835,3 km2): solo Cano_Palos cae estrictamente dentro del area protegida, mientras que Cano_Clarin y Rio_Sevilla quedan asociadas mediante buffer de dos kilometros, y las cinco restantes quedan fuera. Esta distribucion espacial no es un error de seleccion sino una caracteristica de las estaciones INVEMAR-GBIF originales, las cuales fueron disenadas como puntos de monitoreo limnologico ---calidad de agua, estructura del cuerpo lagunar--- y por tanto se ubican sobre la lamina de agua del sistema, no sobre el manglar. Esto se confirma al observar el NDVI mediano historico (2013--2025): las cuatro estaciones del costado oriental ---Isla Boqueron, Punta Cerro, Punta Chino y Rio Sevilla--- presentan NDVI medianos entre 0,14 y 0,28, valores compatibles con superficies de agua o transicion agua-borde, mientras que las cuatro estaciones sobre manglar ---Cano Palos, Cano Clarin, CP Aguas Negras y CP Luna--- presentan NDVI medianos entre 0,38 y 0,75, consistentes con cobertura vegetal densa.
+
+Esta diferenciacion permite reorganizar la lectura de los resultados de la Fase 2 en dos grupos comparables. Las anomalias negativas detectadas en septiembre 2020 sobre las estaciones limnologicas ---NDVI = -0,078 en Punta Cerro, NDVI = -0,018 en Isla Boqueron--- reflejan principalmente la respuesta del cuerpo de agua al exceso hidrico y al arrastre de sedimentos, no necesariamente mortalidad de manglar. En contraste, las anomalias detectadas en las estaciones de manglar ---CP Aguas Negras con z = -2,50, Cano Clarin con z = -3,15--- representan estres real del dosel vegetal y son las que efectivamente miden el efecto de La Nina sobre la cobertura. Este reordenamiento conceptual refuerza el argumento de que la mortandad de septiembre 2020 fue mas severa de lo que sugiere la lectura uniforme de las ocho estaciones, pues el evento se concentro en las que realmente capturan dinamica de manglar y no en las que dominan el agua superficial.
+
+| Naturaleza | Estaciones | NDVI mediano | Distancia media al AOI |
+|------------|-----------|--------------|------------------------|
+| Manglar | Cano_Palos, Cano_Clarin, CP_Aguas_Negras, CP_Luna | 0,59 | 1,9 km |
+| Limnologica | Isla_Boqueron, Punta_Cerro, Punta_Chino, Rio_Sevilla | 0,21 | 4,2 km |
+
+: Clasificacion de las ocho estaciones de muestreo por naturaleza espectral y distancia al AOI. {#tbl-clasif-estaciones}
+
+## Acoplamiento ERA5-Land y discusion del forzante La Nina
+
+El cruce entre las anomalias mensuales de precipitacion y temperatura ERA5-Land y las anomalias NDVI promediadas sobre las ocho estaciones arrojo correlaciones debiles e indistinguibles de cero --con valores absolutos $|\rho| < 0{,}12$ para todos los rezagos entre cero y tres meses--, lo que sugiere a primera vista que el forzante climatico local no explica directamente la dinamica del manglar de la CGSM. Sin embargo, este resultado agregado oculta una asimetria importante que solo aparece al desagregar las ocho estaciones segun la clasificacion por naturaleza espectral introducida en la seccion anterior: las cuatro estaciones de manglar y las cuatro limnologicas responden al mismo forzante climatico con signos opuestos, de modo que el promedio de las ocho cancela mutuamente las dos senales.
+
+En las cuatro estaciones que efectivamente miden cobertura de manglar --Cano Palos, Cano Clarin, CP Aguas Negras y CP Luna--, la correlacion entre la anomalia de precipitacion ERA5-Land y el z-score NDVI con rezago de dos meses es de $\rho = -0{,}123$, valor debil pero consistente con la hipotesis original de La Nina como forzante de mortandad: precipitacion anomalamente alta induce inundacion prolongada e hipoxia en el sistema radicular, con caida posterior del NDVI. La temperatura presenta una correlacion analoga en rezago de tres meses --$\rho_{T2m} = -0{,}087$-- que refuerza el patron sin alcanzar significancia estadistica individual. En las cuatro estaciones limnologicas --Isla Boqueron, Punta Cerro, Punta Chino, Rio Sevilla--, en cambio, la precipitacion anomala se asocia positivamente con el z-score NDVI con rezago de dos meses ($\rho = +0{,}292$) y la temperatura se asocia negativamente con rezago de tres meses ($\rho_{T2m} = -0{,}201$). Este patron, fisicamente coherente, refleja la respuesta del cuerpo de agua al exceso hidrico: la lluvia anomala arrastra sedimentos y nutrientes desde las cuencas altas que estimulan floraciones de fitoplancton y vegetacion acuatica efimera en bordes, lo que aumenta temporalmente la senal NDVI sobre los pixeles dominados por agua.
+
+| Naturaleza | Rezago (meses) | $\rho$ precip vs NDVI z | $\rho$ T2m vs NDVI z | n |
+|------------|----------------|-------------------------|----------------------|---|
+| Manglar | 0 | $-0{,}081$ | $+0{,}022$ | 86 |
+| Manglar | 1 | $-0{,}081$ | $+0{,}040$ | 85 |
+| Manglar | 2 | $-0{,}123$ | $-0{,}018$ | 84 |
+| Manglar | 3 | $-0{,}020$ | $-0{,}087$ | 83 |
+| Limnologica | 0 | $+0{,}082$ | $-0{,}173$ | 72 |
+| Limnologica | 1 | $+0{,}108$ | $-0{,}149$ | 71 |
+| Limnologica | 2 | $+0{,}292$ | $-0{,}144$ | 70 |
+| Limnologica | 3 | $+0{,}271$ | $-0{,}201$ | 69 |
+
+: Correlacion entre anomalias climaticas ERA5-Land y NDVI z-score, desagregada por naturaleza espectral de las estaciones de muestreo. {#tbl-era5}
+
+Tres consideraciones permiten interpretar esta evidencia de manera prudente. En primer lugar, la resolucion espacial de ERA5-Land --nueve kilometros nominales-- promedia el campo de precipitacion sobre una zona que excede la escala caracteristica del sistema lagunar y, por tanto, no captura microclimas locales que probablemente median la respuesta del manglar. En segundo lugar, el mecanismo causal real de la mortandad de septiembre 2020 no es necesariamente la lluvia caida sobre la CGSM, sino el incremento de caudal aportado por el rio Magdalena --y secundariamente por los rios Sevilla, Aracataca y Fundacion-- que viene de cuencas altas en la Sierra Nevada de Santa Marta, donde la lluvia La Nina si fue copiosa; el insumo apropiado para validar esa cadena causal serian las series mensuales de caudal del IDEAM y no las anomalias ERA5-Land sobre el pixel del humedal. En tercer lugar, el contraste de signos opuestos entre manglar y estaciones limnologicas constituye en si mismo un hallazgo metodologico relevante: confirma que el promedio de las ocho estaciones --aplicado en la version preliminar del proyecto-- enmascara una senal real en el subconjunto de estaciones que monitorea cobertura vegetal, y justifica retrospectivamente la decision metodologica de clasificar las estaciones por naturaleza espectral antes de cualquier analisis de correlacion.
+
+## Validacion cruzada multilingue Python+GEE vs R+stars
+
+La extraccion de series temporales NDVI con `st_extract` sobre el cubo stars construido a partir de los TIFs trimestrales se compara contra la serie producida por `reduceRegions` en GEE para las mismas ocho estaciones. La metrica de coincidencia se calcula a granularidad mensual --promediando cuando hay mas de una observacion por estacion-mes-- y se reportan tres estadisticos sobre el conjunto de pares: el coeficiente de correlacion de Pearson, el sesgo medio --positivo si Python sobrestima respecto a R-- y el RMSE. Una coincidencia de $\rho > 0{,}95$ y RMSE < 0{,}05 unidades NDVI confirma que la serie temporal del proyecto no depende de la implementacion ni del entorno computacional, y por lo tanto las conclusiones sobre periodos criticos --degradacion 2020, recuperacion 2022, estado actual 2024-2025-- se sostienen independientemente de cual de los dos flujos se haya usado. La tabla de validacion por estacion se exporta como `outputs/tables/validacion_multilingual.csv` y el grafico de dispersion uno-a-uno permite identificar visualmente qualquier estacion cuya discrepancia exceda el patron general.
 
 ## Validacion con datos NASA: deteccion de inundacion SAR
 
@@ -359,13 +480,20 @@ El proyecto se ejecuta sobre el contenedor Docker sig_unal v1.11 proporcionado p
 pip install earthengine-api geemap segment-geospatial leafmap
 pip install rasterio geopandas xarray shapely folium rasterstats
 pip install matplotlib pandas numpy scikit-learn contextily
+pip install cdsapi netCDF4              # Cap. 20 — descarga ERA5-Land
 
 # Autenticacion Google Earth Engine
 earthengine authenticate --auth_mode=notebook
+
+# Autenticacion Climate Data Store (ECMWF) — para ERA5-Land
+# 1) Crear cuenta en https://cds.climate.copernicus.eu/
+# 2) Aceptar terminos del dataset reanalysis-era5-land-monthly-means
+# 3) Crear archivo ~/.cdsapirc con la URL y la API key personales
 ```
 ```r
 # Paquetes R adicionales
-install.packages(c("bfast", "terra", "sf", "ggplot2", "tseries"))
+install.packages(c("bfast", "terra", "sf", "ggplot2", "tseries",
+                   "stars", "dplyr", "tidyr", "readr", "stringr"))
 ```
 ```julia
 # Paquetes Julia adicionales
@@ -384,8 +512,16 @@ El repositorio esta disponible en https://github.com/LinaQuinteroF/proyecto-cgsm
 - notebooks/02b_bfast_ndvi.R.ipynb: Fase 2 deteccion de quiebres con bfast (R)
 - notebooks/03_segmentation.ipynb: Fase 3 segmentacion SamGeo + validacion GMW
 - notebooks/04_fragmentation.ipynb: Fase 4 metricas de fragmentacion (Julia)
+- notebooks/04b_topologia.ipynb: Predicados topologicos DE-9IM sobre parches en EPSG:9377 (Python)
 - notebooks/05_flooding_nasa.ipynb: Validacion NASA SAR + Global Flood Database + JRC
 - notebooks/06_dashboard.ipynb: Fase 5 dashboard interactivo
+- notebooks/07_era5_clima.ipynb: Forzamiento climatico ERA5-Land via cdsapi (Cap. 20)
+- notebooks/08_validacion_multilingual.ipynb: Comparacion series Python+GEE vs R+stars
+- src/python/utils.py: Funciones reutilizables (reproyeccion 9377, lectura perezosa, predicados DE-9IM)
+- src/python/aoi_acotado.py: Helper que une SFF CGSM + VPI Salamanca y reproyecta a EPSG:9377
+- src/julia/04_fragmentacion.jl: Script Julia con bloques legado (4326) y nuevo (9377)
+- src/R/03_bfast_ndvi.R: Script R para deteccion de quiebres bfast en las 8 estaciones
+- src/R/05_stars_cubo.R: Script R que construye cubo stars desde TIFs y extrae sobre estaciones (Cap. 21)
 - outputs/tables/: 17 archivos CSV con resultados numericos
 - outputs/figures/: 13 graficos y mapas estaticos (PNG)
 - outputs/maps/: Dashboard HTML interactivo (2,7 MB)
