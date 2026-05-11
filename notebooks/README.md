@@ -1,6 +1,6 @@
 # Guía de notebooks — Proyecto CGSM
 
-Los notebooks se dividen en dos series: la **serie vigente** sobre el AOI acotado (SFF CGSM + VPI Salamanca, 835 km²) que produce los resultados reportados en el cuerpo del informe v6, y la **serie legacy/baseline** sobre el AOI envolvente de 5.073 km² (marzo 2026) cuyas cifras se conservan en el Anexo C del informe para trazabilidad metodológica.
+El árbol de notebooks se organiza en dos series —vigente y legacy— pues a lo largo del proyecto el área de estudio se redefinió a partir de los polígonos oficiales del Sistema Nacional de Áreas Protegidas, de modo que las cifras del cuerpo del informe v6 dejaron de ser comparables con las de la primera iteración. La **serie vigente** opera sobre el AOI acotado al Santuario de Fauna y Flora CGSM y al Vía Parque Isla de Salamanca (835 km²) y es la que sostiene los resultados del informe; la **serie legacy/baseline**, en cambio, se ejecutó sobre un AOI envolvente de 5.073 km² (marzo 2026) y sus cifras se conservan en el Anexo C únicamente como rastro metodológico, de manera que cualquier lector puede reconstruir el paso entre una versión y otra sin perder trazabilidad.
 
 ## Serie vigente (v6) — orden de ejecución
 
@@ -21,7 +21,7 @@ Los notebooks se dividen en dos series: la **serie vigente** sobre el AOI acotad
 
 ## Serie legacy/baseline (no ejecutar para v6)
 
-Estos notebooks corresponden a la primera iteración del proyecto sobre AOI envolvente. Se conservan para trazabilidad pero **no se usan para sostener las conclusiones del informe**.
+Los notebooks que se listan a continuación corresponden a la primera iteración del proyecto sobre el AOI envolvente y se conservan en el repositorio por trazabilidad —pues sus cifras alimentan el Anexo C—, de manera que **no se ejecutan para sostener las conclusiones del cuerpo del informe** sino que funcionan, en este sentido, como bitácora del recorrido metodológico.
 
 | Notebook | Estado |
 |----------|--------|
@@ -30,9 +30,7 @@ Estos notebooks corresponden a la primera iteración del proyecto sobre AOI envo
 | `04b_topologia.ipynb` | Legacy — análisis sobre AOI envolvente |
 | `09_datacube_netcdf.ipynb` | Legacy — versión preliminar del datacube sin reproyección a 9377 |
 
-Para reproducir el baseline del Anexo C: ejecutar `03_segmentation.ipynb` y `04_fragmentation.ipynb` desde el inicio.
-
-Para reproducir la v6 vigente: ejecutar los notebooks "_acotado" o el 09b en lugar de sus homónimos legacy.
+Quien quiera reproducir el baseline del Anexo C debe ejecutar `03_segmentation.ipynb` y `04_fragmentation.ipynb` desde la primera celda, así como están, sin reemplazar el AOI; en cambio, para reproducir la v6 vigente —que es lo recomendado— se ejecutan los notebooks con sufijo `_acotado` y el `09b`, los cuales sustituyen por completo a sus homónimos legacy.
 
 ## Carpetas y convenciones de salida
 
