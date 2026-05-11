@@ -24,9 +24,9 @@ La Cienaga Grande de Santa Marta ---CGSM--- constituye el sistema lagunar coster
 
 El monitoreo de manglares mediante teledeteccion ha evolucionado de manera sostenida en la ultima decada, de modo que se ha transitado de las clasificaciones multitemporales con imagenes Landsat a escala regional (Giri et al., 2011; Hamilton y Casey, 2016) hacia el uso de la coleccion Sentinel-2, cuya resolucion espacial de 10 metros y temporal de 5 dias ha mejorado sustancialmente la capacidad de detectar cambios fenologicos y perturbaciones a escala local. En Colombia, el INVEMAR ha realizado monitoreos sistematicos de la CGSM documentando los ciclos de muerte y recuperacion del manglar a traves de seis estaciones permanentes de campo ---cinco en el Complejo de Pajarales y una en el sector de Sevillano---, cuyos datos de estructura forestal estan publicados en el repositorio del Global Biodiversity Information Facility ---GBIF--- (Beltran et al., 2022; DOI: 10.15472/0fqdp4). No obstante, estos estudios se basan principalmente en interpretacion visual o clasificaciones supervisadas clasicas, sin recurrir al analisis automatico basado en modelos de fundacion como el Segment Anything Model ---SAM--- de Meta AI, adaptado para datos geoespaciales a traves de SamGeo (Wu y Osco, 2023), que permite realizar segmentacion semantica de imagenes satelitales sin necesidad de grandes conjuntos de datos etiquetados.
 
-En este marco, la integracion de herramientas de Inteligencia Artificial Geoespacial ---GeoAI--- con plataformas de geocomputacion en la nube como Google Earth Engine ---GEE--- abre una via metodologica para el monitoreo costero a alta resolucion espaciotemporal. El presente proyecto se propone desarrollar una cadena de procesamiento multilenguaje ---Python, R y Julia--- que articule el analisis de series de tiempo de indices espectrales con la segmentacion automatica de cobertura de manglar, de manera que el resultado pueda servir como componente de observacion de un futuro Digital Twin costero para la CGSM, sin pretender constituirse en si mismo como tal en su version actual. La caracterizacion espaciotemporal del manglar en la CGSM constituye un insumo para la gestion de riesgos de inundacion y la formulacion de politica publica ambiental; en febrero de 2026 se firmo el Plan de Manejo Ambiental del sitio Ramsar Sistema Delta Estuarino del Rio Magdalena--CGSM, con una vigencia de diez anos, el cual requiere insumos espaciales actualizados para orientar las medidas de manejo y seguimiento del humedal (Comision Conjunta CGSM, 2026), de modo que una cadena de procesamiento automatizada como la que aqui se propone atiende directamente ese requerimiento.
+En este marco, la integracion de herramientas de Inteligencia Artificial Geoespacial ---GeoAI--- con plataformas de geocomputacion en la nube como Google Earth Engine ---GEE--- abre una via metodologica para el monitoreo costero a alta resolucion espaciotemporal. El presente proyecto se propone desarrollar una pipeline multilenguaje ---Python, R y Julia--- que articule el analisis de series de tiempo de indices espectrales con la segmentacion automatica de cobertura de manglar, de manera que el resultado pueda servir como componente de observacion de un futuro Digital Twin costero para la CGSM, sin pretender constituirse en si mismo como tal en su version actual. La caracterizacion espaciotemporal del manglar en la CGSM constituye un insumo para la gestion de riesgos de inundacion y la formulacion de politica publica ambiental; en febrero de 2026 se firmo el Plan de Manejo Ambiental del sitio Ramsar Sistema Delta Estuarino del Rio Magdalena--CGSM, con una vigencia de diez anos, el cual requiere insumos espaciales actualizados para orientar las medidas de manejo y seguimiento del humedal (Comision Conjunta CGSM, 2026), de modo que una pipeline automatizada como la que aqui se propone atiende directamente ese requerimiento.
 
-A partir de lo anterior, el presente estudio se articula en torno a la siguiente pregunta de investigacion: **comó ha variado la cobertura, la fragmentación y el vigor del manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025, y qué evidencia cuantitativa permite atribuir las perturbaciones detectadas a forzantes climáticos asociados al evento La Niña 2020–2021?**
+A partir de lo anterior, el presente estudio se articula en torno a la siguiente pregunta de investigacion: **¿cómo ha variado la cobertura, la fragmentación y el vigor del manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025, y qué evidencia cuantitativa permite atribuir las perturbaciones detectadas a forzantes climáticos asociados al evento La Niña 2020--2021?**
 
 # Estado del Arte
 
@@ -52,7 +52,7 @@ La aparicion de modelos de fundacion como el Segment Anything Model de Meta AI (
 
 ## Objetivo General
 
-Desarrollar un pipeline GeoAI multilenguaje para el monitoreo de la dinamica espaciotemporal de la cobertura de manglar en la Cienaga Grande de Santa Marta (2013--2025).
+Desarrollar una pipeline GeoAI multilenguaje para el monitoreo de la dinámica espaciotemporal de la cobertura de manglar en la Ciénaga Grande de Santa Marta (2013--2025).
 
 ## Objetivos Especificos
 
@@ -62,7 +62,7 @@ Desarrollar un pipeline GeoAI multilenguaje para el monitoreo de la dinamica esp
 
 # Area de Estudio
 
-El area de estudio comprende la CGSM y su zona de influencia costera, ubicada en el departamento del Magdalena, Colombia, entre aproximadamente 10 20 N--11 05 N y 74 10 W--74 55 W. El poligono de analisis fue delimitado con 34 vertices cubriendo un area total de 5.073 km2, abarcando la Via Parque Isla de Salamanca ---barra costera con manglares protegidos que constituye zona nucleo de la Reserva de Biosfera---, el Complejo de Pajarales ---sistema de cienagas interconectadas donde se concentro la mayor degradacion historica del manglar---, el Santuario de Flora y Fauna CGSM con sus 26.810 hectareas de area protegida, los canales hidraulicos rehabilitados ---Cano Clarin, Aguas Negras y Renegado--- con conexion al rio Magdalena, y las desembocaduras de los rios provenientes de la Sierra Nevada de Santa Marta ---Sevilla, Aracataca y Fundacion--- (INVEMAR, 2024).
+El área de estudio comprende la CGSM y su zona de influencia costera, ubicada en el departamento del Magdalena, Colombia, entre aproximadamente 10°20' N--11°05' N y 74°10' W--74°55' W. El proyecto opera con dos delimitaciones de área anidadas que cumplen funciones distintas. La primera, denominada **AOI envolvente** y delimitada con 34 vértices sobre 5.073 km², se utilizó únicamente en la iteración preliminar del proyecto (marzo de 2026) y se conserva en el Anexo C como baseline de trazabilidad; comprende la Vía Parque Isla de Salamanca, el Complejo de Pajarales, el Santuario de Fauna y Flora CGSM, los canales hidráulicos rehabilitados ---Caño Clarín, Aguas Negras y Renegado---, y las desembocaduras de los ríos Sevilla, Aracataca y Fundación. La segunda, denominada **AOI acotado** y delimitada con 835,3 km² sobre la unión de los polígonos oficiales del Santuario de Fauna y Flora CGSM (26.810 ha) y la Vía Parque Isla de Salamanca extraídos del Registro Único Nacional de Áreas Protegidas (RUNAP), constituye el área sobre la cual se sostienen todos los resultados reportados en el cuerpo del informe v6; este acotamiento obedece a que la inclusión de vegetación riberana, salitral y zonas agropecuarias en el AOI envolvente inflaba sistemáticamente las cifras de manglar potencial y comprometía la comparabilidad con la cartografía oficial de manglares de Colombia (INVEMAR, 2020) y con el Global Mangrove Watch (Bunting et al., 2022), referencias que también se acotan al humedal propiamente dicho.
 
 Para el analisis de series de tiempo se definieron 8 estaciones de muestreo, de las cuales 5 corresponden a estaciones con coordenadas exactas obtenidas del dataset de monitoreo de estructura de manglares del INVEMAR publicado en GBIF (Beltran et al., 2022; DOI: 10.15472/0fqdp4) ---Isla Boqueron (10,962 N, 74,298 W), Punta Cerro (10,973 N, 74,283 W), Punta Chino (10,912 N, 74,305 W), Rio Sevilla (10,880 N, 74,325 W) y Cano Palos (10,758 N, 74,471 W)---, mientras que las 3 restantes son estaciones complementarias seleccionadas sobre cobertura de manglar verificada mediante NDVI > 0,4 en composites Sentinel-2 de 2024, con el proposito de representar el Complejo de Pajarales y la zona de rehabilitacion hidrologica del Cano Clarin.
 
@@ -81,15 +81,15 @@ Los datos utilizados en este proyecto provienen tanto de plataformas de geocompu
 | Monitoreo manglar INVEMAR | 376 registros (2013--2019) | Coordenadas estaciones de muestreo | GBIF DOI: 10.15472/0fqdp4 |
 | Global Mangrove Watch v4.0 | Raster (2020) | Validacion de clasificacion | GEE: sat-io/GMW |
 
-: Fuentes de datos utilizadas en la cadena de procesamiento para el monitoreo de manglar. {#tbl-fuentes}
+: Fuentes de datos utilizadas en la pipeline para el monitoreo de manglar. {#tbl-fuentes}
 
 # Metodologia y Codigo
 
-El proyecto se desarrolla siguiendo una cadena de procesamiento modular y reproducible, organizada en cuatro fases y un modulo de validacion que se ejecutan dentro de un contenedor Docker ---sig_unal v1.11, que integra Python 3.12, R 4.3.3, Julia 1.11.3 y Quarto 1.4---, de modo que se garantiza la replicabilidad completa del entorno de analisis. Cada fase se implementa aprovechando las fortalezas del lenguaje mas adecuado para la tarea, y la interoperabilidad entre fases se mantiene mediante formatos estandar ---GeoTIFF, GeoJSON y CSV---.
+El proyecto se desarrolla siguiendo una pipeline modular y reproducible, organizada en cuatro fases y un modulo de validacion que se ejecutan dentro de un contenedor Docker ---sig_unal v1.11, que integra Python 3.12, R 4.3.3, Julia 1.11.3 y Quarto 1.4---, de modo que se garantiza la replicabilidad completa del entorno de analisis. Cada fase se implementa aprovechando las fortalezas del lenguaje mas adecuado para la tarea, y la interoperabilidad entre fases se mantiene mediante formatos estandar ---GeoTIFF, GeoJSON y CSV---.
 
 ## Fase 1: Construccion del datacube multitemporal (Python + geemap)
 
-La primera fase de la cadena de procesamiento consiste en la construccion de un datacube listo para analisis ---una estructura tridimensional (X, Y, tiempo) que organiza las observaciones satelitales de la CGSM a resoluciones de 10 a 30 metros segun el sensor, donde cada capa temporal contiene los valores de reflectancia superficial e indices espectrales derivados para un periodo de composicion determinado---. Se construye una coleccion de 789 imagenes Sentinel-2 SR Harmonized para el periodo 2018--2025, filtrada por cobertura de nubes inferior al 20% y recortada al poligono del area de estudio. Se aplica una mascara de nubes utilizando la banda QA60 y se calculan los indices NDVI = (B8-B4)/(B8+B4), NDWI = (B3-B8)/(B3+B8) y CMRI = NDVI - NDWI por imagen, cuya efectividad para discriminar manglar de otras coberturas en ambientes estuarinos ha sido documentada por Gupta et al. (2018).
+La primera fase de la pipeline consiste en la construccion de un datacube listo para analisis ---una estructura tridimensional (X, Y, tiempo) que organiza las observaciones satelitales de la CGSM a resoluciones de 10 a 30 metros segun el sensor, donde cada capa temporal contiene los valores de reflectancia superficial e indices espectrales derivados para un periodo de composicion determinado---. Se construye una coleccion de 789 imagenes Sentinel-2 SR Harmonized para el periodo 2018--2025, filtrada por cobertura de nubes inferior al 20% y recortada al poligono del area de estudio. Se aplica una mascara de nubes utilizando la banda QA60 y se calculan los indices NDVI = (B8-B4)/(B8+B4), NDWI = (B3-B8)/(B3+B8) y CMRI = NDVI - NDWI por imagen, cuya efectividad para discriminar manglar de otras coberturas en ambientes estuarinos ha sido documentada por Gupta et al. (2018).
 ```python
 # Filtrado y calculo de indices
 s2 = (ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
@@ -105,6 +105,29 @@ def add_indices(image):
     cmri = ndvi.subtract(ndwi).rename('CMRI')
     return image.addBands([ndvi, ndwi, cmri])
 ```
+
+El datacube se materializa adicionalmente como tres archivos NetCDF con convenciones CF-1.8 ---generados por el script `build_cubos.py` mediante `xarray` y `rioxarray`---, de modo que el cubo queda disponible en disco para análisis fuera de la nube y reutilizable desde Python, R o Julia sin necesidad de re-consultar la API de GEE. Cada raster se reproyecta al sistema oficial colombiano EPSG:9377 y se resamplea a 30 metros antes de concatenarse a lo largo del eje temporal, en este sentido los tres cubos comparten una sola rejilla espacial y se diferencian únicamente por la fuente sensorial y la frecuencia temporal, así el flujo de la Fase 4 puede leer cualquiera de los tres con el mismo bloque de código.
+
+| Archivo | Sensor | Frecuencia | Periodo | Bandas | Tamaño |
+|---------|--------|------------|---------|--------|--------|
+| `cgsm_datacube_periodos.nc` | Sentinel-2 | Tres composites discretos | Degradación (2020 H2), recuperación (2022 H1), actual (2024--2025) | RGB (B4, B3, B2) | 40 MB |
+| `cgsm_datacube_trimestral.nc` | Sentinel-2 | Trimestral | 2018-Q1 a 2025-Q4 (31 trimestres) | NDVI, NDWI, CMRI | 275 MB |
+| `cgsm_datacube_landsat.nc` | Landsat 8/9 | Anual | 2013--2025 (13 años) | NDVI, NDWI, CMRI | 119 MB |
+
+: Datacubes NetCDF CF-1.8 materializados sobre el AOI acotado en EPSG:9377 (MAGNA-SIRGAS Origen Nacional), comprimidos con zlib nivel 4. {#tbl-cubos}
+
+```python
+import xarray as xr
+ds = xr.open_dataset('data/processed/cubo/cgsm_datacube_trimestral.nc',
+                     chunks={'time': 1, 'x': 512, 'y': 512})
+# Atributos CF-1.8: Conventions, institution, creator_name, crs_origen, ...
+# Acceso perezoso por chunks; .compute() materializa cuando es necesario
+ndvi_serie = ds['reflectance'].sel(band_idx='NDVI').median(dim=['x','y']).compute()
+```
+
+La diferencia espacial entre la mediana de NDVI del estado actual (julio 2024--junio 2025) y la del periodo de degradación (julio--diciembre 2020) ---calculada directamente sobre el datacube trimestral CF-1.8--- permite leer en un solo mapa las zonas que recuperaron vigor frente a aquellas que perdieron cobertura, de modo que la figura @fig-ndvi-cambio sostiene cualitativamente lo que las metricas de fragmentación describen cuantitativamente. Las áreas en azul corresponden a píxeles que ganaron al menos 0,1 unidades NDVI entre ambos periodos ---consistentes con la regeneración del manglar---, mientras que las áreas en rojo, concentradas principalmente en el borde norte del Vía Parque y en sectores hipersalinos del Santuario, marcan reducciones que pueden asociarse tanto a estresores climáticos persistentes como a heterogeneidad fenológica del manglar entre ambas ventanas temporales.
+
+![Cambio en la mediana de NDVI entre el estado actual (2024--2025) y el periodo de degradación (2020 H2), calculado desde el datacube trimestral CF-1.8 sobre el AOI acotado. El azul indica ganancia de vigor (regeneración), el rojo indica pérdida; coordenadas en metros sobre EPSG:9377 MAGNA-SIRGAS Origen Nacional.](../outputs/figures/ndvi_cambio_cubo.png){#fig-ndvi-cambio width=85%}
 
 ## Fase 2: Analisis de series de tiempo (Python + pandas / R + bfast)
 
@@ -229,7 +252,7 @@ flood_canopy = sar_diff.lt(-2).selfMask() # bajo dosel
 | 8. Cubo stars | stars + sf | R | TIFs trimestrales S2 | Series por estacion (.csv) |
 | 9. Validacion multilingue | pandas | Python | Series Python + R | RMSE/rho (.csv) |
 
-: Flujo de datos de la cadena de procesamiento multilenguaje. {#tbl-flujo}
+: Flujo de datos de la pipeline multilenguaje. {#tbl-flujo}
 
 ## Entorno de ejecucion
 
@@ -264,6 +287,10 @@ El analisis de series temporales de NDVI para las 8 estaciones de monitoreo reve
 
 : Anomalias significativas de NDVI (z < -2) en la serie combinada 2013--2025. {#tbl-anomalias}
 
+La construcción del datacube trimestral CF-1.8 sobre el AOI acotado ---ver tabla @tbl-cubos--- permite, además, calcular una serie temporal del NDVI mediano restringida a los píxeles que superan el umbral de manglar ($NDVI > 0{,}4$), de modo que la dinámica observada deja de estar diluida por el agua, las salinas y los arenales que también ocupan el polígono. El resultado, presentado en la figura @fig-ndvi-manglar, confirma el patrón ya identificado en las estaciones individuales pues el NDVI mediano del manglar oscila alrededor de 0,80 en condiciones normales, cae a valores cercanos a 0,60 entre el segundo semestre de 2019 y el primer semestre de 2020 ---coincidiendo con la sequía precursora y el inicio del episodio La Niña 2020--2021---, y vuelve a estabilizarse en torno a 0,80 desde 2022 en adelante, en este sentido la serie temporal espacializada sostiene el mismo argumento que las series puntuales de las ocho estaciones pero sobre la totalidad de la cobertura de manglar del AOI acotado.
+
+![Serie temporal del NDVI mediano del manglar sobre AOI acotado (SFF CGSM + VPI Salamanca, 835 km²) entre 2018 y 2025, calculada a partir del datacube trimestral CF-1.8 restringida a píxeles con $NDVI > 0{,}4$. Las franjas sombreadas marcan los tres periodos de referencia de la segmentación; la caída de 2019--2020 coincide con la sequía y el episodio La Niña que sostienen la narrativa del informe.](../outputs/figures/ndvi_mediano_manglar_acotado.png){#fig-ndvi-manglar width=90%}
+
 ## Analisis bfast (serie combinada 2013--2025)
 
 La aplicacion de bfast sobre las series mensuales de NDVI combinadas Landsat 8 + Sentinel-2 (2013--2025, 12 anos) detecto quiebres estructurales en 7 de las 8 estaciones con h = 0,15 y en las 8 estaciones con h = 0,10. Este resultado contrasta con el analisis previo basado unicamente en Sentinel-2 (2018--2025, 7 anos), que no detecto quiebres en ninguna estacion, lo cual demuestra la importancia de contar con series temporales suficientemente largas para la deteccion de cambios estructurales con bfast. El patron dominante es un quiebre generalizado en 2016 ---detectado en 7 de 8 estaciones entre abril y diciembre de ese ano---, coincidente con el evento El Nino 2015--2016, uno de los mas intensos registrados, que provoco sequias prolongadas y estres hidrico en el sistema lagunar. La estacion Punta Cerro fue la mas inestable, con 3 quiebres detectados (h = 0,10): noviembre de 2016 (El Nino), abril de 2020 (inicio de La Nina) y agosto de 2021 (recuperacion post-La Nina), capturando los dos eventos climaticos mas importantes del periodo de estudio. VIPIS presento un segundo quiebre en 2022, posiblemente asociado a la recuperacion post-La Nina 2020--2021.
@@ -287,7 +314,7 @@ La segmentacion con SamGeo (vit_b, 30 m) sobre los composites RGB recortados al 
 
 ## Recalculo en EPSG:9377 y analisis topologico de parches
 
-La reproyeccion de los GeoJSON al sistema oficial colombiano y la consecuente sustitucion de la aproximacion esferica por el calculo directo del area en metros redefine las cifras de cobertura por periodo, de modo que las hectareas reportadas a continuacion corresponden a una proyeccion equivalente y son comparables con la cartografia base del IGAC. En el periodo de degradacion (julio--diciembre 2020) se identificaron 100 parches en el rango de 1 a 5.000 hectareas con un area total de 8.829,1 ha y un area media de 88,3 ha; en el periodo de recuperacion (enero--junio 2022) se redujo el numero de parches a 67 pero el area total ascendio a 13.088,2 ha con un area media de 195,4 ha, lo que es consistente con un proceso de fusion de parches pequenos en unidades mas grandes; y en el periodo actual (julio 2024 a junio 2025) se contabilizaron 104 parches con un area total de 17.075,8 ha y un area media de 164,2 ha, valores que confirman tanto la expansion espacial del manglar como la consolidacion observada en el analisis bfast.
+La reproyección de los GeoJSON al sistema oficial colombiano y la consecuente sustitución de la aproximación esférica por el cálculo directo del área en metros redefine las cifras de cobertura por periodo, de modo que las hectáreas reportadas a continuación corresponden a una proyección equivalente y son comparables con la cartografía base del IGAC. Sobre el AOI acotado, las métricas de fragmentación reportadas en la tabla @tbl-fragmentacion-acotado describen una secuencia de **contracción de área clasificada** con simultánea **consolidación estructural**: el número de parches en el rango filtrado 1--5.000 ha disminuye de 79 en el periodo de degradación a 38 en el de recuperación y a 15 en el actual, en tanto que el área total clasificada como manglar pasa de 12.425,6 a 8.650,8 y a 4.037,0 hectáreas en los mismos cortes. El área media de parche, en contraste, crece de 157,3 a 269,1 hectáreas, en este sentido los parches sobrevivientes son más grandes pero menos numerosos, así el paisaje se reorganiza alrededor de unidades de manglar maduro mientras los parches pequeños o degradados quedan por fuera del umbral espectral aplicado por la clasificación. Esta lectura se complementa con el índice de forma medio (MSI) que pasa de 0,51 a 1,46 ---bordes progresivamente más irregulares consistentes con regeneración natural no uniforme--- y con la distancia media al vecino más cercano que aumenta de 1,10 a 2,39 km, evidenciando un aislamiento creciente de los parches sobrevivientes.
 
 | Periodo | Parches (Julia) | Area total (ha) | Area media (ha) | MSI medio | NND medio (km) |
 |---------|-----------------|-----------------|-----------------|-----------|----------------|
@@ -299,7 +326,7 @@ La reproyeccion de los GeoJSON al sistema oficial colombiano y la consecuente su
 
 Antes de interpretar las cifras conviene aclarar el alcance temporal de cada periodo de referencia: la **degradacion** corresponde al semestre julio--diciembre de 2020 y captura la respuesta espectral del manglar durante el evento humanitario de mortandad asociado a La Nina; la **recuperacion** corresponde al semestre enero--junio de 2022 y captura la fase de regeneracion temprana documentada por INVEMAR (2024); el periodo **actual** corresponde al ciclo anual julio 2024 a junio 2025 y constituye un *snapshot* del estado mas reciente disponible al momento de la entrega, no una tendencia post-recuperacion estabilizada. La comparacion entre los tres periodos debe leerse, por lo tanto, como una secuencia de tres estados puntuales y no como un analisis de tendencia, en la medida en que se requieren al menos dos ciclos anuales adicionales --2025--2026 y 2026--2027-- para evaluar si el patron observado en 2024--2025 corresponde a una contraccion estable o a una fluctuacion intermedia. Esta consideracion metodologica matiza las inferencias sobre cambio neto que se discuten a continuacion.
 
-El analisis sobre el area protegida acotada revela un patron de consolidacion con perdida neta entre 2020 y 2024--2025 que difiere de la lectura inicial sobre el AOI envolvente. El numero de parches disminuye progresivamente de 79 a 15, el area total se contrae de 12.426 a 4.037 hectareas, y el area media de parche aumenta de 157 a 269 hectareas. Estos tres movimientos juntos indican que los parches pequenos desaparecen o se fusionan en unidades mayores, pero que la cobertura total se reduce. El indice de forma medio --MSI-- pasa de 0,51 a 1,46, lo que confirma una creciente irregularidad de los bordes consistente con regeneracion natural no uniforme y desgaste perimetral. La distancia media al vecino mas cercano aumenta de 1,10 a 2,39 kilometros, evidenciando un aislamiento progresivo de los parches sobrevivientes.
+Conviene precisar que la contracción del área clasificada por umbrales no equivale, por sí sola, a pérdida de cobertura del manglar; en efecto, la figura @fig-ndvi-cambio ---calculada directamente sobre el datacube trimestral CF-1.8 como diferencia de NDVI mediano entre el periodo actual y el de degradación--- muestra que la mayor parte del AOI acotado presenta tonos azules consistentes con **ganancia de vigor vegetativo** sobre los parches sobrevivientes, mientras los tonos rojos se concentran en los bordes hipersalinos del Vía Parque y en sectores puntuales del Santuario asociados a las lagunas internas. Ambos hallazgos son compatibles: el manglar se consolida en menos parches pero más densos espectralmente, así la métrica de área filtrada subestima la dinámica del ecosistema cuando se interpreta de forma aislada, en este sentido se justifica reportar de manera conjunta las métricas de fragmentación, las series temporales y el mapa de cambio NDVI, pues los tres se sostienen mutuamente.
 
 El analisis topologico complementa estas cifras con dos lecturas adicionales sobre los mismos parches. La aplicacion del predicado `intersects` entre cada parche y la frontera del AOI con una tolerancia de 30 metros identifico una proporcion variable de parches truncados por el borde del area de estudio: 24,0 % en el periodo de degradacion ---equivalentes a 2.238,1 ha---, 7,5 % en el periodo de recuperacion ---1.640,0 ha--- y 18,3 % en el periodo actual ---2.076,2 ha---. Esta diferencia sugiere que los parches del periodo de recuperacion estan mas agrupados al interior del sistema lagunar, mientras que los de degradacion y los actuales se extienden hasta el limite cartografico del AOI, de modo que sus metricas de fragmentacion globales reflejan tambien el efecto del recorte. La aplicacion del predicado `contains` con los ocho puntos de monitoreo no devolvio parches que envolvieran las estaciones bajo el filtro de tamano 1--5.000 ha, lo cual se explica porque las estaciones INVEMAR estan ubicadas sobre cuerpos de agua o en bordes inmediatos al manglar, donde la segmentacion devuelve parches menores a 1 ha o el agua misma; la representatividad espacial de las estaciones, en consecuencia, debe discutirse en escalas de buffer y no de contenencia estricta.
 
@@ -353,56 +380,63 @@ La extraccion de series temporales NDVI con `st_extract` sobre el cubo stars con
 
 ## Validacion con datos NASA: deteccion de inundacion SAR
 
-La consulta a la Global Flood Database identifico 16 eventos de inundacion historicos en la CGSM entre 2001 y 2017, de los cuales 14 registraron areas de inundacion superiores a cero. El evento de mayor magnitud ocurrio en febrero de 2005 con 1.149,9 km2 inundados, seguido por los eventos de septiembre--diciembre de 2005 (1.063,7 km2, 92 dias de duracion ---el mas prolongado del registro---) y noviembre de 2004 (1.027,2 km2). Estos eventos coinciden con episodios ENSO documentados por el IDEAM, confirmando la vulnerabilidad del sistema lagunar a la variabilidad climatica interanual. Las estaciones del borde oriental ---Isla Boqueron, Punta Cerro y Rio Sevilla--- registraron inundacion en 10 de los 16 eventos, mientras que Cano Clarin solo fue afectado en 1 evento, lo cual es consistente con su ubicacion mas alejada del cuerpo de agua principal.
+La consulta a la Global Flood Database identificó 16 eventos de inundación históricos que intersecan el AOI acotado entre 2001 y 2017, de los cuales 14 registraron áreas de inundación superiores a cero. El evento de mayor magnitud ocurrió en febrero de 2005 con 299,2 km² inundados ---el 35,8 % del AOI acotado---, seguido por los eventos de noviembre de 2004 (274,8 km²) y septiembre--diciembre de 2005 (239,4 km², 92 días de duración, el más prolongado del registro). Estos eventos coinciden con episodios ENSO documentados por el IDEAM, lo que confirma la vulnerabilidad del sistema lagunar a la variabilidad climática interanual. Las estaciones del borde oriental del complejo lagunar ---Isla Boquerón, Punta Cerro, Punta Chino y Río Sevilla--- registraron inundación en 9 o 10 de los 16 eventos, en tanto que Caño Clarín solo fue afectado en 1 evento, lo cual es consistente con su ubicación más alejada del cuerpo de agua principal.
 
-| Evento | Inicio | Fin | Area (km2) | Dias |
+| Evento | Inicio | Fin | Área (km²) | Días |
 |--------|--------|-----|-----------|------|
-| DFO_1996 | 2002-07-20 | 2002-07-31 | 959,5 | 11 |
-| DFO_2588 | 2004-11-20 | 2004-11-27 | 1.027,2 | 7 |
-| DFO_2625 | 2005-02-11 | 2005-02-26 | 1.149,9 | 15 |
-| DFO_2761 | 2005-09-15 | 2005-12-16 | 1.063,7 | 92 |
-| DFO_3212 | 2007-10-01 | 2007-12-10 | 1.025,7 | 70 |
-| DFO_3750 | 2010-11-15 | 2010-12-20 | 946,6 | 35 |
-| DFO_4495 | 2017-08-04 | 2017-08-21 | 908,9 | 17 |
+| DFO_2625 | 2005-02-11 | 2005-02-26 | 299,2 | 15 |
+| DFO_2588 | 2004-11-20 | 2004-11-27 | 274,8 | 7 |
+| DFO_2761 | 2005-09-15 | 2005-12-16 | 239,4 | 92 |
+| DFO_1996 | 2002-07-20 | 2002-07-31 | 233,9 | 11 |
+| DFO_4495 | 2017-08-04 | 2017-08-21 | 221,3 | 17 |
+| DFO_3212 | 2007-10-01 | 2007-12-10 | 211,5 | 70 |
+| DFO_3750 | 2010-11-15 | 2010-12-20 | 190,1 | 35 |
+| DFO_3754 | 2010-11-25 | 2010-12-20 | 175,0 | 25 |
+| DFO_3421 | 2008-12-13 | 2008-12-14 | 151,9 | 1 |
+| DFO_3311 | 2008-05-27 | 2008-05-28 | 78,8 | 1 |
 
-: Eventos de inundacion con mayor area afectada en la CGSM (Global Flood Database, 2001--2017). {#tbl-gfd}
+: Eventos de inundación con mayor área afectada dentro del AOI acotado (Global Flood Database, 2001--2017). {#tbl-gfd}
 
-Para el evento de septiembre--octubre de 2020 ---no registrado en la Global Flood Database cuya cobertura termina en 2017---, la deteccion con Sentinel-1 SAR (banda VH, modo IW) identifico 56,6 km2 de inundacion en agua abierta (diferencia de backscatter > 3 dB) y 1.450,8 km2 de inundacion bajo dosel de manglar (diferencia negativa, indicativa de scattering de doble rebote agua-tronco), para un total de 1.507,4 km2 afectados ---el 29,7% del area de estudio---. El cruce con las anomalias NDVI revelo patrones diferenciados por estacion: Punta Cerro e Isla Boqueron presentaron degradacion severa (NDVI negativo) sin senal SAR de inundacion directa, lo que sugiere mortalidad de manglar por hipersalinizacion mas que por anegamiento; CP Pajarales mostro inundacion bajo dosel (SAR diff = -1,71 dB) con NDVI relativamente estable (0,300), indicando manglar inundado pero no muerto; y Rio Sevilla presento estres hidrico (NDVI = 0,050) sin inundacion SAR clara.
+Para el evento de septiembre--octubre de 2020 ---no registrado en la Global Flood Database cuya cobertura termina en 2017---, la detección con Sentinel-1 SAR (banda VH, modo IW) restringida al AOI acotado identificó 15,93 km² de inundación en agua abierta (diferencia de backscatter > 3 dB) y 43,08 km² de inundación bajo dosel de manglar (diferencia negativa, indicativa de *scattering* de doble rebote agua-tronco), para un total de 59,02 km² afectados ---el 7,1 % del AOI acotado---. Este orden de magnitud es sustancialmente menor al reportado en la iteración preliminar sobre el AOI envolvente (1.507,4 km², Anexo C) y resulta más defendible, pues la versión envolvente contabilizaba cambios espectrales en zonas no-manglar de la Sierra Nevada y áreas inland que también producen diferencia SAR negativa por dinámica de vegetación natural sin relación con la inundación La Niña. El cruce con las anomalías NDVI revela patrones diferenciados por estación que se discuten en la tabla @tbl-cruce.
 
-| Tipo de inundacion | Area (km2) | Porcentaje AOI |
+| Tipo de inundación | Área (km²) | % AOI acotado |
 |-------------------|-----------|----------------|
-| Agua abierta (SAR diff > 3 dB) | 56,6 | 1,1% |
-| Bajo dosel manglar (SAR diff < -2 dB) | 1.450,8 | 28,6% |
-| Total afectado | 1.507,4 | 29,7% |
+| Agua abierta (SAR diff > +3 dB) | 15,93 | 1,9 % |
+| Bajo dosel manglar (SAR diff < −2 dB) | 43,08 | 5,2 % |
+| Total afectado | 59,02 | 7,1 % |
 
-: Extension de la inundacion detectada con Sentinel-1 SAR (septiembre--octubre 2020). {#tbl-sar}
+: Extensión de la inundación detectada con Sentinel-1 SAR (septiembre--octubre 2020) sobre el AOI acotado SFF + VPI Salamanca. {#tbl-sar}
 
-| Estacion | SAR diff (dB) | NDVI sept-2020 | Eventos historicos | Interpretacion |
-|----------|--------------|----------------|-------------------|----------------|
-| Isla Boqueron | -0,26 | -0,018 | 10 de 16 | Degradacion severa |
-| Punta Cerro | -0,63 | -0,078 | 10 de 16 | Degradacion severa |
-| Rio Sevilla | -0,76 | 0,050 | 10 de 16 | Estres hidrico |
-| CP Pajarales | -1,71 | 0,300 | 9 de 16 | Inundacion bajo dosel |
-| VIPIS | 0,12 | 0,350 | 9 de 16 | Sin afectacion mayor |
-| Cano Palos | 0,15 | 0,400 | 2 de 16 | Sin afectacion mayor |
-| Cano Clarin | -0,36 | 0,500 | 1 de 16 | Sin afectacion mayor |
+| Estación | Naturaleza | Dentro AOI acotado | SAR diff (dB) | NDVI sept-2020 | Eventos GFD | Interpretación |
+|----------|-----------|--------------------|---------------|----------------|-------------|----------------|
+| Isla Boquerón | Limnológica | No | N/A | -0,018 | 10 de 16 | Fuera del AOI: sobre lámina de agua del complejo lagunar central |
+| Punta Cerro | Limnológica | No | N/A | -0,078 | 10 de 16 | Fuera del AOI: sobre lámina de agua del complejo lagunar central |
+| Punta Chino | Limnológica | No | N/A | 0,200 | 9 de 16 | Fuera del AOI: sobre lámina de agua del complejo lagunar central |
+| Río Sevilla | Limnológica | No | N/A | 0,050 | 10 de 16 | Fuera del AOI: sobre lámina de agua del complejo lagunar central |
+| Caño Palos | Manglar | Sí | +0,15 | 0,400 | 2 de 16 | Sin afectación SAR mayor |
+| CP Pajarales | Manglar | No | N/A | 0,300 | 9 de 16 | Fuera del AOI: oeste del SFF, en zona riberana |
+| Caño Clarín | Manglar | No | N/A | 0,500 | 1 de 16 | Fuera del AOI: sur del SFF, sobre zona de rehabilitación hidráulica |
+| VIPIS | Manglar | Sí | +0,12 | 0,350 | 9 de 16 | Sin afectación SAR mayor |
 
-: Cruce de senal SAR, NDVI y frecuencia de inundacion historica por estacion. {#tbl-cruce}
+: Cruce de señal SAR, NDVI y frecuencia de inundación histórica por estación, restringido al AOI acotado SFF + VPI Salamanca. Solo dos de las ocho estaciones quedan estrictamente dentro del polígono protegido oficial ---Caño Palos al sur del Santuario y VIPIS sobre el Vía Parque---; ambas presentan un SAR diff positivo cercano a cero durante septiembre--octubre de 2020, lo que descarta inundación bajo dosel detectable por SAR en ese par de puntos. Las seis estaciones restantes caen fuera del polígono acotado y por tanto el `clip(aoi)` aplicado a la imagen de diferencia SAR retorna `None` en sus buffers, en este sentido este resultado es un hallazgo metodológico relevante: las estaciones INVEMAR-GBIF fueron diseñadas como puntos de monitoreo limnológico sobre la lámina de agua del sistema lagunar central, fuera de los polígonos oficiales de protección, así su uso para monitorear el manglar requiere mediar la lectura mediante buffers amplios o ampliar el AOI más allá de RUNAP. {#tbl-cruce}
 
 ## Dinamica hidrica: transiciones JRC en zonas de manglar
 
-El analisis de las transiciones del JRC Global Surface Water dentro de las zonas clasificadas como manglar revelo cambios hidricos de magnitud considerable. Se identificaron 59,8 km2 de agua estacional perdida ---areas que antes se inundaban estacionalmente y dejaron de hacerlo--- y 40,3 km2 de agua permanente perdida ---cuerpos de agua que se secaron dentro del manglar---, para un total de 100,1 km2 de perdida hidrica en zonas de manglar. Simultaneamente, 26,7 km2 presentaron nueva inundacion estacional y 155,7 km2 se clasificaron como efimero estacional, lo que indica que la dinamica hidrica del sistema se ha redistribuido espacialmente. Estos hallazgos permiten diferenciar dos mecanismos de degradacion que operan simultaneamente en la CGSM: la mortalidad por estres salino derivada de la perdida hidrica en las estaciones costeras orientales ---donde se concentran los 100,1 km2 de agua perdida--- y la inundacion prolongada bajo dosel en el Complejo de Pajarales ---donde se concentran los 155,7 km2 de inundacion efimera---.
+El análisis de las transiciones del JRC Global Surface Water restringido al AOI acotado revela una dinámica hídrica donde la pérdida y la ganancia de cuerpos de agua son aproximadamente del mismo orden, en este sentido el sistema lagunar se redistribuye más que se contrae. Se identifican 18,55 km² de agua permanente perdida ---cuerpos que se secaron entre 1984 y 2021--- y 29,38 km² de agua estacional perdida, en tanto que 23,55 km² aparecen como nuevo permanente y 31,31 km² como nuevo estacional; sumando, el sistema gana 54,86 km² y pierde 47,93 km² para un balance neto positivo de aproximadamente 7 km². De manera complementaria, 49,30 km² se clasifican como efímero estacional ---zonas donde la inundación es esporádica y no sigue un patrón estacional definido--- y 18,54 km² muestran transición de régimen permanente a estacional, lo que sugiere un retroceso parcial de la lámina de agua permanente. Estos hallazgos son coherentes con el contexto hidrológico de un humedal en proceso de rehabilitación tras la reapertura de canales (1996--1998) que reintrodujo la conexión con el río Magdalena, así la dinámica observada en la ventana JRC captura los efectos combinados de la intervención y de los episodios ENSO posteriores.
 
-| Transicion JRC en zona manglar | Area (km2) | Interpretacion |
+| Transición JRC dentro del AOI acotado | Área (km²) | Interpretación |
 |-------------------------------|-----------|----------------|
-| Permanente perdido | 40,3 | Secamiento de cuerpos de agua |
-| Estacional perdido | 59,8 | Zonas que dejaron de inundarse |
-| Nuevo estacional | 26,7 | Nuevas areas de inundacion |
-| Efimero estacional | 155,7 | Inundacion intermitente |
-| Permanente a estacional | 9,8 | Transicion hidrologica |
-| Efimero permanente | 13,8 | Agua intermitente persistente |
+| Permanente | 377,75 | Lámina de agua estable |
+| Nuevo permanente | 23,55 | Cuerpos nuevos consolidados |
+| Permanente perdido | 18,55 | Cuerpos de agua secados |
+| Estacional | 17,98 | Zonas con régimen estacional estable |
+| Nuevo estacional | 31,31 | Nuevas áreas de inundación estacional |
+| Estacional perdido | 29,38 | Zonas que dejaron de inundarse |
+| Permanente a estacional | 18,54 | Retroceso parcial de lámina permanente |
+| Efímero estacional | 49,30 | Inundación intermitente sin patrón estacional |
+| Efímero permanente | 1,74 | Agua intermitente persistente |
 
-: Transiciones JRC Global Surface Water en zonas clasificadas como manglar. {#tbl-jrc}
+: Transiciones JRC Global Surface Water (1984--2021) dentro del AOI acotado SFF + VPI Salamanca. El AOI acotado contiene 385,3 km² de agua permanente (>75 % del tiempo) y 44,1 km² de agua estacional (25--75 %), de modo que casi la mitad del polígono protegido es lámina de agua. {#tbl-jrc}
 
 ## Ganancia y perdida de manglar (2020 vs 2024--2025)
 
@@ -415,38 +449,43 @@ El analisis de las transiciones del JRC Global Surface Water dentro de las zonas
 
 : Ganancia y perdida de manglar entre el periodo de degradacion y el actual. {#tbl-cambio}
 
-## Validacion contra Global Mangrove Watch v4.0
+## Validación contra cartografía global de referencia (ESA WorldCover v200)
 
-La clasificacion por umbrales espectrales se valido contra el Global Mangrove Watch v4.0 (GMW, ano 2020), que reporta 376,5 km2 de manglar en la CGSM. Se evaluaron multiples combinaciones de umbrales CMRI y NDVI, incorporando restricciones geofisicas de elevacion (SRTM < 10 m) y proximidad al agua (JRC, distancia < 3 km) para reducir la comision de falsos positivos en zonas de vegetacion terrestre fuera del habitat potencial del manglar. La optimizacion se realizo mediante muestreo aleatorio de 2.000 puntos sobre el AOI y calculo de la matriz de confusion contra el raster GMW. La mejor configuracion ---NDVI > 0,70, elevacion < 10 m, distancia al agua < 3 km--- alcanzo un F1-score de 0,442 con una precision global del 89,9%, clasificando 556 km2 como manglar potencial frente a los 376,5 km2 del GMW (ratio 1,48).
+La clasificación por umbrales espectrales se valida sobre el AOI acotado contra **ESA WorldCover v200** (Zanaga et al., 2022) ---producto cartográfico global de 10 m de resolución que reporta cobertura de tierra para el año 2021 y que se acota a la clase 95 (manglar) como referencia binaria---. La sustitución del Global Mangrove Watch por ESA WorldCover como cartografía de referencia obedece a que el catálogo público de sat-io en Google Earth Engine reorganizó el dataset GMW al momento de la entrega y los paths conocidos del GMW v3.0 (Bunting et al., 2022) dejaron de ser accesibles directamente desde el contenedor, así WorldCover ofrece una alternativa con mayor resolución espacial nativa (10 m frente a los 25 m del GMW), validación independiente por la Agencia Espacial Europea y consistencia metodológica con la cartografía global de cobertura de tierra. El cálculo de la matriz de confusión se realiza directamente sobre los servidores de Earth Engine mediante `reduceRegion` con histograma de frecuencias, comparando pixel a pixel a 25 m de resolución la clasificación por umbrales ---NDVI > 0,70, elevación SRTM < 10 m, distancia al agua JRC < 3 km--- contra la clase 95 de WorldCover, sin necesidad de descargar los rasters al contenedor local.
 
-Conviene precisar el alcance de esta validacion antes de interpretar el F1. En primer lugar, la metrica reportada se calcula sobre la clasificacion por umbrales espectrales con restricciones geofisicas, no sobre la salida directa de SamGeo; la segmentacion automatica produce poligonos que se filtran y reclasifican por CMRI medio dentro de cada parche, pero su validacion cuantitativa contra GMW queda como linea de trabajo futuro inmediato, en la medida en que requiere una pasada de matriz de confusion polygon-by-polygon que excede el alcance del proyecto de curso. En segundo lugar, el F1 reportado corresponde a una clase positiva muy desbalanceada ---el manglar ocupa cerca del 8% del AOI envolvente del baseline---, lo que penaliza desproporcionadamente cualquier comision de falsos positivos; con un Kappa de Cohen estimado en 0,38 (Landis-Koch nivel "moderado") y una balanced accuracy del 0,67, la clasificacion presenta un acuerdo significativamente mejor que el aleatorio pero notoriamente inferior al rango "sustancial" que reportan los flujos optico-SAR supervisados de referencia. En tercer lugar, la discrepancia residual se atribuye a tres factores: primero, el GMW emplea datos de resolucion gruesa (ALOS PALSAR, 25 m) que puede subestimar manglar disperso en zonas de transicion; segundo, los umbrales espectrales capturan vegetacion riberana y de humedal que comparte firma espectral con el manglar; y tercero, el GMW v4.0 corresponde al ano 2020, que coincide con el periodo de degradacion identificado en la Fase 2, por lo que la extension real del manglar puede haber sido menor ese ano. Estas tres causas dan cuenta de un ratio area-clasificacion-sobre-GMW de 1,48, donde la sobreestimacion sistematica del clasificador por umbrales no debe leerse como error puro sino como producto de la combinacion de las tres limitaciones senaladas.
+Los resultados sobre el AOI acotado mejoran sustancialmente respecto al baseline envolvente conservado en el Anexo C: el F1-score pasa de 0,442 a **0,548** (+24 %), la Precision (acuerdo positivo predictivo) sube de 0,428 a **0,768** (+79 %) y la Specificity alcanza 0,944, en este sentido el acotamiento al área protegida oficial reduce dramáticamente los falsos positivos por vegetación riberana, salitrales y zonas agropecuarias del AOI envolvente que comparten firma espectral con el manglar pero no constituyen hábitat potencial dentro del polígono RUNAP. La Recall (sensibilidad) baja ligeramente de 0,457 a 0,426 ---atribuible a que el umbral NDVI > 0,70 es conservador y deja fuera manglar joven o degradado que WorldCover sí reconoce con su clasificador supervisado---, en tanto que la Overall Accuracy desciende de 0,899 a 0,788 únicamente porque la prevalencia de la clase positiva pasa de cerca del 8 % en el AOI envolvente a aproximadamente el 30 % en el AOI acotado, lo cual hace de OA una métrica menos engañosa y más informativa pues deja de estar dominada por el acuerdo trivial sobre la clase mayoritaria.
 
-| Metrica | Valor |
-|---------|-------|
-| Precision global (OA) | 0,899 |
-| Precision (Producers) | 0,428 |
-| Recall (Users) | 0,457 |
-| F1-score | 0,442 |
-| Area GMW 2020 | 376,5 km2 |
-| Area clasificacion optimizada | 556,0 km2 |
-| Ratio area (clasificacion / GMW) | 1,48 |
-| Umbrales | NDVI > 0,70, elev < 10 m, agua < 3 km |
+Conviene precisar tres aspectos del alcance de la validación. En primer lugar, la métrica reportada se calcula sobre la clasificación por umbrales espectrales con restricciones geofísicas, no sobre la salida directa de SamGeo: la segmentación automática produce polígonos que cubren cualquier objeto coherente del raster RGB ---incluidos cuerpos de agua y suelo desnudo--- y por tanto requiere un filtrado posterior por CMRI o NDVI medio antes de su comparación con la cartografía de referencia, filtrado que en esta entrega se realiza implícitamente al usar la clasificación por umbrales como producto evaluado. En segundo lugar, la cartografía WorldCover identifica aproximadamente 412 km² de manglar dentro del AOI acotado mientras que el clasificador por umbrales identifica 229 km², es decir, una subestimación sistemática que se explica por el umbral conservador NDVI > 0,70 y que sugiere como línea de trabajo bajar el umbral a 0,60--0,65 o complementarlo con CMRI para mejorar la Recall sin comprometer la Precision alcanzada. En tercer lugar, la diferencia residual entre ambas cartografías corresponde a heterogeneidad espectral del manglar de la CGSM ---vegetación riberana, pastizales inundables, salitrales con cobertura intermitente--- y a la diferencia entre el clasificador supervisado de WorldCover (entrenado globalmente sobre etiquetas de referencia) y la regla determinística por umbrales usada en este proyecto, distinción que conviene tener presente al comparar este F1 con los rangos 0,80--0,90 reportados por Selvaraj y Gallego-Pérez (2023) para flujos óptico-SAR supervisados con Random Forest.
 
-: Metricas de validacion de la clasificacion de manglar contra GMW v4.0 (2020). {#tbl-validacion}
+| Métrica | Baseline envolvente | AOI acotado (vigente) |
+|---------|---------------------|------------------------|
+| Overall Accuracy (OA) | 0,899 | 0,788 |
+| Precision (Producer's) | 0,428 | **0,768** |
+| Recall (User's) | 0,457 | 0,426 |
+| F1-score | 0,442 | **0,548** |
+| Specificity | --- | 0,944 |
+| TP / FP / FN / TN | --- | 175.862 / 53.220 / 237.006 / 904.799 |
+| Área referencia 2020-2021 | 376,5 km² (GMW) | 412 km² (WorldCover) |
+| Área clasificación | 556,0 km² | 229 km² |
+| Cartografía de referencia | GMW v3.0 (Bunting et al., 2022) | ESA WorldCover v200 (Zanaga et al., 2022) |
+| Resolución de evaluación | 25 m | 25 m |
+| Umbrales | NDVI > 0,70, elev < 10 m, agua < 3 km | idem |
+
+: Métricas de validación de la clasificación de manglar contra cartografía global de referencia. La columna de baseline envolvente corresponde a la iteración preliminar sobre 5.073 km² y se conserva en el Anexo C; la columna vigente corresponde al AOI acotado SFF + VPI (835 km²) y constituye la validación oficial del informe v6. {#tbl-validacion}
 
 ## Dashboard interactivo
 
-Se genero un dashboard interactivo en formato HTML (2,7 MB) mediante geemap, que integra 15 capas tematicas: composites RGB por periodo, NDVI por periodo, mapa de cambio NDVI, clasificacion de manglar por periodo, ganancia/perdida de manglar, inundacion SAR (agua abierta y bajo dosel), poligono del area de estudio y estaciones de monitoreo. El dashboard permite activar y desactivar capas, ajustar transparencia y navegar el mapa con zoom y desplazamiento, constituyendo una herramienta de consulta para gestores ambientales que no requiere software especializado ---solo un navegador web---.
+Se generó un dashboard interactivo en formato HTML autocontenido (~80 KB) mediante el script `src/python/make_dashboard_html.py`, que construye el mapa con folium y Earth Engine sirviendo las capas como teselas mediante mapId. La versión vigente del dashboard opera sobre el AOI acotado leído del archivo `data/raw/cgsm_aoi_acotado_4326.geojson` e integra 15 capas temáticas: NDVI por periodo de referencia, mapa de cambio NDVI (Actual − Degradación), clasificación de manglar por periodo (degradación, recuperación, actual), ganancia/pérdida/estabilidad de manglar entre 2020 y 2024--2025, inundación SAR de septiembre--octubre 2020 en agua abierta y bajo dosel, polígono del área de estudio y estaciones de monitoreo separadas por naturaleza espectral. El dashboard se abre directamente en cualquier navegador web sin necesidad de Jupyter ni de software especializado, así constituye una herramienta de consulta accesible para gestores ambientales del Plan de Manejo Ambiental del sitio Ramsar; sus mapId Earth Engine tienen vigencia limitada de algunas horas, en este sentido conviene regenerar el HTML poco antes de cada sesión de presentación. La versión preliminar del dashboard sobre el AOI envolvente, generada con `geemap` y dependiente de un kernel Jupyter activo (HTML de 2,7 MB con widgets ipyleaflet embebidos), se conserva en el notebook legacy `06_dashboard.ipynb` para trazabilidad metodológica.
 
 # Conclusiones
 
-La cadena de procesamiento multilenguaje desarrollada permitio caracterizar la dinamica espaciotemporal de la cobertura de manglar en la CGSM durante el periodo 2013--2025, integrando analisis de series temporales de NDVI en Python (929 registros mensuales que combinan Landsat 8 y Sentinel-2), deteccion de quiebres con bfast en R, segmentacion automatica con SamGeo en Python, metricas de fragmentacion en Julia y validacion cruzada con datos SAR de inundacion y cartografia de referencia del Global Mangrove Watch. Los resultados principales son los siguientes: primero, la identificacion de un quiebre estructural generalizado en 2016 ---detectado por bfast en 7 de 8 estaciones---, asociado al evento El Nino 2015--2016, y de septiembre de 2020 como el segundo evento de mayor perturbacion ---NDVI negativo en 2 de 8 estaciones, z < -3---, asociado a La Nina 2020--2021, en un contexto historico de 14 eventos de inundacion documentados por la Global Flood Database entre 2001 y 2017; segundo, la deteccion de 18 anomalias significativas (z < -2) en la serie combinada de 12 anos, incluyendo 4 anomalias en VIPIS durante 2016 que solo fueron visibles al extender la serie con Landsat 8; tercero, una duplicacion del area de manglar clasificada entre el periodo de degradacion (4.938,5 ha) y el estado actual (8.444,5 ha) con incremento simultaneo del vigor vegetativo (NDVI de 0,503 a 0,564); cuarto, una reduccion de la densidad de parches de 11,19 a 6,47 por 1.000 hectareas, indicativa de consolidacion del paisaje; quinto, la diferenciacion mediante SAR de dos mecanismos de degradacion ---mortalidad por estres salino en estaciones costeras (100,1 km2 de agua perdida segun JRC) e inundacion bajo dosel en el Complejo de Pajarales (155,7 km2 de inundacion efimera)---, con un total de 1.507,4 km2 afectados durante el evento de 2020 (29,7% del AOI); y sexto, una validacion contra GMW v4.0 que arrojo un F1-score de 0,442 (OA = 0,899) con umbrales optimizados de NDVI > 0,70 y restricciones geofisicas de elevacion y proximidad al agua.
+La pipeline multilenguaje desarrollada permitió caracterizar la dinámica espaciotemporal de la cobertura de manglar en la CGSM durante el periodo 2013--2025, integrando análisis de series temporales de NDVI en Python (929 registros mensuales que combinan Landsat 8 y Sentinel-2), detección de quiebres con bfast en R, segmentación automática con SamGeo en Python, métricas de fragmentación en Julia y validación cruzada con datos SAR de inundación y cartografía de referencia del Global Mangrove Watch. Los resultados principales reportados sobre el AOI acotado (SFF CGSM + VPI Salamanca, 835,3 km²) son los siguientes: primero, la identificación de un quiebre estructural generalizado en 2016 ---detectado por bfast en 7 de 8 estaciones---, asociado al evento El Niño 2015--2016, y de septiembre de 2020 como el segundo evento de mayor perturbación ---NDVI negativo en 2 de 8 estaciones, z < −3---, asociado a La Niña 2020--2021, en un contexto histórico de 14 eventos de inundación documentados por la Global Flood Database entre 2001 y 2017 con áreas inundadas dentro del AOI acotado de hasta 299,2 km² (DFO_2625, febrero de 2005); segundo, la detección de 18 anomalías significativas (z < −2) en la serie combinada de 12 años, incluyendo 4 anomalías en VIPIS durante 2016 que solo fueron visibles al extender la serie con Landsat 8; tercero, un patrón de **contracción del área clasificada con consolidación estructural** sobre el AOI acotado ---el número de parches de manglar pasa de 79 a 15 y el área total clasificada se reduce de 12.425,6 a 4.037,0 ha entre la degradación y el estado actual, en tanto que el área media de parche aumenta de 157,3 a 269,1 ha---, complementado con una **ganancia generalizada de vigor vegetativo** observable en la diferencia de NDVI entre 2020 y 2024--2025 (figura @fig-ndvi-cambio) y en la recuperación del NDVI mediano del manglar (figura @fig-ndvi-manglar) que pasa de valores cercanos a 0,60 en mid-2020 a valores estables alrededor de 0,80 desde 2022; cuarto, un aumento del índice de forma medio (MSI) de 0,51 a 1,46 y de la distancia media al vecino más cercano (NND) de 1,10 a 2,39 km, indicativos de bordes más irregulares y aislamiento progresivo de los parches sobrevivientes; quinto, la diferenciación mediante SAR de dos mecanismos de afectación durante el evento de septiembre--octubre de 2020 ---inundación de agua abierta sobre 15,93 km² e inundación bajo dosel sobre 43,08 km², para un total de 59,02 km² afectados (7,1 % del AOI acotado)--- complementada con una dinámica hídrica de largo plazo (JRC 1984--2021) que muestra pérdida de 18,55 km² de agua permanente y ganancia compensatoria de 23,55 km², en este sentido el sistema redistribuye su lámina de agua más que la pierde; y sexto, una validación contra ESA WorldCover v200 (Zanaga et al., 2022) sobre el AOI acotado que arroja un F1-score de **0,548** con Precision de 0,768 y Specificity de 0,944, lo cual mejora en un 24 % al F1 de 0,442 reportado sobre el AOI envolvente del baseline (Anexo C) y confirma cuantitativamente que el acotamiento a los polígonos oficiales del SFF + VPI elimina los falsos positivos por vegetación riberana y agropecuaria sin entrenamiento supervisado adicional; la Recall de 0,426 indica una subestimación atribuible al umbral conservador NDVI > 0,70 y queda como línea futura inmediata para refinamiento.
 
-Contrastando estos resultados con la literatura, conviene senalar que la cobertura total reportada para la CGSM bajo el AOI acotado --del orden de 4.000 a 12.000 hectareas segun el periodo-- es coherente con el rango estimado por el Global Mangrove Watch v3.0 para esta misma area en el ciclo 2018--2020 (Bunting et al., 2022), si bien el F1-score de 0,442 alcanzado en la validacion contra GMW v4.0 es marcadamente inferior al rango 0,80--0,90 reportado por Selvaraj y Gallego-Perez (2023) para manglares del Pacifico colombiano utilizando una combinacion de Landsat optico y SAR ALOS-2 con clasificador Random Forest. La discrepancia se atribuye, en primer lugar, a que el enfoque metodologico aqui presentado descansa en umbrales espectrales sobre indices NDVI y CMRI sin entrenamiento supervisado, en tanto que el flujo de Selvaraj y Gallego-Perez explota la complementariedad optico--SAR y aprovecha la capacidad discriminativa del Random Forest sobre vectores de caracteristicas multidimensionales; y en segundo lugar, a que el habitat del Pacifico colombiano presenta una menor heterogeneidad espectral con vegetacion no-manglar comparada con el complejo lagunar de la CGSM, donde la vegetacion riberana, los pastizales inundables y los salitrales comparten firmas espectrales con el manglar maduro. El analisis de tendencias mediante z-scores sobre series Sentinel-2 reproduce metodologicamente la aproximacion de Raza et al. (2024) sobre el manglar de Pakistan, con la diferencia de que aqui se extiende la serie con Landsat 8 para alcanzar doce anos de cobertura --frente a los siete del estudio original-- lo que permite detectar quiebres bfast en eventos ENSO previos al periodo Sentinel-2.
+Contrastando estos resultados con la literatura, conviene senalar que la cobertura total reportada para la CGSM bajo el AOI acotado --del orden de 4.000 a 12.000 hectareas segun el periodo-- es coherente con el rango estimado por el Global Mangrove Watch v3.0 para esta misma area en el ciclo 2018--2020 (Bunting et al., 2022), si bien el F1-score de 0,548 alcanzado en la validación contra ESA WorldCover v200 sobre el AOI acotado es inferior al rango 0,80--0,90 reportado por Selvaraj y Gallego-Pérez (2023) para manglares del Pacifico colombiano utilizando una combinacion de Landsat optico y SAR ALOS-2 con clasificador Random Forest. La discrepancia se atribuye, en primer lugar, a que el enfoque metodologico aqui presentado descansa en umbrales espectrales sobre indices NDVI y CMRI sin entrenamiento supervisado, en tanto que el flujo de Selvaraj y Gallego-Perez explota la complementariedad optico--SAR y aprovecha la capacidad discriminativa del Random Forest sobre vectores de caracteristicas multidimensionales; y en segundo lugar, a que el habitat del Pacifico colombiano presenta una menor heterogeneidad espectral con vegetacion no-manglar comparada con el complejo lagunar de la CGSM, donde la vegetacion riberana, los pastizales inundables y los salitrales comparten firmas espectrales con el manglar maduro. El analisis de tendencias mediante z-scores sobre series Sentinel-2 reproduce metodologicamente la aproximacion de Raza et al. (2024) sobre el manglar de Pakistan, con la diferencia de que aqui se extiende la serie con Landsat 8 para alcanzar doce anos de cobertura --frente a los siete del estudio original-- lo que permite detectar quiebres bfast en eventos ENSO previos al periodo Sentinel-2.
 
-Entre las limitaciones tecnicas se identifican: la necesidad de remuestrear los composites RGB de 10 a 30 metros por restricciones de memoria para SamGeo (vit_b), lo que reduce la resolucion de la segmentacion; la diferencia en la respuesta espectral entre Landsat 8 y Sentinel-2, que introduce una discontinuidad en la serie combinada alrededor de 2018 ---visible en estaciones como VIPIS (NDVI medio L8 = 0,090 vs S2 = 0,353)--- que podria influir en la deteccion de quiebres por bfast; el F1-score de 0,442 que indica una sobreestimacion del area de manglar respecto al GMW, atribuible a la inclusion de vegetacion riberana con firma espectral similar; y la aproximacion del calculo de areas en Julia mediante conversion de coordenadas geograficas a metros. Se recomienda para trabajo futuro acotar el area de estudio a los poligonos oficiales del SFF CGSM y la Via Parque Isla de Salamanca, aplicar armonizacion espectral entre Landsat y Sentinel-2 para eliminar la discontinuidad en la serie, e implementar un clasificador Random Forest entrenado con puntos GMW para mejorar la precision de la clasificacion. Como trabajo futuro inmediato se identifican cinco lineas. Primero, validar cuantitativamente la cadena causal La Nina 2020--2021 -> caudal fluvial -> mortandad mediante la integracion de las series mensuales de caudal del IDEAM en las estaciones El Banco y Plato del rio Magdalena, y Aracataca, Fundacion y Rio Frio para los tributarios menores; al momento de la entrega el portal DHIME del IDEAM no permitio la descarga automatizada, razon por la cual se identifican los codigos de estacion como insumo para una solicitud formal posterior. Segundo, complementar el forzamiento ERA5-Land con los indices climaticos globales del Oceanic Nino Index (ONI) y el Southern Oscillation Index (SOI) publicados por NOAA, que ofrecen una medida directa de la fase ENSO sin requerir promediado espacial sobre el AOI. Tercero, ampliar la validacion contra la cartografia oficial de manglares de Colombia a escala 1:25.000 (INVEMAR, 2020) como referencia alternativa al Global Mangrove Watch, dado que esta cartografia se basa en clasificacion supervisada en GEE con datos colombianos y representa un estandar nacional independiente. Cuarto, unificar el conjunto de estaciones de muestreo entre el analisis bfast historico y la clasificacion espectral actual, de manera que las ocho estaciones reportadas en el analisis topologico --cinco INVEMAR-GBIF y tres complementarias sobre manglar denso-- coincidan con las series temporales largas extraidas para 2013-2025. Quinto, ampliar la ventana temporal del periodo "actual" a por lo menos dos ciclos anuales adicionales (julio 2025--junio 2027), de modo que la contraccion observada en 2024--2025 se pueda diferenciar entre fluctuacion intermedia y tendencia estable, y se pueda validar la senal de aislamiento progresivo de parches detectada en las metricas de fragmentacion del paisaje.
+Entre las limitaciones tecnicas se identifican: la necesidad de remuestrear los composites RGB de 10 a 30 metros por restricciones de memoria para SamGeo (vit_b), lo que reduce la resolucion de la segmentacion; la diferencia en la respuesta espectral entre Landsat 8 y Sentinel-2, que introduce una discontinuidad en la serie combinada alrededor de 2018 ---visible en estaciones como VIPIS (NDVI medio L8 = 0,090 vs S2 = 0,353)--- que podria influir en la deteccion de quiebres por bfast; el F1-score de 0,548 sobre el AOI acotado que, si bien mejora en 24 % al baseline envolvente, sigue indicando una subestimación de la Recall por el umbral conservador NDVI > 0,70 que deja fuera manglar joven o degradado detectado por WorldCover; y la aproximacion del calculo de areas en Julia mediante conversion de coordenadas geograficas a metros. Se recomienda para trabajo futuro acotar el area de estudio a los poligonos oficiales del SFF CGSM y la Via Parque Isla de Salamanca, aplicar armonizacion espectral entre Landsat y Sentinel-2 para eliminar la discontinuidad en la serie, e implementar un clasificador Random Forest entrenado con puntos GMW para mejorar la precision de la clasificacion. Como trabajo futuro inmediato se identifican cinco lineas. Primero, validar cuantitativamente la cadena causal La Nina 2020--2021 -> caudal fluvial -> mortandad mediante la integracion de las series mensuales de caudal del IDEAM en las estaciones El Banco y Plato del rio Magdalena, y Aracataca, Fundacion y Rio Frio para los tributarios menores; al momento de la entrega el portal DHIME del IDEAM no permitio la descarga automatizada, razon por la cual se identifican los codigos de estacion como insumo para una solicitud formal posterior. Segundo, complementar el forzamiento ERA5-Land con los indices climaticos globales del Oceanic Nino Index (ONI) y el Southern Oscillation Index (SOI) publicados por NOAA, que ofrecen una medida directa de la fase ENSO sin requerir promediado espacial sobre el AOI. Tercero, ampliar la validacion contra la cartografia oficial de manglares de Colombia a escala 1:25.000 (INVEMAR, 2020) como referencia alternativa al Global Mangrove Watch, dado que esta cartografia se basa en clasificacion supervisada en GEE con datos colombianos y representa un estandar nacional independiente. Cuarto, unificar el conjunto de estaciones de muestreo entre el analisis bfast historico y la clasificacion espectral actual, de manera que las ocho estaciones reportadas en el analisis topologico --cinco INVEMAR-GBIF y tres complementarias sobre manglar denso-- coincidan con las series temporales largas extraidas para 2013-2025. Quinto, ampliar la ventana temporal del periodo "actual" a por lo menos dos ciclos anuales adicionales (julio 2025--junio 2027), de modo que la contraccion observada en 2024--2025 se pueda diferenciar entre fluctuacion intermedia y tendencia estable, y se pueda validar la senal de aislamiento progresivo de parches detectada en las metricas de fragmentacion del paisaje.
 
-Pese a estas limitaciones, la cadena de procesamiento demuestra la viabilidad de un enfoque GeoAI multilenguaje para el monitoreo costero y constituye un prototipo reproducible adaptable a otros sistemas lagunares tropicales. El dashboard interactivo generado atiende directamente el requerimiento de monitoreo espacial sistematico del Plan de Manejo Ambiental del sitio Ramsar CGSM (Comision Conjunta CGSM, 2026).
+Pese a estas limitaciones, la pipeline demuestra la viabilidad de un enfoque GeoAI multilenguaje para el monitoreo costero y constituye un prototipo reproducible adaptable a otros sistemas lagunares tropicales. El dashboard interactivo generado atiende directamente el requerimiento de monitoreo espacial sistematico del Plan de Manejo Ambiental del sitio Ramsar CGSM (Comision Conjunta CGSM, 2026).
 
 # Referencias
 
@@ -464,6 +503,7 @@ Pese a estas limitaciones, la cadena de procesamiento demuestra la viabilidad de
 - Raza, S., Zhang, J., Zuo, S., y Chen, J. (2024). Time series monitoring and analysis of Pakistans mangrove using Sentinel-2 data. Frontiers in Environmental Science, 12, 1416450. https://doi.org/10.3389/fenvs.2024.1416450
 - Selvaraj, J. J., y Gallego-Perez, J. (2023). An enhanced approach to mangrove forest analysis in the Colombian Pacific coast using optical and SAR data in Google Earth Engine. Estuarine, Coastal and Shelf Science, 283, 108253. https://doi.org/10.1016/j.ecss.2023.108253
 - Wu, Q., y Osco, L. (2023). samgeo: A Python package for segmenting geospatial data with the Segment Anything Model (SAM). Journal of Open Source Software, 8(89), 5663. https://doi.org/10.21105/joss.05663
+- Zanaga, D., Van De Kerchove, R., Daems, D., De Keersmaecker, W., Brockmann, C., Kirches, G., Wevers, J., Cartus, O., Santoro, M., Fritz, S., Lesiv, M., Herold, M., Tsendbazar, N.-E., Xu, P., Ramoino, F., y Arino, O. (2022). ESA WorldCover 10 m 2021 v200. Zenodo. https://doi.org/10.5281/zenodo.7254221
 
 # Anexo A: Configuracion del entorno Docker
 
@@ -494,9 +534,54 @@ using Pkg
 Pkg.add(["GeoJSON", "DataFrames", "CSV", "Statistics"])
 ```
 
-La autenticacion con GEE se realiza mediante el flujo notebook, que genera un token almacenado en ~/.config/earthengine/credentials. El contenedor requiere un minimo de 8 GB de RAM asignados en Docker Desktop para ejecutar SamGeo con el backbone vit_b; con vit_h se requieren al menos 12 GB. Los composites RGB se remuestrean de 10 a 30 metros antes de la segmentacion para reducir el consumo de memoria.
+La autenticación con GEE se realiza mediante el flujo `gcloud auth application-default login` con quota project configurado, que genera credenciales almacenadas en `~/.config/gcloud/application_default_credentials.json`. El contenedor requiere un mínimo de 8 GB de RAM asignados en Docker Desktop para ejecutar SamGeo con el backbone vit_b; con vit_h se requieren al menos 12 GB. Los composites RGB se remuestrean de 10 a 30 metros antes de la segmentación para reducir el consumo de memoria.
 
-# Anexo C: Baseline preliminar sobre AOI envolvente (5.073 km2)
+# Anexo B: Estructura del repositorio GitHub
+
+El repositorio público está disponible en https://github.com/linaq11/proyecto-cgsm-curso bajo licencia MIT. La versión anterior del proyecto (baseline marzo 2026 sobre AOI envolvente de 5.073 km²) permanece archivada en https://github.com/LinaQuinteroF/proyecto-cgsm para fines de comparación histórica. El árbol de notebooks se organiza en dos series ---vigente y legacy--- pues a lo largo del proyecto el área de estudio se redefinió a partir de los polígonos oficiales del RUNAP, de modo que las cifras del cuerpo del informe v6 dejaron de ser comparables con las de la primera iteración.
+
+**Serie vigente (v6) ---ejecutar en este orden para reproducir los resultados del informe:**
+
+- `notebooks/01_gee_acquisition.ipynb`: Fase 1 adquisición Sentinel-2 + Landsat 8 sobre AOI acotado
+- `notebooks/02_time_series.ipynb`: Fase 2 series temporales y z-scores (Python + pandas)
+- `notebooks/02b_bfast_ndvi.R.ipynb`: Fase 2 detección de quiebres con bfast (R)
+- `notebooks/03_segmentation_acotado.ipynb`: Fase 3 segmentación SamGeo sobre AOI acotado + reproyección a EPSG:9377
+- `notebooks/04_fragmentation_acotado.ipynb`: Fase 4 métricas de fragmentación en Julia sobre EPSG:9377
+- `notebooks/04b_topologia_acotado.ipynb`: Predicados topológicos DE-9IM + clasificación de estaciones por naturaleza
+- `notebooks/05_flooding_nasa_acotado.ipynb`: Validación NASA SAR + GFD + JRC restringida al AOI acotado
+- `src/python/make_dashboard_html.py`: Script que construye el dashboard HTML autocontenido con folium
+- `notebooks/07_era5_clima.ipynb`: Forzamiento climático ERA5-Land vía cdsapi (Cap. 20)
+- `notebooks/08_validacion_multilingual.ipynb`: Comparación series Python+GEE vs R+stars (Cap. 21)
+- `notebooks/09b_datacube_extendido.ipynb`: Construcción de los tres datacubes NetCDF CF-1.8 (períodos, trimestral, Landsat anual)
+- `notebooks/10_validacion_extendida.ipynb`: Validación contra GMW v4.0 restringida al AOI acotado
+
+**Serie legacy (baseline AOI envolvente) ---se conservan para trazabilidad del Anexo C, no para sostener conclusiones:**
+
+- `notebooks/03_segmentation.ipynb`, `notebooks/04_fragmentation.ipynb`, `notebooks/04b_topologia.ipynb`
+- `notebooks/05_flooding_nasa.ipynb`, `notebooks/06_dashboard.ipynb`, `notebooks/09_datacube_netcdf.ipynb`
+
+**Scripts auxiliares y módulos compartidos:**
+
+- `src/python/utils.py`: funciones reutilizables (reproyección 9377, lectura perezosa, predicados DE-9IM, clasificación de estaciones)
+- `src/python/aoi_acotado.py`: helper que une SFF CGSM + VPI Salamanca y reproyecta a EPSG:9377
+- `src/python/build_cubos.py`: construcción de los datacubes NetCDF trimestral y anual (resampling a 30 m + compresión zlib)
+- `src/python/merge_cubo.py`: respaldo de concatenación secuencial para evitar segfaults de HDF5 con muchos archivos
+- `src/julia/04_fragmentacion.jl`: script Julia con bloques legado (4326) y vigente (9377)
+- `src/R/03_bfast_ndvi.R`: script R para detección de quiebres bfast en las 8 estaciones
+- `src/R/05_stars_cubo.R`: script R que construye cubo stars desde TIFs y extrae sobre estaciones (Cap. 21)
+
+**Salidas y documentación:**
+
+- `notebooks/README.md`: guía de ejecución con la separación vigente / legacy
+- `outputs/tables/`: archivos CSV con resultados numéricos
+- `outputs/figures/`: figuras estáticas (PNG), incluidas las dos figuras del datacube referenciadas en este informe
+- `outputs/maps/dashboard_CGSM_final.html`: dashboard HTML autocontenido (~80 KB) generado por `make_dashboard_html.py`
+- `data/processed/cubo/`: datacubes NetCDF CF-1.8 (períodos 40 MB, trimestral 275 MB, Landsat 119 MB)
+- `docs/informe_final.qmd`, `docs/informe_final.html`, `docs/informe_final.pdf`: informe Quarto reproducible y sus renderizados
+
+Los composites trimestrales y anuales en formato GeoTIFF, así como los NetCDF de mayor tamaño, no se incluyen en el repositorio por restricciones de tamaño de GitHub; se regeneran ejecutando los notebooks en orden secuencial con acceso a GEE autenticado.
+
+# Anexo C: Baseline preliminar sobre AOI envolvente (5.073 km²)
 
 Las cifras de cobertura y fragmentacion reportadas en esta seccion corresponden a una iteracion preliminar del proyecto, anterior al acotamiento del area de estudio a los poligonos oficiales del SFF CGSM y el Via Parque Isla de Salamanca. Se conservan con fines de comparacion historica y trazabilidad metodologica, pero no se utilizan para sostener las conclusiones del estudio, en la medida en que el AOI envolvente incluia vegetacion riberana, salitral y zonas agropecuarias que sobrestiman sistematicamente la cobertura potencial de manglar.
 
@@ -527,33 +612,3 @@ Cuando SamGeo segmenta un parche grande de manglar atravesado por un canal hidra
 
 Ambas mediciones tienen validez metodologica diferenciada. La version `geopandas` reporta el area efectiva de cobertura de manglar, descontando agua interior, y es apropiada para indicadores de superficie y validacion contra cartografia de referencia como GMW. La version Julia reporta el area del envolvente del parche y es apropiada para indicadores de extension del paisaje fragmentado y para calculos de conectividad mediante distancia entre envolventes. Para evitar confusion en el informe, en la Tabla `tbl-fragmentacion-acotado` se reporta el conteo Julia con la columna explicita "Parches (Julia)" y se utiliza para indicadores de forma --MSI-- y aislamiento --NND--, mientras que en la Tabla `tbl-topologia-acotado` se reporta el conteo `geopandas` y se utiliza para indicadores de superficie y para el cruce con la frontera del AOI mediante predicados DE-9IM.
 
-# Anexo B: Estructura del repositorio GitHub
-
-El repositorio publico esta disponible en https://github.com/linaq11/proyecto-cgsm-curso bajo licencia MIT. La version anterior del proyecto (baseline marzo 2026 sobre AOI envolvente de 5.073 km2) permanece archivada en https://github.com/LinaQuinteroF/proyecto-cgsm para fines de comparacion historica.
-
-- notebooks/01_gee_acquisition.ipynb: Fase 1 datacube Sentinel-2 + Landsat 8
-- notebooks/02_time_series.ipynb: Fase 2 series temporales y z-scores (Python)
-- notebooks/02b_bfast_ndvi.R.ipynb: Fase 2 deteccion de quiebres con bfast (R)
-- notebooks/03_segmentation.ipynb: Fase 3 segmentacion SamGeo + validacion GMW
-- notebooks/04_fragmentation.ipynb: Fase 4 metricas de fragmentacion (Julia)
-- notebooks/04b_topologia.ipynb: Predicados topologicos DE-9IM sobre parches en EPSG:9377 (Python)
-- notebooks/05_flooding_nasa.ipynb: Validacion NASA SAR + Global Flood Database + JRC
-- notebooks/06_dashboard.ipynb: Fase 5 dashboard interactivo
-- notebooks/07_era5_clima.ipynb: Forzamiento climatico ERA5-Land via cdsapi (Cap. 20)
-- notebooks/08_validacion_multilingual.ipynb: Comparacion series Python+GEE vs R+stars
-- notebooks/09_datacube_netcdf.ipynb: Construccion del datacube NetCDF con convenciones CF (Cap. 20)
-- notebooks/10_validacion_extendida.ipynb: Validacion contra GMW v4.0 restringida al AOI acotado
-- notebooks/README.md: Guia de ejecucion con orden de notebooks y celdas baseline vs acotado
-- src/python/utils.py: Funciones reutilizables (reproyeccion 9377, lectura perezosa, predicados DE-9IM)
-- src/python/aoi_acotado.py: Helper que une SFF CGSM + VPI Salamanca y reproyecta a EPSG:9377
-- src/julia/04_fragmentacion.jl: Script Julia con bloques legado (4326) y nuevo (9377)
-- src/R/03_bfast_ndvi.R: Script R para deteccion de quiebres bfast en las 8 estaciones
-- src/R/05_stars_cubo.R: Script R que construye cubo stars desde TIFs y extrae sobre estaciones (Cap. 21)
-- outputs/tables/: 17 archivos CSV con resultados numericos
-- outputs/figures/: 13 graficos y mapas estaticos (PNG)
-- outputs/maps/: Dashboard HTML interactivo (2,7 MB)
-- docs/informe_final.qmd: Informe Quarto reproducible
-- docs/informe_final.html: Informe renderizado HTML
-- docs/informe_final.pdf: Informe renderizado PDF
-
-Los datos procesados (GeoTIFFs, GeoJSONs) no se incluyen en el repositorio por su tamano; se generan ejecutando los notebooks en orden secuencial con acceso a GEE autenticado.
