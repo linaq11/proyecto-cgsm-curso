@@ -1,0 +1,564 @@
+<eml:eml xmlns:eml="eml://ecoinformatics.org/eml-2.1.1"
+         xmlns:dc="http://purl.org/dc/terms/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="eml://ecoinformatics.org/eml-2.1.1 http://rs.gbif.org/schema/eml-gbif-profile/1.1/eml.xsd"
+         packageId="https://ipt.biodiversidad.co/sibm/resource?id=invemar_estructura_manglar/v1.0" system="http://gbif.org" scope="system"
+         xml:lang="spa">
+
+<dataset>
+  <alternateIdentifier>10.15472/0fqdp4</alternateIdentifier>
+  <alternateIdentifier>https://ipt.biodiversidad.co/sibm/resource?r=invemar_estructura_manglar</alternateIdentifier>
+  <title xml:lang="spa">Datos de monitoreo de la estructura de los manglares de la Ciénaga Grande de Santa Marta (Magdalena)</title>
+      <creator>
+    <individualName>
+        <givenName>Julian</givenName>
+      <surName>Beltrán</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Oscar</givenName>
+      <surName>Casas</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Ernesto</givenName>
+      <surName>Mancera Pineda</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Jhon Jairo</givenName>
+      <surName>Ortíz</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Jorge</givenName>
+      <surName>Restrepo</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Paola</givenName>
+      <surName>Reyes Forero</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Victor</givenName>
+      <surName>Rivera-Monroy</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Alexandra</givenName>
+      <surName>Rodríguez</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Juan Camilo</givenName>
+      <surName>Rodríguez</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Adriana</givenName>
+      <surName>Santos</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Laura</givenName>
+      <surName>Perdomo</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Arturo</givenName>
+      <surName>Torres</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Carlos Augusto</givenName>
+      <surName>Villamil</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Lucia</givenName>
+      <surName>Villanueva</surName>
+    </individualName>
+    <address>
+        <country>CO</country>
+    </address>
+      </creator>
+      <creator>
+    <individualName>
+        <givenName>Juan Fernando</givenName>
+      <surName>Meza Prada</surName>
+    </individualName>
+    <organizationName>SiB Colombia</organizationName>
+    <positionName>Pasante - calidad de datos marinos</positionName>
+    <address>
+        <deliveryPoint>calle 57b # 45 - 23</deliveryPoint>
+        <city>Bogotá D.C.</city>
+        <administrativeArea>Bogotá D.C.</administrativeArea>
+        <country>CO</country>
+    </address>
+    <phone>3142862783</phone>
+    <electronicMailAddress>jufernprada@gmail.com</electronicMailAddress>
+      </creator>
+      <metadataProvider>
+    <individualName>
+        <givenName>Erika</givenName>
+      <surName>Montoya-Cadavid</surName>
+    </individualName>
+    <organizationName>INVEMAR</organizationName>
+    <positionName>Administradora de Contenidos SiBM</positionName>
+    <address>
+        <deliveryPoint>Calle 25 No. 2-55 Playa Salguero, Rodadero</deliveryPoint>
+        <city>Santa Marta</city>
+        <administrativeArea>Magdalena</administrativeArea>
+        <country>CO</country>
+    </address>
+    <phone>+5 4328600 ext. 143</phone>
+    <electronicMailAddress>erika.montoya@invemar.org.co</electronicMailAddress>
+      </metadataProvider>
+      <metadataProvider>
+    <individualName>
+        <givenName>Juan Fernando</givenName>
+      <surName>Meza Prada</surName>
+    </individualName>
+    <organizationName>SiB Colombia</organizationName>
+    <positionName>Pasante calidad de datos marinos</positionName>
+    <address>
+        <deliveryPoint>calle 57b  # 45-23</deliveryPoint>
+        <city>Bogotá D.C.</city>
+        <administrativeArea>Bogotá D.C.</administrativeArea>
+        <country>CO</country>
+    </address>
+    <electronicMailAddress>jufernprada@gmail.com</electronicMailAddress>
+      </metadataProvider>
+      <associatedParty>
+    <individualName>
+      <surName>INVEMAR</surName>
+    </individualName>
+    <organizationName>INVEMAR</organizationName>
+    <positionName>Institución científica</positionName>
+    <address>
+        <deliveryPoint>Cl 25 No. 2-55 Playa Salguero - Rodadero Sur</deliveryPoint>
+        <city>Santa Marta</city>
+        <administrativeArea>Magdalena</administrativeArea>
+        <country>CO</country>
+    </address>
+    <onlineUrl>http://www.invemar.org.co/</onlineUrl>
+    <role>originator</role>
+      </associatedParty>
+      <associatedParty>
+    <individualName>
+      <surName>Ministerio de Medio Ambiente - MMA</surName>
+    </individualName>
+    <organizationName>Ministerio de Medio Ambiente - MMA</organizationName>
+    <positionName>Ministerio</positionName>
+    <address>
+        <deliveryPoint>Calle 37 No. 8-40</deliveryPoint>
+        <city>Bogotá D.C.</city>
+        <administrativeArea>Bogotá D.C.</administrativeArea>
+        <country>CO</country>
+    </address>
+    <electronicMailAddress>servicioalciudadano@minambiente.gov.co</electronicMailAddress>
+    <onlineUrl>https://www.minambiente.gov.co/</onlineUrl>
+    <role>originator</role>
+      </associatedParty>
+      <associatedParty>
+    <individualName>
+      <surName>Corporación Autónoma Regional del Magdalena - Corpamag</surName>
+    </individualName>
+    <organizationName>Corporación Autónoma Regional del Magdalena</organizationName>
+    <positionName>Corporación Autónomo</positionName>
+    <address>
+        <deliveryPoint>Av. del Libertador # 32-201</deliveryPoint>
+        <city>Santa Marta</city>
+        <administrativeArea>Magdalena</administrativeArea>
+        <country>CO</country>
+    </address>
+    <electronicMailAddress>contactenos@corpamag.gov.co</electronicMailAddress>
+    <onlineUrl>https://www.corpamag.gov.co/index.php/es</onlineUrl>
+    <role>originator</role>
+      </associatedParty>
+      <associatedParty>
+    <individualName>
+      <surName>Unidad de Parque Nacionales Naturales - Territorial Caribe</surName>
+    </individualName>
+    <organizationName>Unidad de Parque Nacionales Naturales - Territorial Caribe</organizationName>
+    <positionName>Parques Nacionales</positionName>
+    <address>
+        <deliveryPoint>Cl. 17 # 4-06</deliveryPoint>
+        <city>Santa Marta</city>
+        <administrativeArea>Magdalena</administrativeArea>
+        <country>CO</country>
+    </address>
+    <onlineUrl>https://www.parquesnacionales.gov.co/</onlineUrl>
+    <role>originator</role>
+      </associatedParty>
+      <associatedParty>
+    <individualName>
+      <surName>Agencia Alemana de Cooperación, actualmente GIZ - Agencia Internacional de Cooperación Alemana</surName>
+    </individualName>
+    <organizationName>Agencia Alemana de Cooperación, actualmente GIZ - Agencia Internacional de Cooperación Alemana</organizationName>
+    <positionName>Agencia Alemana</positionName>
+    <address>
+        <deliveryPoint>Calle 125 No.19-24, oficina 501</deliveryPoint>
+        <city>Bogotá D.C.</city>
+        <administrativeArea>Bogotá D.C.</administrativeArea>
+        <country>CO</country>
+    </address>
+    <electronicMailAddress>giz-kolumbien@giz.de</electronicMailAddress>
+    <onlineUrl>https://www.giz.de/en/worldwide/29848.html</onlineUrl>
+    <role>originator</role>
+      </associatedParty>
+      <associatedParty>
+    <individualName>
+        <givenName>David Alejandro</givenName>
+      <surName>Carvajal</surName>
+    </individualName>
+    <organizationName>INVEMAR</organizationName>
+    <positionName>Coordinador del Programa de Investigación Biodiversidad y Ecosistemas Marinos</positionName>
+    <address>
+        <deliveryPoint>Calle 25 # 2-55, Playa Salguero – Rodadero Sur</deliveryPoint>
+        <city>Santa Marta</city>
+        <administrativeArea>Magdalena</administrativeArea>
+        <country>CO</country>
+    </address>
+    <phone>+54328600 ext 249</phone>
+    <electronicMailAddress>david.alonso@invemar.org.co</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+      <associatedParty>
+    <individualName>
+        <givenName>Diana Isabel</givenName>
+      <surName>López</surName>
+    </individualName>
+    <organizationName>INVEMAR</organizationName>
+    <positionName>Jefe de la Línea de Investigación Organización y Dinámica de Ecosistemas</positionName>
+    <address>
+        <deliveryPoint>Calle 25 No. 2-55 Playa Salguero, Rodadero</deliveryPoint>
+        <city>Santa Marta</city>
+        <administrativeArea>Magdalena</administrativeArea>
+        <country>CO</country>
+    </address>
+    <phone>+54328600 ext 250</phone>
+    <electronicMailAddress>diana.gomez@invemar.org.co</electronicMailAddress>
+    <role>pointOfContact</role>
+      </associatedParty>
+      <associatedParty>
+    <individualName>
+        <givenName>Julio Cesar</givenName>
+      <surName>Naranjo</surName>
+    </individualName>
+    <organizationName>INVEMAR</organizationName>
+    <positionName>Administrador Bases de datos</positionName>
+    <address>
+        <deliveryPoint>Calle 25 # 2-55, Playa Salguero – Rodadero Sur</deliveryPoint>
+        <city>Santa Marta</city>
+        <administrativeArea>Magdalena</administrativeArea>
+        <country>CO</country>
+    </address>
+    <phone>+54328600363</phone>
+    <electronicMailAddress>julio.bohorquez@invemar.org.co</electronicMailAddress>
+    <role>custodianSteward</role>
+      </associatedParty>
+  <pubDate>
+      2022-01-28
+  </pubDate>
+  <language>spa</language>
+  <abstract>
+    <para>Los datos se derivan de la línea de investigación ICTbm: Protocolo indicador Condición Tendencias Bosques de Manglar en el subsistemas de aéreas protegidas marinas. El protocolo evalúa la condición general de integridad biótica y , por tanto, el estado de conservación del bosque de manglar y sus cambios a través del tiempo. En este conjunto de datos se reportan manglares, documentados en estaciones de monitoreo en las regiones del Pacifico continental, Caribe continental y Caribe insular colombiano, que corresponden a 15.392 registros biológicos obtenidos entre el año 2013 y 2019.</para>
+  </abstract>
+      <keywordSet>
+            <keyword>Samplingevent</keyword>
+        <keywordThesaurus>GBIF Dataset Type Vocabulary: http://rs.gbif.org/vocabulary/gbif/dataset_type_2015-07-10.xml</keywordThesaurus>
+      </keywordSet>
+      <keywordSet>
+            <keyword>Estructura de Manglar</keyword>
+            <keyword>Caribe Continental</keyword>
+            <keyword>Pacifico Continental</keyword>
+            <keyword>Diámetro a la altura del pecho</keyword>
+            <keyword>Circunferencia a la altura del pecho.</keyword>
+        <keywordThesaurus>n/a</keywordThesaurus>
+      </keywordSet>
+  <intellectualRights>
+    <para>This work is licensed under a <ulink url="http://creativecommons.org/licenses/by/4.0/legalcode"><citetitle>Creative Commons Attribution (CC-BY) 4.0 License</citetitle></ulink>.</para>
+  </intellectualRights>
+  <coverage>
+      <geographicCoverage>
+          <geographicDescription>La zona de estudio comprende 164 estaciones de monitoreo en el subsistema de áreas protegidas marinas en las regiones del Pacifico Continental, Caribe Continental y Caribe Insular.</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-83.605</westBoundingCoordinate>
+          <eastBoundingCoordinate>-72.55</eastBoundingCoordinate>
+          <northBoundingCoordinate>15.959</northBoundingCoordinate>
+          <southBoundingCoordinate>1.789</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+          <temporalCoverage>
+              <rangeOfDates>
+                  <beginDate>
+                    <calendarDate>2013-09-07</calendarDate>
+                  </beginDate>
+                <endDate>
+                  <calendarDate>2019-09-07</calendarDate>
+                </endDate>
+              </rangeOfDates>
+          </temporalCoverage>
+          <taxonomicCoverage>
+              <generalTaxonomicCoverage>El conjunto de datos se compone de 15.392 registros biológicos de manglares en áreas del subsistema protegido marino de Colombia, representado en 1 clase, 6 ordenes, 7 familias, 9 géneros y 8 especies.</generalTaxonomicCoverage>
+              <taxonomicClassification>
+                  <taxonRankName>genus</taxonRankName>
+                <taxonRankValue>Avicennia</taxonRankValue>
+              </taxonomicClassification>
+              <taxonomicClassification>
+                  <taxonRankName>genus</taxonRankName>
+                <taxonRankValue>Conocarpus</taxonRankValue>
+              </taxonomicClassification>
+              <taxonomicClassification>
+                  <taxonRankName>genus</taxonRankName>
+                <taxonRankValue>Eugenia</taxonRankValue>
+              </taxonomicClassification>
+              <taxonomicClassification>
+                  <taxonRankName>genus</taxonRankName>
+                <taxonRankValue>Ficus</taxonRankValue>
+              </taxonomicClassification>
+              <taxonomicClassification>
+                  <taxonRankName>genus</taxonRankName>
+                <taxonRankValue>Laguncularia</taxonRankValue>
+              </taxonomicClassification>
+              <taxonomicClassification>
+                  <taxonRankName>genus</taxonRankName>
+                <taxonRankValue>Mora</taxonRankValue>
+              </taxonomicClassification>
+              <taxonomicClassification>
+                  <taxonRankName>genus</taxonRankName>
+                <taxonRankValue>Pelliciera</taxonRankValue>
+              </taxonomicClassification>
+              <taxonomicClassification>
+                  <taxonRankName>genus</taxonRankName>
+                <taxonRankValue>Rhizophora</taxonRankValue>
+              </taxonomicClassification>
+              <taxonomicClassification>
+                  <taxonRankName>genus</taxonRankName>
+                <taxonRankValue>Terminalia</taxonRankValue>
+              </taxonomicClassification>
+          </taxonomicCoverage>
+  </coverage>
+  <maintenance>
+    <description>
+      <para></para>
+    </description>
+    <maintenanceUpdateFrequency>unkown</maintenanceUpdateFrequency>
+  </maintenance>
+
+      <contact>
+    <individualName>
+        <givenName>Raúl</givenName>
+      <surName>Navas Camacho</surName>
+    </individualName>
+    <organizationName>INVEMAR</organizationName>
+    <positionName>Investigador científico ODI, Programa BEM</positionName>
+    <address>
+        <deliveryPoint>Calle 25 No. 2-55 Playa Salguero, Rodadero</deliveryPoint>
+        <city>Santa Marta</city>
+        <administrativeArea>Magdalena</administrativeArea>
+        <country>CO</country>
+    </address>
+    <phone>+5 4328600 ext. 251</phone>
+    <electronicMailAddress>raul.navas@invemar.org.co</electronicMailAddress>
+      </contact>
+      <contact>
+    <individualName>
+        <givenName>Diana Isabel</givenName>
+      <surName>López</surName>
+    </individualName>
+    <organizationName>INVEMAR</organizationName>
+    <positionName>Jefe de la Línea de Investigación Organización y Dinámica de Ecosistemas</positionName>
+    <address>
+        <deliveryPoint>Calle 25 No. 2-55 Playa Salguero, Rodadero</deliveryPoint>
+        <city>Santa Marta</city>
+        <administrativeArea>Magdalena</administrativeArea>
+        <country>CO</country>
+    </address>
+    <phone>+5 4328600 ext. 250</phone>
+    <electronicMailAddress>diana.gomez@invemar.org.co</electronicMailAddress>
+      </contact>
+      <contact>
+    <individualName>
+        <givenName>Erika</givenName>
+      <surName>Montoya-Cadavid</surName>
+    </individualName>
+    <organizationName>INVEMAR</organizationName>
+    <positionName>Administradora de Contenidos SiBM</positionName>
+    <address>
+        <deliveryPoint>Calle 25 No. 2-55 Playa Salguero, Rodadero</deliveryPoint>
+        <city>Santa Marta</city>
+        <administrativeArea>Magdalena</administrativeArea>
+        <country>CO</country>
+    </address>
+    <phone>+5 4328600 ext. 143</phone>
+    <electronicMailAddress>administrador_sibm@invemar.org.co</electronicMailAddress>
+      </contact>
+  <methods>
+        <methodStep>
+          <description>
+            <para>Parcelas rectangulares: Están establecidas s a lo largo de un gradiente horizontal, permite una buena estimación de la composición y la estructura de los manglares, además de incluir la variabilidad de la vegetación debido a la elevación topográfica y la frecuencia de inundación de la marea. Los pasos a seguir son los siguientes:</para>
+          </description>
+        </methodStep>
+        <methodStep>
+          <description>
+            <para>1. Se establece un transecto lineal de 100 × 10 m perpendicular al cuerpo de agua que provoque la inundación de la estación de muestreo, subdivido en subparcelas de 10 × 10m.</para>
+          </description>
+        </methodStep>
+        <methodStep>
+          <description>
+            <para>2. De las subparcelas se seleccionan al azar 5 para ser muestreadas.</para>
+          </description>
+        </methodStep>
+        <methodStep>
+          <description>
+            <para>3. Dentro del área de cada subparcela seleccionada, se monitorean todos los árboles con diámetro a la altura del pecho (DAP) igual o mayor a 2,5 cm.</para>
+          </description>
+        </methodStep>
+        <methodStep>
+          <description>
+            <para>4. Para el monitoreo de plántulas y árboles juveniles, dentro de cada subparcela se delimita un cuadrante de 1 m^2  y dentro de dicha área se tienen en cuenta todos los individuos con DAP igual o menor a 2,5 cm.</para>
+          </description>
+        </methodStep>
+        <methodStep>
+          <description>
+            <para>Parcelas circulares: Se sugiere que las parcelas circulares estén establecidas a lo largo de un gradiente desde el mar o cuerpo de agua principal que provoque las inundaciones de la estación de muestreo. Los pasos a seguir son los siguientes:</para>
+          </description>
+        </methodStep>
+        <methodStep>
+          <description>
+            <para>1. se establece un transecto lineal (procurando siempre el área mínima de  muestreo de 1.000 m^2), estando la primera parcela ubicada a 15 metros de la costa o borde del cuerpo de agua.</para>
+          </description>
+        </methodStep>
+        <methodStep>
+          <description>
+            <para>2. Para su establecimiento se define un punto central y a partir de este un radio de 12 m.</para>
+          </description>
+        </methodStep>
+        <methodStep>
+          <description>
+            <para>3. Dentro de este límite establecido se miden todos los arboles con un diámetro a la altura del pecho (DAP) mayor o igual a 2,5 cm.</para>
+          </description>
+        </methodStep>
+        <methodStep>
+          <description>
+            <para>4. Las plántulas y juveniles con DAP igual o menor a 2,5 cm se miden en subparcelas de 2 m de radio.</para>
+          </description>
+        </methodStep>
+        <methodStep>
+          <description>
+            <para>5. La distancia entre las parcelas dependerá de la extensión del área a monitorear y no deben cruzarse entre sí; para ello deben estar a una distancia de 50 m entre cada punto central.</para>
+          </description>
+        </methodStep>
+      <sampling>
+        <studyExtent>
+          <description>
+            <para>La zona de estudio comprende 164 estaciones de monitoreo en el subsistema de áreas protegidas marinas en las regiones del Pacifico Continental, Caribe Continental y Caribe Insular.</para>
+          </description>
+        </studyExtent>
+        <samplingDescription>
+          <para>Se establecen dos metodologías ( parcelas rectangulares y parcelas circulares)  para la ubicación de las estaciones de monitoreo; cada área de protegida, según su capacidad logística y técnica, adoptará aquella que se considere más adecuada.</para>
+        </samplingDescription>
+      </sampling>
+      <qualityControl>
+        <description>
+          <para>Los datos se estandarizaron al formato Darwin Core. Las fechas, los datos geográficos y la información taxonómica fueron sometidos a un proceso de validación y limpieza. La validación taxonómica se hizo contrastando la información con el árbol taxonómico de WoRMS.</para>
+        </description>
+      </qualityControl>
+  </methods>
+  <project >
+    <title>PROTOCOLO INDICADOR Condición Tendencia Bosques de Manglar (ICTbm)</title>
+      <personnel>
+        <individualName>
+            <givenName>Erika</givenName>
+          <surName>Montoya-Cadavid</surName>
+        </individualName>
+        <role>custodianSteward</role>
+      </personnel>
+      <personnel>
+        <individualName>
+            <givenName>Julio Cesar</givenName>
+          <surName>Bohórquez Naranjo</surName>
+        </individualName>
+        <role>custodianSteward</role>
+      </personnel>
+      <abstract>
+        <para>Los datos se derivan de la línea de investigación ICTbm: Protocolo indicador Condición Tendencias Bosques de Manglar en el subsistemas de aéreas protegidas marinas. El protocolo evalúa la condición general de integridad biótica y , por tanto, el estado de conservación del bosque de manglar y sus cambios a través del tiempo. En este conjunto de datos se reportan manglares, documentados en estaciones de monitoreo en las regiones del Pacifico continental, Caribe continental y Caribe insular colombiano, que corresponden a 15.392 registros biológicos obtenidos entre el año 2013 y 2019.</para>
+      </abstract>
+      <studyAreaDescription>
+        <descriptor name="generic"
+                    citableClassificationSystem="false">
+          <descriptorValue>La zona de estudio comprende 164 estaciones de monitoreo en el subsistema de áreas protegidas marinas en las regiones del Pacifico Continental, Caribe Continental y Caribe Insular.</descriptorValue>
+        </descriptor>
+      </studyAreaDescription>
+  </project>
+</dataset>
+  <additionalMetadata>
+    <metadata>
+      <gbif>
+          <dateStamp>2022-01-25T18:55:02.013+00:00</dateStamp>
+          <hierarchyLevel>dataset</hierarchyLevel>
+            <citation identifier="https://doi.org/10.15472/0fqdp4">Beltrán J, Casas O, Mancera Pineda E, Ortíz J J, Restrepo J, Reyes Forero P, Rivera-Monroy V, Rodríguez A, Rodríguez J C, Santos A, Perdomo L, Torres A, Villamil C A, Villanueva L, Meza Prada J F (2022): Datos de monitoreo de la estructura de los manglares de la Ciénaga Grande de Santa Marta (Magdalena). v1.0. Instituto de Investigaciones Marinas y Costeras - Invemar. Dataset/Samplingevent. https://doi.org/10.15472/0fqdp4</citation>
+          <bibliography>
+                <citation>Navarrete-Ramírez, S. M. y A. M. Rodríguez-Rincón, 2014. Protocolo Indicador Condición Tendencias Bosques de Manglar (ICTbm). Indicadores de monitoreo biológico del Subsistema de Áreas Marinas Protegidas (SAMP). Invemar, GEF y PNUD. Serie de Publicaciones Generales del Invemar No.  67, Santa Marta. 40 p.</citation>
+                <citation>Tavera, H. 2014. Lineamientos nacionales para el monitoreo de ecosistemas de manglar en Colombia. Convenio No. 156 del 2014 suscrito entre el Ministerio de Ambiente y Desarrollo Sostenible - MADS y la Asociación de Corporaciones Autónomas Regionales y de Desarrollo Sostenible - ASOCARS. Bogotá. 56 p.</citation>
+          </bibliography>
+          <resourceLogoUrl>https://statics.sibcolombia.net/sib-resources/images/logos-socios/500px/invemar.jpg</resourceLogoUrl>
+      </gbif>
+    </metadata>
+  </additionalMetadata>
+</eml:eml>

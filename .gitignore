@@ -40,3 +40,12 @@ data/processed/rgb_acotado/resampled/*.tif
 # Caches y temporales
 **/__pycache__/
 **/.ipynb_checkpoints/
+
+# Datacube legacy (reemplazado por cgsm_datacube_periodos.nc)
+data/processed/cubo/cgsm_datacube.nc
+
+# Mapas legacy
+data/raw/mapa_cgsm.html
+
+# Archivos basura
+exec*
