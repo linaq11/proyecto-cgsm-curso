@@ -310,23 +310,27 @@ El analisis de fragmentacion computado en Julia revelo una tendencia clara de co
 
 La reproyeccion de los GeoJSON al sistema oficial colombiano y la consecuente sustitucion de la aproximacion esferica por el calculo directo del area en metros redefine las cifras de cobertura por periodo, de modo que las hectareas reportadas a continuacion corresponden a una proyeccion equivalente y son comparables con la cartografia base del IGAC. En el periodo de degradacion (julio--diciembre 2020) se identificaron 100 parches en el rango de 1 a 5.000 hectareas con un area total de 8.829,1 ha y un area media de 88,3 ha; en el periodo de recuperacion (enero--junio 2022) se redujo el numero de parches a 67 pero el area total ascendio a 13.088,2 ha con un area media de 195,4 ha, lo que es consistente con un proceso de fusion de parches pequenos en unidades mas grandes; y en el periodo actual (julio 2024 a junio 2025) se contabilizaron 104 parches con un area total de 17.075,8 ha y un area media de 164,2 ha, valores que confirman tanto la expansion espacial del manglar como la consolidacion observada en el analisis bfast.
 
-| Periodo | Parches | Area total (ha) | Area media (ha) |
-|---------|---------|-----------------|-----------------|
-| Degradacion (2020-S2) | 100 | 8.829,1 | 88,3 |
-| Recuperacion (2022-S1) | 67 | 13.088,2 | 195,4 |
-| Actual (2024--2025) | 104 | 17.075,8 | 164,2 |
+| Periodo | Parches (Julia) | Area total (ha) | Area media (ha) | MSI medio | NND medio (km) |
+|---------|-----------------|-----------------|-----------------|-----------|----------------|
+| Degradacion (2020-S2)  | 79 | 12.425,6 | 157,3 | 0,51 | 1,10 |
+| Recuperacion (2022-S1) | 38 |  8.650,8 | 227,7 | 1,01 | 1,99 |
+| Actual (2024--2025)    | 15 |  4.037,0 | 269,1 | 1,46 | 2,39 |
 
-: Areas de manglar recalculadas sobre EPSG:9377 (MAGNA-SIRGAS Origen Nacional). {#tbl-areas-9377}
+: Metricas de fragmentacion sobre AOI acotado (SFF CGSM + VPI Salamanca, 835 km2), calculadas en EPSG:9377. Los parches estan filtrados al rango 1--5.000 ha y procesados en Julia descomponiendo MultiPolygons. {#tbl-fragmentacion-acotado}
+
+El analisis sobre el area protegida acotada revela un patron de consolidacion con perdida neta entre 2020 y 2024--2025 que difiere de la lectura inicial sobre el AOI envolvente. El numero de parches disminuye progresivamente de 79 a 15, el area total se contrae de 12.426 a 4.037 hectareas, y el area media de parche aumenta de 157 a 269 hectareas. Estos tres movimientos juntos indican que los parches pequenos desaparecen o se fusionan en unidades mayores, pero que la cobertura total se reduce. El indice de forma medio --MSI-- pasa de 0,51 a 1,46, lo que confirma una creciente irregularidad de los bordes consistente con regeneracion natural no uniforme y desgaste perimetral. La distancia media al vecino mas cercano aumenta de 1,10 a 2,39 kilometros, evidenciando un aislamiento progresivo de los parches sobrevivientes.
 
 El analisis topologico complementa estas cifras con dos lecturas adicionales sobre los mismos parches. La aplicacion del predicado `intersects` entre cada parche y la frontera del AOI con una tolerancia de 30 metros identifico una proporcion variable de parches truncados por el borde del area de estudio: 24,0 % en el periodo de degradacion ---equivalentes a 2.238,1 ha---, 7,5 % en el periodo de recuperacion ---1.640,0 ha--- y 18,3 % en el periodo actual ---2.076,2 ha---. Esta diferencia sugiere que los parches del periodo de recuperacion estan mas agrupados al interior del sistema lagunar, mientras que los de degradacion y los actuales se extienden hasta el limite cartografico del AOI, de modo que sus metricas de fragmentacion globales reflejan tambien el efecto del recorte. La aplicacion del predicado `contains` con los ocho puntos de monitoreo no devolvio parches que envolvieran las estaciones bajo el filtro de tamano 1--5.000 ha, lo cual se explica porque las estaciones INVEMAR estan ubicadas sobre cuerpos de agua o en bordes inmediatos al manglar, donde la segmentacion devuelve parches menores a 1 ha o el agua misma; la representatividad espacial de las estaciones, en consecuencia, debe discutirse en escalas de buffer y no de contenencia estricta.
 
 | Periodo | Parches | Parches en borde | % en borde | Area en borde (ha) |
 |---------|---------|------------------|------------|--------------------|
-| Degradacion | 100 | 24 | 24,0 | 2.238,1 |
-| Recuperacion | 67 | 5 | 7,5 | 1.640,0 |
-| Actual | 104 | 19 | 18,3 | 2.076,2 |
+| Degradacion (2020-S2)  | 17 | 6 | 35,3 | 5.104,3 |
+| Recuperacion (2022-S1) | 17 | 8 | 47,1 | 8.325,7 |
+| Actual (2024--2025)    | 15 | 8 | 53,3 | 5.237,9 |
 
-: Parches de manglar truncados por la frontera del AOI (predicado DE-9IM `intersects`). {#tbl-topologia}
+: Parches de manglar truncados por la frontera del AOI acotado (predicado DE-9IM `intersects` con tolerancia de 30 m). Los parches se cuentan agregados como features completos en `geopandas`. {#tbl-topologia-acotado}
+
+El analisis topologico sobre el AOI acotado muestra una proporcion creciente de parches truncados por el limite del area protegida, que pasa del 35,3 % en 2020 al 53,3 % en 2024--2025. Esta tendencia es coherente con el patron de contraccion documentado en la fragmentacion: a medida que los parches centrales del sistema lagunar desaparecen o pierden cobertura espectral suficiente, los parches sobrevivientes se concentran en posiciones perifericas del Santuario de Fauna y Flora y del Via Parque, donde el limite legal de proteccion se acerca a la franja costera o a la frontera con zonas agropecuarias. La ausencia total de estaciones de muestreo INVEMAR dentro de parches segmentados mayores a una hectarea --predicado DE-9IM `contains`-- confirma la observacion metodologica de la seccion anterior: las cuatro estaciones limnologicas originales estan ubicadas sobre cuerpos de agua, no sobre manglar denso, y las cuatro estaciones de manglar real se encuentran en pixeles de borde donde la segmentacion automatica produce parches inferiores al umbral de filtrado.
 
 ## Comparacion dinamica dentro y fuera del area protegida
 
