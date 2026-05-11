@@ -16,3 +16,27 @@ Thumbs.db
 .env
 credentials/
 .config/
+
+# NetCDFs grandes y composites
+data/processed/s2/*.tif
+data/processed/landsat/*.tif
+data/processed/cubo/cgsm_datacube_trimestral.nc
+data/processed/cubo/cgsm_datacube_landsat.nc
+data/processed/rgb/*.tif
+data/processed/rgb_acotado/resampled/*.tif
+
+# Caches y temporales
+**/__pycache__/
+**/.ipynb_checkpoints/
+
+# NetCDFs grandes y composites
+data/processed/s2/*.tif
+data/processed/landsat/*.tif
+data/processed/cubo/cgsm_datacube_trimestral.nc
+data/processed/cubo/cgsm_datacube_landsat.nc
+data/processed/rgb/*.tif
+data/processed/rgb_acotado/resampled/*.tif
+
+# Caches y temporales
+**/__pycache__/
+**/.ipynb_checkpoints/
