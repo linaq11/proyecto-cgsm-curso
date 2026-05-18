@@ -1,0 +1,10 @@
+metrica,valor
+TP,188097.0
+FP,43777.0
+FN,225733.0
+TN,913309.0
+OA,0.8034
+Precision,0.8112
+Recall,0.4545
+F1,0.5826
+Specificity,0.9543
