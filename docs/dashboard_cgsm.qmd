@@ -1,8 +1,5 @@
 ---
-title: "CGSM Monitor"
-subtitle: "Pipeline multilenguaje · 2013–2025"
-author: "Lina María Quintero Fonseca"
-date: today
+title: "CGSM Monitor · 2013–2025"
 format:
   dashboard:
     orientation: rows

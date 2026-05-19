@@ -1,12 +1,9 @@
 # Pipeline multilenguaje (Python, R, Julia) para el monitoreo de manglar en la CGSM (2013–2025)
 
 ![License](https://img.shields.io/badge/License-MIT-black)
-![Python](https://img.shields.io/badge/Python-3.12+-blue)
-![R](https://img.shields.io/badge/R-4.3.3-blue)
-![Julia](https://img.shields.io/badge/Julia-1.11.3-purple)
-[![Ver Dashboard](https://img.shields.io/badge/Ver-Dashboard%20Interactivo-success)](https://linaq11.github.io/proyecto-cgsm-curso/dashboard_cgsm.html)
-[![Ver Informe HTML](https://img.shields.io/badge/Ver-Informe%20Final%20HTML-orange)](https://linaq11.github.io/proyecto-cgsm-curso/informe_final.html)
-[![Descargar PDF](https://img.shields.io/badge/Descargar-Informe%20Final%20PDF-red)](https://github.com/linaq11/proyecto-cgsm-curso/raw/main/docs/informe_final.pdf)
+![Stack](https://img.shields.io/badge/Stack-Python%20%C2%B7%20R%20%C2%B7%20Julia-blue)
+[![Dashboard](https://img.shields.io/badge/Ver-Dashboard-success)](https://linaq11.github.io/proyecto-cgsm-curso/dashboard_cgsm.html)
+[![Informe PDF](https://img.shields.io/badge/Descargar-Informe%20PDF-red)](https://github.com/linaq11/proyecto-cgsm-curso/raw/main/docs/informe_final.pdf)
 
 Caracterización espaciotemporal de la cobertura, fragmentación y vigor del manglar en la Ciénaga Grande de Santa Marta entre 2013 y 2025, mediante una pipeline multilenguaje (Python, R, Julia) que integra detección de cambios bfast, segmentación automática con SamGeo y validación contra cartografía oficial INVEMAR 1:25.000 y global ESA WorldCover v200.
 
