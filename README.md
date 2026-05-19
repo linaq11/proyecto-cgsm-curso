@@ -2,7 +2,7 @@
 
 ![License](https://img.shields.io/badge/License-MIT-black)
 ![Stack](https://img.shields.io/badge/Stack-Python%20%C2%B7%20R%20%C2%B7%20Julia-blue)
-[![Dashboard](https://img.shields.io/badge/Ver-Dashboard-success)](https://linaq11.github.io/proyecto-cgsm-curso/dashboard_cgsm.html)
+[![Dashboard](https://img.shields.io/badge/Ver-Dashboard-success)](https://linaq11.github.io/proyecto-cgsm-curso/docs/dashboard_cgsm.html)
 [![Informe PDF](https://img.shields.io/badge/Descargar-Informe%20PDF-red)](https://github.com/linaq11/proyecto-cgsm-curso/raw/main/docs/informe_final.pdf)
 
 Caracterización espaciotemporal de la cobertura, fragmentación y vigor del manglar en la Ciénaga Grande de Santa Marta entre 2013 y 2025, mediante una pipeline multilenguaje (Python, R, Julia) que integra detección de cambios bfast, segmentación automática con SamGeo y validación contra cartografía oficial INVEMAR 1:25.000 y global ESA WorldCover v200.
