@@ -1,0 +1,17 @@
+estacion,naturaleza,rezago_meses,rho_caudal,n
+El_Banco_Magdalena,manglar,0,0.064,74
+El_Banco_Magdalena,manglar,1,0.039,73
+El_Banco_Magdalena,manglar,2,0.108,72
+El_Banco_Magdalena,manglar,3,0.256,71
+El_Banco_Magdalena,limnologica,0,0.181,61
+El_Banco_Magdalena,limnologica,1,0.233,60
+El_Banco_Magdalena,limnologica,2,0.043,59
+El_Banco_Magdalena,limnologica,3,0.05,58
+Ganaderia_Caribe_Aracataca,manglar,0,0.196,68
+Ganaderia_Caribe_Aracataca,manglar,1,0.224,67
+Ganaderia_Caribe_Aracataca,manglar,2,0.184,66
+Ganaderia_Caribe_Aracataca,manglar,3,0.18,65
+Ganaderia_Caribe_Aracataca,limnologica,0,0.107,58
+Ganaderia_Caribe_Aracataca,limnologica,1,0.263,57
+Ganaderia_Caribe_Aracataca,limnologica,2,0.267,56
+Ganaderia_Caribe_Aracataca,limnologica,3,0.15,55

@@ -1,0 +1,17 @@
+cuenca,naturaleza,rezago_meses,rho,n
+magdalena_alta_media,manglar,0,0.075,86
+magdalena_alta_media,manglar,1,0.17,85
+magdalena_alta_media,manglar,2,0.097,84
+magdalena_alta_media,manglar,3,0.252,83
+magdalena_alta_media,limnologica,0,0.276,72
+magdalena_alta_media,limnologica,1,0.132,71
+magdalena_alta_media,limnologica,2,0.268,70
+magdalena_alta_media,limnologica,3,0.203,69
+sierra_nevada_oeste,manglar,0,0.14,86
+sierra_nevada_oeste,manglar,1,0.136,85
+sierra_nevada_oeste,manglar,2,0.061,84
+sierra_nevada_oeste,manglar,3,0.281,83
+sierra_nevada_oeste,limnologica,0,0.153,72
+sierra_nevada_oeste,limnologica,1,0.223,71
+sierra_nevada_oeste,limnologica,2,0.359,70
+sierra_nevada_oeste,limnologica,3,0.201,69

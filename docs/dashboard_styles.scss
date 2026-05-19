@@ -1,0 +1,249 @@
+/*-- scss:defaults --*/
+
+// Paleta cmocean — Algae + Deep · oceanografía profesional · IOC-UNESCO
+$primary:   #1f5a4b;  // algae profundo · verde-azul lagunar
+$secondary: #163d3c;  // deep · verde oscuro abisal
+$success:   #5b7e3c;  // algae claro · vegetación acuática
+$info:      #2e6f8e;  // ocean deep · azul profundo
+$warning:   #c4b659;  // sedimento · amarillo arena del Magdalena
+$danger:    #aa4c2a;  // terracota · alerta cálida
+
+$body-bg:    #f7faf9;   // verde-blanco muy claro, sutilmente acuoso
+$body-color: #1e2d2a;   // verde oscuro casi negro, mejor que negro puro
+
+$font-family-sans-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+$font-size-base: 0.92rem;
+
+$navbar-bg: #ffffff;
+$navbar-fg: #1e2d2a;
+
+/*-- scss:rules --*/
+
+/* Valueboxes — diseño limpio y compacto */
+.value-box {
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: none;
+  overflow: hidden;
+}
+
+.value-box-value {
+  font-size: 1.45rem !important;
+  font-weight: 700 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.02em;
+  margin: 0.15rem 0 !important;
+}
+
+.value-box-title {
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.95;
+  line-height: 1.15 !important;
+  white-space: normal !important;     // permite 2 líneas
+  word-wrap: break-word;
+  max-height: 2.6em;
+  overflow: hidden;
+}
+
+/* Iconos de valuebox: tamaño proporcional, centrados, sin recortes
+   (overflow:visible y line-height:1 evitan el corte del glifo por arriba) */
+.value-box-showcase {
+  font-size: 2rem !important;
+  opacity: 0.55;
+  overflow: visible !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.4rem !important;
+}
+
+.value-box-showcase > i,
+.value-box-showcase > .bi,
+.value-box-showcase i[class^="bi"] {
+  line-height: 1 !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  font-size: inherit !important;
+}
+
+.value-box-area {
+  padding: 0.7rem 0.85rem !important;
+}
+
+/* Caption pequeño bajo el valor */
+.value-box-area p,
+.value-box-caption {
+  font-size: 0.66rem !important;
+  font-weight: 400 !important;
+  opacity: 0.88;
+  line-height: 1.25 !important;
+  margin: 0.15rem 0 0 0 !important;
+  letter-spacing: 0.01em;
+  text-transform: none !important;
+}
+
+/* Cards y secciones */
+.card {
+  border-radius: 8px;
+  border: 1px solid #d4e4dd;
+  box-shadow: 0 1px 2px rgba(22,61,60,0.06);
+}
+
+.card-header {
+  background: #eef5f2;
+  border-bottom: 1px solid #d4e4dd;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #1f5a4b;
+  padding: 0.6rem 1rem;
+}
+
+/* Navegación superior */
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.navbar {
+  border-bottom: 2px solid #1f5a4b;
+  box-shadow: 0 1px 2px rgba(22,61,60,0.05);
+}
+
+.nav-link {
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+/* Tablas */
+.table {
+  font-size: 0.85rem;
+}
+
+.table thead th {
+  background: #eef5f2;
+  border-bottom: 2px solid #1f5a4b;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: #1f5a4b;
+}
+
+/* Espaciado general */
+.dashboard-page {
+  padding: 0.4rem;
+}
+
+.bslib-grid-item {
+  padding: 0.3rem !important;
+}
+
+/* Imágenes dentro de cards: el <img class="img-fluid"> generado por Quarto
+   crece hasta el 100% del ancho de la card; la altura se calcula por
+   proporción (height:auto). El máximo de alto evita que imágenes muy
+   verticales se salgan de la card. */
+.card-body img,
+.card-body .figure-img,
+.card-body .quarto-figure img,
+.card-body figure img,
+.card-body p img,
+.bslib-card .card-body img,
+.card-body img.img-fluid {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: none !important;   /* sin techo: imagen al ancho completo */
+  min-width: 0 !important;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  margin: 0 auto !important;
+}
+
+/* Card body: bloque normal con scroll vertical cuando la imagen
+   excede la altura de la card. APLICA SOLO a cards de imagen/gráfico,
+   NUNCA a valueboxes (que también contienen .card-body por dentro y
+   romperían su layout interno value-box-grid). */
+.bslib-card:not(.bslib-value-box) > .card-body {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding: 0.2rem 0.4rem !important;
+  display: block !important;
+  text-align: center;
+  position: relative;
+}
+
+/* Scrollbar discreta — solo en cards de imagen, no en valueboxes */
+.bslib-card:not(.bslib-value-box) .card-body::-webkit-scrollbar {
+  width: 7px;
+}
+.bslib-card:not(.bslib-value-box) .card-body::-webkit-scrollbar-thumb {
+  background: #1f5a4b;
+  border-radius: 4px;
+  opacity: 0.5;
+}
+.bslib-card:not(.bslib-value-box) .card-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Wrappers de Quarto (figure, p, quarto-figure): rellenan toda la card
+   sin imponer ancho fijo propio, para que la imagen crezca libremente.
+   ESCOPADO a cards de imagen, NO a valueboxes (cuyos <p value-box-title>
+   y <p value-box-value> tienen su propio layout y se romperían con flex). */
+.bslib-card:not(.bslib-value-box) .card-body figure,
+.bslib-card:not(.bslib-value-box) .card-body p,
+.bslib-card:not(.bslib-value-box) .card-body .quarto-figure {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Botón circular de expandir a pantalla completa: solo en cards con imagen,
+   no en valueboxes (no aporta nada expandir un KPI). Ubicado en esquina
+   inferior derecha para no tapar barras de color/leyendas de los mapas. */
+.bslib-card:not(.bslib-value-box) .bslib-full-screen-enter {
+  position: absolute !important;
+  bottom: 0.55rem !important;
+  right: 0.55rem !important;
+  top: auto !important;
+  z-index: 5;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.bslib-card:not(.bslib-value-box) .bslib-full-screen-enter:hover {
+  opacity: 1;
+}
+
+/* Ocultar completamente el botón en valueboxes */
+.bslib-value-box .bslib-full-screen-enter {
+  display: none !important;
+}
+
+/* Pantallas estrechas: ya no impone máximos restrictivos, mantiene
+   el crecimiento responsive del 100% del ancho del contenedor */
+@media (max-width: 768px) {
+  .card-body img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+}
+
+/* Tipografía de encabezados de sección */
+h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f5a4b;
+  margin: 0.4rem 0 0.3rem 0;
+}

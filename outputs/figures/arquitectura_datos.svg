@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1100 480" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad-amber" x1="0" x2="1">
+      <stop offset="0" stop-color="#bf360c" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#bf360c" stop-opacity="0.05"/>
+    </linearGradient>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#bf360c"/>
+    </marker>
+  </defs>
+  <!-- Fondo oscuro -->
+  <rect width="1100" height="480" fill="#ffffff"/>
+  <!-- Título superior -->
+  <text x="550" y="22" fill="#bf360c" font-family="Inter, sans-serif" font-size="13"
+        font-weight="700" text-anchor="middle" letter-spacing="0.12em">VISIÓN GENERAL · 5 FUENTES DE DATOS → DATACUBE → 3 LENGUAJES → 5 PRODUCTOS</text>
+  <!-- INPUTS column -->
+  <g font-family="Inter, sans-serif" font-size="11" text-anchor="middle">
+    <text x="120" y="50" fill="#6a6a6a" font-size="10" letter-spacing="0.1em">FUENTES DE DATOS</text>
+    <g><rect x="30" y="70" width="180" height="50" rx="8" fill="#f5f8fa" stroke="#0d47a1" stroke-width="1.5"/><text x="120" y="92" fill="#0d47a1" font-weight="600">Sentinel-2 + Landsat 8</text><text x="120" y="108" fill="#4a4a4a" font-size="10">Google Earth Engine</text></g>
+    <g><rect x="30" y="140" width="180" height="50" rx="8" fill="#f5f8fa" stroke="#0d47a1" stroke-width="1.5"/><text x="120" y="162" fill="#0d47a1" font-weight="600">ERA5-Land · CHIRPS</text><text x="120" y="178" fill="#4a4a4a" font-size="10">Clima local + lluvia satelital</text></g>
+    <g><rect x="30" y="210" width="180" height="50" rx="8" fill="#f5f8fa" stroke="#0d47a1" stroke-width="1.5"/><text x="120" y="232" fill="#0d47a1" font-weight="600">ENSO ONI · SOI · NOAA</text><text x="120" y="248" fill="#4a4a4a" font-size="10">Forzamiento climático global</text></g>
+    <g><rect x="30" y="280" width="180" height="50" rx="8" fill="#f5f8fa" stroke="#0d47a1" stroke-width="1.5"/><text x="120" y="302" fill="#0d47a1" font-weight="600">Caudal IDEAM · DHIME</text><text x="120" y="318" fill="#4a4a4a" font-size="10">Río Magdalena · El Banco</text></g>
+    <g><rect x="30" y="350" width="180" height="50" rx="8" fill="#f5f8fa" stroke="#0d47a1" stroke-width="1.5"/><text x="120" y="372" fill="#0d47a1" font-weight="600">INVEMAR · GBIF</text><text x="120" y="388" fill="#4a4a4a" font-size="10">Estaciones · cartografía oficial</text></g>
+  </g>
+  <!-- DATACUBE central -->
+  <g>
+    <rect x="320" y="190" width="200" height="110" rx="12" fill="url(#grad-amber)" stroke="#bf360c" stroke-width="2.5"/>
+    <text x="420" y="220" text-anchor="middle" fill="#bf360c" font-family="Inter, sans-serif" font-weight="700" font-size="14">DATACUBE</text>
+    <text x="420" y="240" text-anchor="middle" fill="#1a1a1a" font-family="Inter, sans-serif" font-size="11">NetCDF CF-1.8</text>
+    <text x="420" y="258" text-anchor="middle" fill="#1a1a1a" font-family="Inter, sans-serif" font-size="11">EPSG:9377</text>
+    <text x="420" y="276" text-anchor="middle" fill="#4a4a4a" font-family="Inter, sans-serif" font-size="10">2013-2025 · 10 m · 4 archivos</text>
+  </g>
+  <!-- Flechas de fuentes a datacube -->
+  <g fill="none" stroke="#0d47a1" stroke-width="1.5" opacity="0.55" marker-end="url(#arr-amber)">
+    <path d="M 210 95 C 270 95 280 230 320 230"/>
+    <path d="M 210 165 C 270 165 280 235 320 235"/>
+    <path d="M 210 235 Q 270 240 320 240"/>
+    <path d="M 210 305 C 270 305 280 255 320 255"/>
+    <path d="M 210 375 C 270 375 280 260 320 260"/>
+  </g>
+  <!-- PHASES (Python R Julia) -->
+  <g font-family="Inter, sans-serif" font-size="11" text-anchor="middle">
+    <text x="700" y="50" fill="#6a6a6a" font-size="10" letter-spacing="0.1em">PIPELINE · 3 LENGUAJES</text>
+    <g><rect x="600" y="70" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#0d47a1" stroke-width="1.5"/><text x="700" y="92" fill="#0d47a1" font-weight="600">Python · Adquisición + IA</text><text x="700" y="108" fill="#4a4a4a" font-size="10">geemap · samgeo · xarray</text></g>
+    <g><rect x="600" y="140" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#4527a0" stroke-width="1.5"/><text x="700" y="162" fill="#4527a0" font-weight="600">R · Estadística + BFAST</text><text x="700" y="178" fill="#4a4a4a" font-size="10">bfast · stars · sf · terra</text></g>
+    <g><rect x="600" y="210" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#311b92" stroke-width="1.5"/><text x="700" y="232" fill="#311b92" font-weight="600">Julia · Fragmentación</text><text x="700" y="248" fill="#4a4a4a" font-size="10">shoelace · NND · MSI</text></g>
+  </g>
+  <!-- Flechas datacube a lenguajes -->
+  <g fill="none" stroke="#bf360c" stroke-width="1.5" opacity="0.6" marker-end="url(#arr-amber)" stroke-dasharray="5 4">
+    <path d="M 520 220 C 560 220 570 95 600 95"/>
+    <path d="M 520 240 Q 560 240 600 165"/>
+    <path d="M 520 260 C 560 260 570 235 600 235"/>
+  </g>
+  <!-- OUTPUTS column -->
+  <g font-family="Inter, sans-serif" font-size="11" text-anchor="middle">
+    <text x="990" y="50" fill="#6a6a6a" font-size="10" letter-spacing="0.1em">PRODUCTOS</text>
+    <g><rect x="880" y="70" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#1b5e20" stroke-width="1.5"/><text x="980" y="92" fill="#1b5e20" font-weight="600">Dashboard 15 capas</text><text x="980" y="108" fill="#4a4a4a" font-size="10">HTML interactivo</text></g>
+    <g><rect x="880" y="140" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#1b5e20" stroke-width="1.5"/><text x="980" y="162" fill="#1b5e20" font-weight="600">Informe Quarto</text><text x="980" y="178" fill="#4a4a4a" font-size="10">36 páginas · PDF</text></g>
+    <g><rect x="880" y="210" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#1b5e20" stroke-width="1.5"/><text x="980" y="232" fill="#1b5e20" font-weight="600">30 tablas CSV</text><text x="980" y="248" fill="#4a4a4a" font-size="10">Resultados numéricos</text></g>
+    <g><rect x="880" y="280" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#1b5e20" stroke-width="1.5"/><text x="980" y="302" fill="#1b5e20" font-weight="600">35 figuras PNG</text><text x="980" y="318" fill="#4a4a4a" font-size="10">Series · mapas · validación</text></g>
+    <g><rect x="880" y="350" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#1b5e20" stroke-width="1.5"/><text x="980" y="372" fill="#1b5e20" font-weight="600">Repositorio GitHub</text><text x="980" y="388" fill="#4a4a4a" font-size="10">Docker · reproducible</text></g>
+  </g>
+  <!-- Flechas lenguajes a productos -->
+  <g fill="none" stroke="#311b92" stroke-width="1.5" opacity="0.5" marker-end="url(#arr-amber)">
+    <path d="M 800 95 C 840 95 850 95 880 95"/>
+    <path d="M 800 165 C 840 165 850 165 880 165"/>
+    <path d="M 800 235 C 840 235 850 235 880 235"/>
+    <path d="M 800 165 C 840 165 850 305 880 305"/>
+    <path d="M 800 235 C 840 235 850 375 880 375"/>
+  </g>
+  <!-- Leyenda inferior -->
+  <g font-family="Inter, sans-serif" font-size="10.5" fill="#6a6a6a">
+    <text x="120" y="445" text-anchor="middle">5 fuentes</text>
+    <text x="420" y="445" text-anchor="middle">Datacube unificado</text>
+    <text x="700" y="445" text-anchor="middle">3 lenguajes</text>
+    <text x="980" y="445" text-anchor="middle">5 productos abiertos</text>
+  </g>
+</svg>

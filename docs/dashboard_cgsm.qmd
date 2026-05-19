@@ -1,0 +1,362 @@
+---
+title: "CGSM Monitor"
+subtitle: "Pipeline multilenguaje · 2013–2025"
+author: "Lina María Quintero Fonseca"
+date: today
+format:
+  dashboard:
+    orientation: rows
+    nav-buttons:
+      - icon: github
+        href: https://github.com/linaq11/proyecto-cgsm-curso
+    theme:
+      - flatly
+      - dashboard_styles.scss
+    scrolling: false
+    expandable: true
+execute:
+  echo: false
+  warning: false
+---
+
+```{python}
+#| label: setup
+import pandas as pd
+import matplotlib.pyplot as plt
+from pathlib import Path
+import warnings
+warnings.filterwarnings('ignore')
+
+ROOT = Path('..').resolve()
+TAB  = ROOT / 'outputs' / 'tables'
+FIG  = ROOT / 'outputs' / 'figures'
+
+# Cargar datos de KPIs
+try:
+    val_inv = pd.read_csv(TAB / 'validacion_invemar_acotado.csv').set_index('metrica')['valor']
+    f1_inv = float(val_inv.get('F1', 0.583))
+except Exception:
+    f1_inv = 0.583
+
+try:
+    frag = pd.read_csv(TAB / 'metricas_fragmentacion_acotado.csv')
+    area_actual = float(frag.loc[frag['Periodo']=='actual', 'Area_total_ha'].iloc[0])
+except Exception:
+    area_actual = 4037.0
+
+try:
+    sar = pd.read_csv(TAB / 'inundacion_sar_sept2020_acotado.csv')
+    total_sar = float(sar.loc[sar['tipo']=='Total', 'area_km2'].iloc[0])
+except Exception:
+    total_sar = 59.02
+
+try:
+    cor_caudal = pd.read_csv(TAB / 'correlacion_caudal_ndvi.csv')
+    rho_max = float(cor_caudal.loc[
+        (cor_caudal['estacion']=='El_Banco_Magdalena') &
+        (cor_caudal['naturaleza']=='manglar') &
+        (cor_caudal['rezago_meses']==3), 'rho_caudal'].iloc[0])
+except Exception:
+    rho_max = 0.256
+```
+
+# Resumen {orientation="rows"}
+
+## Row {height=15%}
+
+```{python}
+#| content: valuebox
+#| title: "Manglar protegido hoy"
+dict(icon="tree-fill", color="success",
+     value=f"{area_actual:,.0f} ha".replace(',', '.'),
+     caption="dentro del área Ramsar (SFF + VPI)")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Área protegida total"
+dict(icon="bounding-box", color="primary",
+     value="835 km²",
+     caption="Santuario CGSM + Vía Parque Salamanca · Ramsar")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Inundado durante La Niña 2020"
+dict(icon="droplet-fill", color="info",
+     value=f"{total_sar:.0f} km²",
+     caption=f"≈ {(total_sar/835)*100:.0f} % del área protegida")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Vínculo caudal río – manglar"
+dict(icon="graph-up-arrow", color="warning",
+     value=f"+{rho_max:.2f}",
+     caption="más agua dulce → manglar más sano")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Años de monitoreo continuo"
+dict(icon="calendar3", color="secondary",
+     value="13",
+     caption="2013 – 2025 · Landsat + Sentinel")
+```
+
+## Row {height=85%}
+
+### Column {width=33%}
+
+#### Row {height=55%}
+
+::: {.card title="Evolución del vigor del manglar · NDVI mediano 2018–2025"}
+![](../outputs/figures/ndvi_mediano_manglar_acotado.png){fig-alt="Serie NDVI"}
+:::
+
+#### Row {height=45%}
+
+::: {.card title="Cambio del manglar: 2020 → 2024-2025"}
+![](../outputs/figures/ndvi_cambio_cubo.png){fig-alt="Cambio NDVI 2020→2024-25"}
+:::
+
+### Column {width=67%}
+
+```{=html}
+<iframe src="../outputs/maps/dashboard_CGSM_final.html"
+        width="100%" height="100%"
+        style="border:none; min-height:680px;"></iframe>
+```
+
+# Cobertura {orientation="rows"}
+
+## Row {height=18%}
+
+```{python}
+#| content: valuebox
+#| title: "Fragmentos de manglar en 2020"
+dict(icon="grid-3x3-gap", color="danger", value="79",
+     caption="manchas separadas durante La Niña")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Fragmentos en 2022"
+dict(icon="grid-3x3-gap", color="warning", value="38",
+     caption="se fusionaron tras recuperación")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Fragmentos hoy (2024-25)"
+dict(icon="grid-3x3-gap", color="success", value="15",
+     caption="manglar más consolidado")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Consolidación de los fragmentos"
+dict(icon="zoom-in", color="primary", value="+71 %",
+     caption="el área media de cada fragmento creció de 157 a 269 ha")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Validación con cartografía oficial"
+dict(icon="check2-square", color="info", value="✓",
+     caption="contrastado con INVEMAR 1:25.000 y ESA WorldCover")
+```
+
+## Row {height=82%}
+
+### Column {width=55%}
+
+#### Fragmentación sobre AOI acotado (Julia, EPSG:9377)
+
+```{python}
+try:
+    df = pd.read_csv(TAB / 'metricas_fragmentacion_acotado.csv')
+    df_disp = df[['Periodo','Parches','Area_total_ha','Area_media_ha','MSI_medio','NND_medio_km']].copy()
+    df_disp.columns = ['Periodo', 'Parches', 'Área (ha)', 'Área media (ha)', 'MSI', 'NND (km)']
+    df_disp.style.format(precision=2)
+except Exception as e:
+    print(f'No disponible: {e}')
+```
+
+#### Validación cartografía oficial
+
+| Métrica | INVEMAR 1:25.000 | ESA WorldCover v200 |
+|---|---|---|
+| F1-score | **0,583** | 0,548 |
+| Precision | **0,811** | 0,768 |
+| Recall | 0,454 | 0,426 |
+| Specificity | 0,954 | 0,944 |
+
+### Column {width=45%}
+
+![](../outputs/figures/ndvi_3_periodos_cubo.png){fig-alt="NDVI 3 periodos"}
+
+# Clima e hidrología {orientation="rows"}
+
+## Row {height=15%}
+
+```{python}
+#| content: valuebox
+#| title: "Caudal típico río Magdalena"
+dict(icon="droplet-fill", color="primary", value="3.750 m³/s",
+     caption="promedio mensual en El Banco · IDEAM")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Pico extremo durante La Niña"
+dict(icon="exclamation-triangle-fill", color="danger", value="5.921 m³/s",
+     caption="agosto 2022 · 58 % sobre el promedio")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Vínculo La Niña – manglar"
+dict(icon="globe", color="info", value="+0,20",
+     caption="fase fría del Pacífico aumenta el vigor")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Inundaciones históricas registradas"
+dict(icon="archive-fill", color="warning", value="16",
+     caption="eventos 2001–2017 (NASA Global Flood DB)")
+```
+
+## Row {height=85%}
+
+### Column {width=50%}
+
+#### Caudal IDEAM 2013–2025
+
+![](../outputs/figures/caudal_ideam_series_2013_2025.png){fig-alt="Caudal IDEAM"}
+
+#### Correlación caudal vs NDVI manglar
+
+![](../outputs/figures/caudal_vs_ndvi_correlacion.png){fig-alt="Correlación caudal"}
+
+### Column {width=50%}
+
+#### Índices ENSO globales (ONI + SOI)
+
+![](../outputs/figures/enso_serie_2013_2025.png){fig-alt="ENSO serie"}
+
+#### Tabla de correlaciones (4 forzantes × 4 rezagos)
+
+```{python}
+import pandas as pd
+filas = [
+    ['ERA5 precip local', -0.081, -0.081, -0.123, -0.020],
+    ['ENSO ONI global',    0.027, -0.007, -0.039, -0.070],
+    ['ENSO SOI global',    0.143,  0.198,  0.146,  0.058],
+    ['Caudal El Banco',    0.064,  0.039,  0.108,  0.256],
+    ['Caudal Aracataca',   0.196,  0.224,  0.184,  0.180],
+    ['CHIRPS Magdalena',   0.075,  0.170,  0.097,  0.252],
+]
+df_corr = pd.DataFrame(filas, columns=['Forzante','Lag 0','Lag 1','Lag 2','Lag 3'])
+df_corr
+```
+
+# Validación multilingüe {orientation="rows"}
+
+## Row {height=15%}
+
+```{python}
+#| content: valuebox
+#| title: "Cuadernos en Python"
+dict(icon="filetype-py", color="primary", value="15",
+     caption="adquisición, segmentación, validación")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Cuadernos en R"
+dict(icon="filetype-r", color="info", value="4",
+     caption="series temporales y bfast")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Cuadernos en Julia"
+dict(icon="filetype-jl", color="warning", value="3",
+     caption="fragmentación y topología")
+```
+
+```{python}
+#| content: valuebox
+#| title: "Pruebas cruzadas entre lenguajes"
+dict(icon="check2-all", color="success", value="4",
+     caption="los tres lenguajes dan el mismo resultado")
+```
+
+## Row {height=85%}
+
+### Column {width=55%}
+
+#### Convergencia trilingüe: Python = R = Julia
+
+![](../outputs/figures/validacion_trilingual_correlacion.png){fig-alt="Validación trilingual"}
+
+### Column {width=45%}
+
+#### Validaciones cruzadas documentadas
+
+| # | Análisis | Lenguajes | Convergencia |
+|---|---|---|---|
+| 1 | ENSO ONI/SOI vs NDVI | Python ↔ R | 8 filas idénticas |
+| 2 | Caudal IDEAM vs NDVI | Python ↔ R | 16 filas idénticas |
+| 3 | Caudal-NDVI manglar | Python = R = Julia | 4 rezagos idénticos |
+| 4 | Predicados DE-9IM | Python ↔ Julia | 17/17/15 parches |
+
+#### Rol de cada lenguaje
+
+- **Python:** GEE, SamGeo, xarray, validación
+- **R:** bfast, series ecohidrológicas, índices climáticos (`tidyverse`)
+- **Julia:** fragmentación, predicados DE-9IM (`LibGEOS.jl`)
+
+# Acerca de {orientation="columns"}
+
+## Row
+
+### Column
+
+#### Proyecto
+
+**Pipeline multilenguaje (Python, R, Julia) para el monitoreo de manglar en la CGSM (2013–2025)**
+
+Trabajo final de la asignatura *Programación en SIG*, Maestría en Geomática, Universidad Nacional de Colombia, semestre 2026-1.
+
+- **Autora:** Lina María Quintero Fonseca
+- **Docente:** Alexys H. Rodríguez-Avellaneda Ph.D.
+- **Repositorio:** [github.com/linaq11/proyecto-cgsm-curso](https://github.com/linaq11/proyecto-cgsm-curso)
+- **Informe completo:** [HTML](informe_final.html) · [PDF](informe_final.pdf)
+
+#### Pregunta de investigación
+
+¿Cómo ha variado la cobertura, la fragmentación y el vigor del manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025, y qué evidencia cuantitativa permite atribuir las perturbaciones detectadas a forzantes climáticos asociados al evento La Niña 2020–2021?
+
+### Column
+
+#### Fuentes de datos
+
+- **Sentinel-2 SR Harmonized** (ESA): 789 imágenes 2018–2025
+- **Landsat 8/9 Collection 2** (USGS-NASA): 345 registros 2013–2017
+- **Sentinel-1 SAR** (ESA): inundación bajo dosel septiembre 2020
+- **SRTM v3** (NASA): restricción geofísica
+- **Global Flood Database** (Dartmouth Flood Observatory): 16 eventos históricos
+- **JRC Global Surface Water**: dinámica hídrica 1984–2021
+- **ESA WorldCover v200** (Zanaga et al., 2022): validación cartográfica
+- **INVEMAR 1:25.000** (2020): cartografía oficial colombiana
+- **IDEAM/DHIME**: caudal río Magdalena (El Banco) y río Aracataca (Ganadería Caribe)
+- **CHIRPS v2.0** (Funk et al., 2015): precipitación regional
+- **NOAA CPC**: índices ENSO ONI y SOI
+- **ERA5-Land** (Hersbach et al., 2020): forzamiento climático local
+
+#### Tecnologías
+
+Python 3.12, R 4.3.3, Julia 1.11.3, Quarto 1.4, Docker, GEE, SamGeo, bfast, LibGEOS, tidyverse, DataFrames.jl, folium.
