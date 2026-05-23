@@ -35,12 +35,22 @@ except Exception:
 
 
 def add_ee_layer(self, ee_object, vis_params, name, shown=True, opacity=1.0):
-    """Agrega una capa EE como TileLayer de folium y la devuelve para agruparla después."""
+    """Agrega una capa EE como TileLayer de folium y la devuelve para agruparla después.
+
+    NOTA: usa el patrón .visualize(**vis).getMapId() en lugar de .getMapId(vis)
+    porque la combinación clip(aoi)+getMapId(visParams) tiene un bug conocido
+    en GEE Python API que devuelve tiles PNG completamente transparentes
+    (334 B exactos) cuando la imagen está clippeada. Al "hornear" la
+    visualización con .visualize() la imagen se convierte en RGB de 3 bandas
+    y el render de tiles funciona correctamente.
+    """
     try:
         img = ee.Image(ee_object)
     except Exception:
         img = ee_object  # FeatureCollection.style() ya devuelve un Image
-    map_id_dict = img.getMapId(vis_params)
+    if vis_params:
+        img = img.visualize(**vis_params)
+    map_id_dict = img.getMapId()
     tl = folium.raster_layers.TileLayer(
         tiles=map_id_dict['tile_fetcher'].url_format,
         attr='Google Earth Engine',
@@ -607,8 +617,11 @@ setTimeout(function() {
 
 
 # Obtener mapId de cada composite anual (registro de visualización GEE, rápido)
+# IMPORTANTE: usar .visualize(**vis) ANTES de getMapId() para evitar el bug
+# conocido de clip(aoi)+getMapId(visParams) que devuelve tiles transparentes.
+# Al "hornear" la visualización como imagen RGB, el render de tiles funciona.
 print('Registrando tiles NDVI anuales en GEE...')
-ndvi_urls = {y: img.getMapId(vis_ndvi)['tile_fetcher'].url_format
+ndvi_urls = {y: img.visualize(**vis_ndvi).getMapId()['tile_fetcher'].url_format
              for y, img in ndvi_anual.items()}
 print(f'  {len(ndvi_urls)} URLs registradas.')
 
