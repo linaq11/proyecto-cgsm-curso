@@ -2,6 +2,13 @@
 title: 'Pipeline multilenguaje (Python, R, Julia) para el monitoreo de manglar en la CGSM (2013--2025)'
 author: 'Lina María Quintero Fonseca'
 date: '2026-05-20'
+lang: es
+crossref:
+  fig-prefix: figura
+  tbl-prefix: tabla
+  sec-prefix: sección
+  fig-title: Figura
+  tbl-title: Tabla
 format:
   html:
     toc: false
@@ -53,8 +60,25 @@ format:
     header-includes:
       - \usepackage{xcolor}
       - \usepackage{ragged2e}
+      - \usepackage{booktabs}
+      - \usepackage{longtable}
+      - \usepackage{array}
+      - \usepackage{makecell}
+      - \usepackage{colortbl}
+      - \renewcommand{\arraystretch}{1.3}
+      - \setlength{\tabcolsep}{6pt}
+      - \arrayrulecolor{black!60}
+      - \setlength{\arrayrulewidth}{0.4pt}
       - \AtBeginDocument{\hypersetup{pdfborderstyle={/S/U/W 0}, allbordercolors={0 0 0}}}
       - \AtBeginDocument{\justifying}
+      - |
+        % Convertir booktabs (\toprule, \midrule, \bottomrule) en \hline
+        % para que las tablas tengan líneas horizontales entre TODAS las filas
+        \AtBeginDocument{
+          \let\toprule\hline
+          \let\midrule\hline
+          \let\bottomrule\hline
+        }
   docx:
     toc: false
     number-sections: true
@@ -147,9 +171,19 @@ Los datos utilizados en este proyecto provienen tanto de plataformas de geocompu
 
 # Metodología y código
 
-![Arquitectura general del proyecto: cinco fuentes de datos heterogéneas (Sentinel-2/Landsat, ERA5/CHIRPS, ENSO NOAA, caudal IDEAM e INVEMAR/GBIF) convergen en un datacube unificado en NetCDF CF-1.8 sobre EPSG:9377, sobre el cual operan tres lenguajes con responsabilidades complementarias ---Python para adquisición e inteligencia artificial, R para estadística y BFAST, Julia para fragmentación---, produciendo cinco productos abiertos que materializan la reproducibilidad.](../outputs/figures/arquitectura_datos.png){#fig-arquitectura width=95% fig-pos="H"}
+El proyecto se desarrolla siguiendo un pipeline modular y reproducible organizado en cuatro fases y un modulo de validacion que se ejecutan dentro de un contenedor Docker ---sig_unal v1.11, que integra Python 3.12, R 4.3.3, Julia 1.11.3 y Quarto 1.4---, de modo que se garantiza la replicabilidad completa del entorno de análisis. Cada fase se implementa aprovechando las fortalezas del lenguaje mas adecuado para la tarea, y la interoperabilidad entre fases se mantiene mediante formatos estandar ---GeoTIFF, GeoJSON y CSV---.
 
-El proyecto se desarrolla siguiendo un pipeline modular y reproducible cuya arquitectura general se sintetiza en la figura @fig-arquitectura, organizada en cuatro fases y un modulo de validacion que se ejecutan dentro de un contenedor Docker ---sig_unal v1.11, que integra Python 3.12, R 4.3.3, Julia 1.11.3 y Quarto 1.4---, de modo que se garantiza la replicabilidad completa del entorno de análisis. Cada fase se implementa aprovechando las fortalezas del lenguaje mas adecuado para la tarea, y la interoperabilidad entre fases se mantiene mediante formatos estandar ---GeoTIFF, GeoJSON y CSV---.
+## Distribución multilingüe de responsabilidades
+
+La arquitectura del proyecto distribuye las tareas entre los tres lenguajes del curso ---Python, R y Julia--- según la conveniencia disciplinar de cada fase, no como mera coexistencia obligatoria. **Python** sustenta la mayor parte del flujo: adquisición y procesamiento en Google Earth Engine, segmentación promptable con SamGeo, manipulación de datacubes con `xarray`, clasificación supervisada con Random Forest, generación del dashboard interactivo con `folium` y descarga del forzamiento climático ERA5-Land con `cdsapi`. **R** se reserva para tareas estadísticas y de series ecohidrológicas donde su ecosistema es más maduro: detección de quiebres bfast sobre las series NDVI mediante el paquete `bfast`, construcción de un datacube `stars` como contraparte local del flujo GEE, y replicación independiente de los análisis ENSO y caudal IDEAM mediante `tidyverse` para validación cruzada Python ↔ R. **Julia** se incorpora para el cómputo geométrico de alta velocidad sobre miles de polígonos vectoriales: métricas de fragmentación del paisaje (NP, PD, MPA, MSI, NND), cálculo exacto del área en EPSG:9377 mediante el algoritmo del cordón (`shoelace`) y predicados topológicos DE-9IM (`intersects`, `contains`) ejecutados con `LibGEOS.jl`, la misma biblioteca GEOS que sustenta PostGIS y `geopandas`, lo cual garantiza consistencia geométrica entre los tres entornos. La equivalencia operativa entre lenguajes se demuestra mediante cuatro validaciones cruzadas formales documentadas en la sección de Validación.
+
+| Lenguaje | Función técnica | Librerías clave | Notebooks / scripts principales |
+|---|---|---|---|
+| **Python** | Adquisición GEE, segmentación SAM, Random Forest, datacubes, dashboard | `geemap`, `samgeo`, `xarray`, `rioxarray`, `rasterio`, `geopandas`, `folium`, `cdsapi` | `01_gee_acquisition`, `02_time_series`, `03_segmentation_acotado`, `05_flooding_nasa_acotado`, `07_era5_clima`, `11_random_forest_benchmark`, `12_sentinel1_sar_serie` |
+| **R** | Detección de quiebres bfast, cubo stars, réplicas estadísticas | `bfast`, `stars`, `sf`, `terra`, `tidyverse` | `src/R/03_bfast_ndvi.R`, `src/R/05_stars_cubo.R`, `notebooks/02b_bfast_ndvi.R`, `11b_indices_enso_noaa_R`, `12c_caudal_ideam_R` |
+| **Julia** | Métricas de fragmentación, topología DE-9IM, cómputo geométrico | `GeoJSON.jl`, `DataFrames.jl`, `LibGEOS.jl`, `Statistics` | `src/julia/04_fragmentacion.jl`, `notebooks/04c_topologia_julia`, `14_validacion_trilingual` |
+
+: Distribución de responsabilidades técnicas entre los tres lenguajes del proyecto, con las librerías centrales y los notebooks que materializan cada función. La elección obedece a las fortalezas disciplinares de cada ecosistema y se valida cruzadamente en la sección de Validación cruzada multilingüe. {#tbl-lenguajes tbl-colwidths="[12, 30, 22, 36]"}
 
 ## Fase 1: Construccion del datacube multitemporal (Python + geemap)
 
@@ -180,14 +214,7 @@ El datacube se materializa adicionalmente como tres archivos NetCDF con convenci
 
 : Datacubes NetCDF CF-1.8 materializados sobre el AOI acotado en EPSG:9377 (MAGNA-SIRGAS Origen Nacional), comprimidos con zlib nivel 4. {#tbl-cubos tbl-colwidths="[28, 14, 18, 24, 10, 6]"}
 
-```python
-import xarray as xr
-ds = xr.open_dataset('data/processed/cubo/cgsm_datacube_trimestral.nc',
-                     chunks={'time': 1, 'x': 512, 'y': 512})
-# Atributos CF-1.8: Conventions, institution, creator_name, crs_origen, ...
-# Acceso perezoso por chunks; .compute() materializa cuando es necesario
-ndvi_serie = ds['reflectance'].sel(band_idx='NDVI').median(dim=['x','y']).compute()
-```
+*El bloque de lectura perezosa del datacube NetCDF con `xarray` se documenta en el Anexo E, ítem E.1.a.*
 
 La diferencia espacial entre la mediana de NDVI del estado actual (julio 2024--junio 2025) y la del periodo de degradación (julio--diciembre 2020) ---calculada directamente sobre el datacube trimestral CF-1.8--- permite leer en un solo mapa las zonas que recuperaron vigor frente a aquellas que perdieron cobertura, de modo que la figura @fig-ndvi-cambio sostiene cualitativamente lo que las métricas de fragmentación describen cuantitativamente. Las áreas en azul corresponden a píxeles que ganaron al menos 0,1 unidades NDVI entre ambos periodos ---consistentes con la regeneración del manglar---, mientras que las áreas en rojo, concentradas principalmente en el borde norte del Vía Parque y en sectores hipersalinos del Santuario, marcan reducciones que pueden asociarse tanto a estresores climáticos persistentes como a heterogeneidad fenológica del manglar entre ambas ventanas temporales.
 
@@ -196,12 +223,16 @@ La diferencia espacial entre la mediana de NDVI del estado actual (julio 2024--j
 ## Fase 2: Analisis de series de tiempo (Python + pandas / R + bfast)
 
 Se extraen series temporales mensuales de NDVI para las 8 estaciones de muestreo definidas, utilizando un buffer de 500 metros alrededor de cada punto y la función reduceRegion de GEE para obtener el valor medio del índice por estacion y por mes. La serie se construye combinando dos sensores: Landsat 8 Collection 2 Level 2 para el periodo 2013--2017 (345 registros, con correccion del factor de escala x0,0000275 - 0,2 segun especificacion USGS) y Sentinel-2 SR Harmonized para el periodo 2018--2025 (584 registros), generando una serie combinada de 929 observaciónes mensuales que cubre 12 años. Posteriormente se calcula el z-score temporal por estacion ---z = (NDVI del mes - media histórica) / desvíacion estandar---, lo que permite identificar anomalias pronunciadas definidas como aquellas con z < -2. De manera complementaria, se aplica el algoritmo bfast (Breaks For Additive Season and Trend) en R sobre las series mensuales combinadas con parametros h = 0,15 y h = 0,10 para evaluar la presencia de quiebres estructurales en la tendencia de largo plazo.
-```python
-# Z-scores y detección de anomalias
-df['z_score'] = df.groupby('estacion')['ndvi'].transform(
-    lambda x: (x - x.mean()) / x.std())
-anomalias = df[df['z_score'] < -2].sort_values('z_score')
+```r
+library(bfast)
+serie  <- read.csv("outputs/tables/serie_temporal_ndvi_combinada.csv")
+ts_est <- ts(subset(serie, estacion == "Cano_Palos")$ndvi,
+             start = c(2013, 1), frequency = 12)
+fit    <- bfast(ts_est, h = 0.10, season = "harmonic", max.iter = 2)
+plot(fit)   # quiebres 2016 (El Nino), 2020 (La Nina), 2023-24 (El Nino)
 ```
+
+*El cálculo de z-scores y la detección de anomalías en Python se documentan en el Anexo E, ítem E.1.b.*
 
 ## Fase 3: Segmentacion automática con SamGeo (Python + samgeo)
 
@@ -257,69 +288,26 @@ En segundo lugar, los GeoJSON resultantes de la segmentación se reproyectan al 
 
 En tercer lugar, sobre los parches reproyectados se aplican dos **predicados topológicos DE-9IM**, calculados con `geopandas` y `shapely` que delegan en GEOS los mismos predicados que reconocen PostGIS y JTS. El primer predicado, `intersects(parche, frontera_AOI)` con tolerancia de 30 metros, identifica los parches truncados por el límite del área de estudio, cuya geometría responde más a una decisión cartográfica externa que a la dinámica del manglar; el segundo, `contains(parche, estacion_INVEMAR)`, evalúa si los parches segmentados envuelven los puntos de muestreo utilizados en el análisis bfast, lo que ofrece una validación cualitativa adicional al F1-score contra GMW.
 
-```python
-from src.python.utils import (
-    raster_metadata, vector_to_9377, area_ha_9377,
-    parches_borde, parches_con_punto, EPSG_NACIONAL,
-)
-
-# Inspeccion lazy del raster: metadatos sin cargar la grilla
-meta = raster_metadata('data/processed/samgeo/mask_actual.tif')
-
-# Reproyeccion al sistema oficial colombiano MAGNA-SIRGAS
-vector_to_9377('data/processed/samgeo/manglar_actual.geojson',
-               'data/processed/samgeo/manglar_actual_9377.geojson')
-
-# Predicados topologicos DE-9IM sobre los parches reproyectados
-gdf = area_ha_9377(gpd.read_file('data/processed/samgeo/manglar_actual_9377.geojson'))
-gdf = parches_borde(gdf, aoi)             # intersects con la frontera
-gdf = parches_con_punto(gdf, estaciones)  # contains con los puntos INVEMAR
-```
+*El bloque que articula lectura perezosa del raster, reproyección a EPSG:9377 y aplicación de predicados DE-9IM se documenta en el Anexo E, ítem E.2.a.*
 
 ## Forzamiento climático ERA5-Land
 
 Para validar cuantitativamente la hipotesis de que la mortandad de manglar de septiembre 2020 estuvo asociada a la fase La Niña 2020--2021, se acopla el reanálisis **ERA5-Land** del Centro Europeo de Previsiones Meteorologicas a Plazo Medio --ECMWF, Hersbach et al. 2020-- como forzante climático sobre las series temporales NDVI calculadas en la Fase 2. La descarga se realiza con `cdsapi` directamente desde el Climate Data Store, solicitando precipitacion total y temperatura a dos metros sobre un bounding box que envuelve la CGSM con buffer (11,20 N--10,30 N, 75,05 W--74,05 W) en escala mensual entre 2018 y 2025.
 
 Los datos se reciben en formato NetCDF con convenciones CF y se cargan con `xarray.open_dataset(chunks=...)` aplicando un patrón de evaluación perezosa: las dimensiones (`time`, `latitude`, `longitude`) y las unidades originales --metros por dia para precipitacion, kelvin para temperatura-- se decodifican automáticamente, y solo se materializa el resultado final con `.compute()`. Se calcula la climatologia mensual sobre el periodo disponible y la anomalia respecto a esa climatologia, se promedia espacialmente sobre el AOI acotado y se cruza con la anomalia NDVI promediada sobre las ocho estaciones para diferentes rezagos temporales --0, 1, 2 y 3 meses-- de modo que se identifique el lag optimo entre forzante y respuesta del manglar.
-```python
-import cdsapi, xarray as xr
-c = cdsapi.Client()
-c.retrieve('reanalysis-era5-land-monthly-means', {
-    'product_type': 'monthly_averaged_reanalysis',
-    'variable': ['total_precipitation', '2m_temperature'],
-    'year': [str(y) for y in range(2018, 2026)],
-    'month': [f'{m:02d}' for m in range(1, 13)],
-    'time': '00:00', 'area': [11.20, -75.05, 10.30, -74.05],
-    'format': 'netcdf'}, 'data/raw/era5_land_cgsm_monthly.nc')
-ds = xr.open_dataset('data/raw/era5_land_cgsm_monthly.nc', chunks={'time': 12})
-anom = ds.groupby('time.month') - ds.groupby('time.month').mean('time')
-```
+*La descarga del reanálisis ERA5-Land con `cdsapi` y el cálculo de anomalías mensuales se documentan en el Anexo E, ítem E.3.a.*
 
 ## Validación cruzada multilingüe con cubo stars en R
 
 Como contraparte local del flujo Python+GEE de la Fase 2, se construye un **cubo stars** con los composites trimestrales Sentinel-2 ya descargados. Los TIFs se ordenan cronologicamente y se ensamblan con `read_stars(tifs, along = list(time = fechas), proxy = TRUE)`, lo que produce un cubo de tres dimensiones --x, y, time-- evaluado de manera perezosa hasta que la operacion `st_extract` materializa los valores sobre las ocho estaciones de muestreo INVEMAR. La extraccion devuelve una serie temporal por estacion, que se exporta como `series_temporales_stars.csv` para comparación contra `serie_temporal_ndvi_definitiva.csv` --la version producida por `reduceRegions` en GEE--.
 
 El proposito de este ejercicio no es sustituir el flujo de la nube sino validarlo: si las dos series coinciden con $\rho > 0{,}95$ y RMSE < 0{,}05 unidades NDVI, queda demostrado que la serie temporal del proyecto no depende del entorno computacional ni de la implementacion. Discrepancias mayores indicarian sesgos sistematicos --diferencias en el enmascaramiento de nubes, en el remuestreo al armar el composite trimestral, o en el manejo de pixeles mixtos en la frontera del buffer de extraccion-- que conviene reportar como limitacion metodologica.
-```r
-library(stars); library(sf); library(dplyr)
-tifs   <- list.files("data/processed/s2", pattern = "NDVI.*\\.tif$", full.names = TRUE)
-fechas <- as.Date(stringr::str_match(basename(tifs), "(\\d{4})_Q(\\d)")[, c(2, 3)])
-cubo   <- read_stars(tifs, along = list(time = fechas), proxy = TRUE)
-serie  <- st_extract(cubo, st_transform(estaciones_sf, st_crs(cubo)))
-```
+*El bloque de construcción del cubo `stars` en R y la extracción sobre las ocho estaciones se documenta en el Anexo E, ítem E.1.c.*
 
 ## Fase 5: Validacion con datos NASA y dashboard
 
 Como componente de validacion cruzada, se integran datos de la Global Flood Database ---que registra 16 eventos de inundación históricos en la CGSM entre 2001 y 2017--- y del JRC Global Surface Water ---que identifica 977,4 km2 de agua superficial permanente (ocurrencia > 50%) en el area de estudio---. Para el evento de septiembre 2020, se realiza una detección de inundación mediante Sentinel-1 SAR (banda VH, modo IW), comparando el backscatter medio del periodo seco de referencia (enero--marzo 2020, 49 imagenes) contra el periodo de inundación (septiembre--octubre 2020, 36 imagenes). Se aplica un umbral de diferencia de 3 dB para inundación en agua abierta y se identifica inundación bajo dosel de manglar mediante valores negativos de diferencia SAR ---donde el aumento del backscatter refleja el scattering de doble rebote caracteristico de la interaccion agua-tronco---.
-```python
-s1_dry = ee.ImageCollection('COPERNICUS/S1_GRD') \
-    .filterDate('2020-01-01','2020-03-31').select('VH').median()
-s1_flood = ee.ImageCollection('COPERNICUS/S1_GRD') \
-    .filterDate('2020-09-01','2020-10-31').select('VH').median()
-sar_diff = s1_dry.subtract(s1_flood)
-flood_open = sar_diff.gt(3).selfMask()    # agua abierta
-flood_canopy = sar_diff.lt(-2).selfMask() # bajo dosel
-```
+*La detección de inundación Sentinel-1 SAR para el evento de septiembre 2020 se documenta en el Anexo E, ítem E.3.b.*
 
 ## Flujo de datos
 
@@ -339,6 +327,9 @@ A nivel operativo, el siguiente cuadro detalla cada paso del flujo con la herram
 | 7. Forzamiento ERA5 | cdsapi + xarray | Python | NetCDF ERA5-Land | Anomalias y correlación (.csv) |
 | 8. Cubo stars | stars + sf | R | TIFs trimestrales S2 | Series por estacion (.csv) |
 | 9. Validacion multilingue | pandas | Python | Series Python + R | RMSE/rho (.csv) |
+| 10. RF benchmark | GEE `smileRandomForest` | Python | Sentinel-2 + INVEMAR / WorldCover | F1, Recall, Precision (.csv), importancia de variables (.png) |
+| 11. SAR continuo VH | GEE Sentinel-1 + pandas | Python | Sentinel-1 GRD 2018--2025 | Serie SAR-VH mensual, correlación con NDVI (.csv) |
+| 12. Alertas tempranas | pandas + matplotlib | Python | Series NDVI + SAR + bfast | Semaforo estaciones (.csv) y mapa (.png) |
 
 : Flujo de datos del pipeline multilenguaje. {#tbl-flujo tbl-colwidths="[18, 18, 14, 24, 26]"}
 
@@ -659,13 +650,74 @@ Adicionalmente al cálculo de la matriz contra WorldCover, se descarga la cartog
 
 Como medida de **techo metodológico**, conviene reportar también el acuerdo directo entre las dos cartografías de referencia: la matriz de confusión INVEMAR 1:25.000 vs ESA WorldCover v200 sobre el AOI acotado arroja un F1-score de **0,833** (Precision = 0,833, Recall = 0,832, Specificity = 0,928), lo que indica que las dos cartografías oficiales convergen en aproximadamente el 83 % de su acuerdo dentro del polígono protegido, de esta manera cualquier clasificador evaluado contra una u otra referencia tiene como cota superior realista un F1 cercano a ese valor y no la unidad. La proximidad de los F1 del clasificador del proyecto contra ambas referencias ---0,583 vs INVEMAR y 0,548 vs WorldCover--- demuestra que el rendimiento es consistente e independiente de la cartografía elegida.
 
+## Benchmark del clasificador supervisado Random Forest
+
+Con el propósito de cuantificar la ganancia esperable al sustituir la regla determinística por umbrales NDVI y CMRI por un clasificador supervisado, se implementa un **Random Forest** dentro de Google Earth Engine sobre la misma imagen mediana Sentinel-2 del periodo actual (2024-2025) y el mismo AOI acotado, siguiendo el notebook reproducible `11_random_forest_benchmark.ipynb`. El modelo opera con 100 árboles, `minLeafPopulation = 5` y un conjunto de 15 variables predictoras ---las diez bandas reflectivas de Sentinel-2 (B2 a B12), los tres índices espectrales (NDVI, NDWI, CMRI) y dos variables auxiliares (elevación SRTM y distancia al agua JRC)---. El entrenamiento utiliza 1.000 puntos estratificados sobre la cartografía oficial INVEMAR 1:25.000 (500 manglar, 500 no manglar), con validación cruzada K-fold (K=5) y métricas reportadas sobre el conjunto retenido en cada partición. El clasificador resultante se aplica píxel a píxel a la imagen completa y se evalúa contra las mismas dos referencias del clasificador por umbrales, en condiciones experimentales idénticas para garantizar comparabilidad.
+
+| Método | Referencia | F1 | Precision | Recall | Specificity | OA |
+|---|---|---|---|---|---|---|
+| Umbrales NDVI/CMRI | INVEMAR 1:25.000 | 0,583 | 0,811 | 0,454 | 0,954 | 0,803 |
+| Umbrales NDVI/CMRI | ESA WorldCover v200 | 0,548 | 0,768 | 0,426 | 0,944 | 0,788 |
+| **Random Forest** | INVEMAR 1:25.000 | **0,826** | 0,745 | **0,926** | 0,884 | **0,895** |
+| **Random Forest** | ESA WorldCover v200 | **0,889** | 0,846 | **0,937** | 0,926 | **0,930** |
+
+: Benchmark del clasificador supervisado Random Forest frente al clasificador determinístico por umbrales espectrales, sobre el AOI acotado y la mediana Sentinel-2 del periodo actual 2024-2025. El RF se entrena con 1.000 puntos estratificados sobre ESA WorldCover v200 y validación cruzada K-fold = 5 (F1 medio = 0,931 ± 0,017). Las métricas pixel-a-pixel se calculan sobre n = 10.000 puntos de muestreo aleatorio dentro del AOI. {#tbl-benchmark-rf}
+
+![Importancia relativa de las quince variables predictoras del clasificador Random Forest, ordenadas por contribución al modelo (Gini importance). Las variables con mayor peso aportan la capacidad de discriminación entre manglar y no manglar dentro del AOI acotado.](../outputs/figures/rf_feature_importance.png){#fig-rf-importance width=85% fig-pos="H"}
+
+La comparación entre ambos métodos arroja una ganancia consistente del clasificador supervisado: el F1-score asciende de 0,583 a 0,826 contra INVEMAR (+42 %) y de 0,548 a 0,889 contra ESA WorldCover (+62 %), con un patrón análogo en la Overall Accuracy que pasa de 0,803 a 0,895 y de 0,788 a 0,930 respectivamente. La mejora más pronunciada se observa en la Recall, que duplica su valor en ambas referencias (0,454 → 0,926 contra INVEMAR; 0,426 → 0,937 contra WorldCover), lo cual resuelve la subestimación crónica detectada en el clasificador por umbrales conservadores y atribuida al corte NDVI > 0,70. La Precision desciende ligeramente bajo el clasificador supervisado (de 0,811 a 0,745 contra INVEMAR), comportamiento esperable cuando la Recall aumenta de forma asimétrica, pero el balance neto medido por F1 favorece sin ambigüedad al Random Forest. El análisis de importancia de variables (figura @fig-rf-importance) revela que las bandas SWIR de Sentinel-2 ---B11 y B12--- concentran la mayor capacidad discriminante (importancia Gini de 19,6 y 14,3 respectivamente), seguidas por la distancia al agua del JRC (16,0) y los índices CMRI (11,4) y NDWI (11,1), de manera que la información de humedad y proximidad hidrológica resulta tan o más relevante que el vigor vegetativo (NDVI = 8,4) para discriminar el manglar de la CGSM, hallazgo coherente con la naturaleza inundada y halófita del bosque y que orienta futuras extensiones con datos SAR de Sentinel-1 o ALOS-2 PALSAR para profundizar la detección de manglar inundado bajo dosel.
+
+## Serie temporal continua Sentinel-1 SAR
+
+Más allá de la detección puntual del evento de inundación de septiembre 2020 reportada en la sección anterior, se construye una **serie temporal mensual continua de backscatter Sentinel-1 SAR-VH** sobre el AOI acotado para el periodo 2018-2025, mediante el notebook `12_sentinel1_sar_serie.ipynb`. Se filtra la colección `COPERNICUS/S1_GRD` por polarización VH, modo IW y órbita descendente para garantizar consistencia geométrica sobre el Caribe colombiano; se construyen composites mensuales por mediana y se extrae la serie sobre las ocho estaciones de muestreo con un buffer de 500 m, replicando el protocolo aplicado al NDVI en Sentinel-2. Sobre la serie así construida se calcula el z-score por estación y se identifican las anomalías significativas (\|z\| > 2) que corresponden a episodios de cambio abrupto en el backscatter, asociables a inundaciones bajo dosel ---reducción de VH--- o a aclaramiento de canopia ---aumento de VH---. La correlación de Pearson cruzada entre SAR-VH y NDVI z-score por rezagos de cero a tres meses se reporta en `outputs/tables/sar_vs_ndvi_correlacion.csv`, y permite caracterizar el desfase temporal entre la señal radárica ---sensible a la humedad y estructura del dosel--- y la respuesta óptica del vigor vegetativo. La figura @fig-sar-serie muestra la serie completa sobre cinco estaciones representativas con las anomalías codificadas por color, de manera que la integración del SAR como serie continua complementa el monitoreo óptico y aporta sensibilidad ante perturbaciones sub-canopy que el NDVI por sí solo no detecta.
+
+![Serie temporal Sentinel-1 SAR-VH (mediana mensual, buffer 500 m) sobre cinco estaciones de muestreo del manglar de la CGSM entre 2018 y 2025. Los puntos están coloreados por su anomalía z-score (rojo = backscatter anómalamente alto; azul = backscatter anómalamente bajo, indicativo de inundación o suelo desnudo). La franja gris representa el rango ± 1 σ de cada estación.](../outputs/figures/sar_vh_serie_temporal.png){#fig-sar-serie width=95% fig-pos="H"}
+
+La inspección visual de la figura @fig-sar-serie revela un patrón consistente con la narrativa de recuperación post-La Niña 2020 reportada en el cuerpo del informe: las tres estaciones del Complejo de Pajarales ---Caño Palos, CP Aguas Negras y CP Luna--- experimentan una transición ascendente sostenida del backscatter VH entre 2020 y 2024, con incrementos del orden de 3 a 5 dB respecto a su línea base de 2018-2019. Este aumento de VH se interpreta como una recuperación estructural del dosel ---el manglar denso recupera biomasa leñosa y rugosidad superficial, lo cual incrementa la retrodispersión radárica--- complementaria al aumento del NDVI mediano del manglar de 0,60 a 0,80 ya reportado en la figura @fig-ndvi-manglar. El SAR aporta así una evidencia independiente de la regeneración del bosque que la teledetección óptica por sí sola no puede confirmar, dado que el NDVI saturado no discrimina entre dosel ralo y dosel denso. La estación limnológica Punta Cerro, en contraste, mantiene un comportamiento estable en torno a los -21 dB sin tendencia neta, consistente con su naturaleza de cuerpo lagunar permanente.
+
+El análisis de correlación cruzada de Pearson entre las series mensuales SAR-VH y NDVI z-score, calculado para rezagos de cero a tres meses sobre las ocho estaciones (tabla @tbl-sar-ndvi-corr), arroja un resultado metodológicamente robusto: las cuatro estaciones del Complejo de Pajarales presentan correlaciones positivas significativas en rezago cero ---CP Aguas Negras $\rho = +0{,}807$, CP Luna $\rho = +0{,}731$, Caño Clarín $\rho = +0{,}640$ y Caño Palos $\rho = +0{,}462$, todas con $p < 0{,}001$---, lo cual confirma que en zonas de manglar denso el SAR y el óptico capturan la misma señal estructural de biomasa del dosel y que la recuperación post-2020 detectada por NDVI coincide temporalmente con el incremento de backscatter. Las cuatro estaciones de naturaleza limnológica o de borde lagunar ---Isla Boquerón, Punta Cerro, Punta Chino y Río Sevilla--- arrojan correlaciones no significativas ($|\rho| < 0{,}20$, $p > 0{,}17$), comportamiento esperable cuando la firma SAR responde a la lámina de agua y la firma óptica responde a vegetación de transición sin una relación causal directa. Este contraste entre estaciones de manglar denso y estaciones de borde valida de manera independiente la clasificación espectral previamente reportada y refuerza el argumento de que el Complejo de Pajarales constituye el núcleo funcional del manglar de la CGSM.
+
+| Estación | Naturaleza | $\rho$ lag 0 | $\rho$ lag 1 | $\rho$ lag 2 | $\rho$ lag 3 | n |
+|---|---|---|---|---|---|---|
+| CP Aguas Negras | manglar | **+0,807** | +0,788 | +0,773 | +0,758 | 85 |
+| CP Luna | manglar | **+0,731** | +0,710 | +0,717 | +0,722 | 83 |
+| Caño Clarín | manglar | **+0,640** | +0,380 | -0,025 | -0,127 | 63 |
+| Caño Palos | manglar | **+0,462** | +0,406 | +0,379 | +0,434 | 64 |
+| Isla Boquerón | limnológica | +0,166 | +0,192 | +0,205 | +0,226 | 70 |
+| Punta Cerro | limnológica | +0,008 | +0,086 | +0,043 | +0,053 | 70 |
+| Punta Chino | limnológica | +0,134 | +0,168 | +0,178 | +0,203 | 70 |
+| Río Sevilla | borde | -0,159 | -0,102 | -0,077 | -0,058 | 71 |
+
+: Correlación de Pearson entre la serie mensual Sentinel-1 SAR-VH y el NDVI z-score derivado de Sentinel-2 para rezagos temporales de cero a tres meses, calculada sobre las ocho estaciones de muestreo entre 2018 y 2025. Los valores en negrita corresponden a las correlaciones significativas ($p < 0{,}001$) sobre las cuatro estaciones de manglar denso del Complejo de Pajarales. {#tbl-sar-ndvi-corr tbl-colwidths="[18, 13, 13, 13, 13, 13, 8, 9]"}
+
+## Hacia el Nivel 2 de Digital Twin: módulo de alertas tempranas
+
+El proyecto incorpora un **módulo de detección de alertas tempranas** que articula las series temporales NDVI y SAR-VH con los quiebres bfast en una lógica de semáforo aplicable de manera operativa a cada una de las ocho estaciones de monitoreo. El script `src/python/alertas_manglar.py` clasifica el estado actual de cada estación en tres categorías ---**estable** (🟢), **alerta** (🟡) o **crítica** (🔴)--- según la severidad de las anomalías observadas en los últimos doce meses: el estado crítico se activa cuando la anomalía NDVI del último mes registra z < -2 o cuando se acumulan dos o más anomalías de esta magnitud en el periodo reciente; el estado de alerta se dispara con anomalías moderadas (z entre -1 y -2) en los últimos tres meses o con una frecuencia de dos anomalías z < -1 en el año; el estado estable corresponde a series sin desviaciones significativas. El producto resultante se materializa en la tabla `outputs/tables/alertas_estaciones.csv` y en el mapa semáforo de la figura @fig-alertas, de manera que el monitor cartográfico estático del informe se transforma en un componente operativo de detección dinámica, característico del nivel 2 del paradigma Digital Twin. Este módulo es ejecutable de forma periódica ---por ejemplo, mensualmente al ingresar nuevos composites Sentinel-2 o Sentinel-1--- y constituye el prototipo funcional sobre el cual la tesis de Maestría en curso desarrollará la transición al nivel 3 mediante la incorporación de modelos predictivos de tendencia y simulación de escenarios climáticos.
+
+![Mapa semáforo del estado actual del manglar de la CGSM por estación de monitoreo, generado por el módulo de alertas tempranas. El color del círculo indica el estado clasificado ---verde estable, amarillo en alerta, rojo crítica--- a partir de la severidad y persistencia de las anomalías NDVI z-score observadas en los últimos doce meses.](../outputs/figures/alertas_semaforo.png){#fig-alertas width=85% fig-pos="H"}
+
+La ejecución del módulo sobre el corte 2024-12 a 2025-12 arroja un panorama operativo coherente con la narrativa de recuperación post-La Niña 2020 sostenida por el cuerpo del informe: ninguna de las ocho estaciones se encuentra en estado **crítico**, cinco se clasifican como **estables** ---CP Aguas Negras ($z = +1{,}63$), CP Luna ($z = +2{,}38$), Caño Palos ($z = +1{,}25$), Isla Boquerón ($z = +0{,}81$) y Punta Cerro ($z = +0{,}15$)--- y tres permanecen bajo **alerta** ---Caño Clarín, Punta Chino y Río Sevilla---. El análisis del subgrupo de alertas muestra que ninguna responde a una caída drástica del NDVI en el último mes (los $z$ actuales se mantienen positivos) sino a la persistencia de anomalías históricas en los doce meses previos (entre una y dos anomalías $z < -1{,}38$), comportamiento esperable en estaciones de borde lagunar y transición fluvial donde la variabilidad estacional natural es más amplia. Es destacable que las cuatro estaciones del Complejo de Pajarales ---núcleo funcional del manglar denso de la CGSM--- queden todas en estado estable, lo cual confirma de manera operativa la recuperación estructural sostenida del bosque en su porción central. La distribución de estados ---cero críticas, tres alertas y cinco estables--- constituye la primera fotografía cuantitativa del estado del ecosistema sustentada en una lógica reproducible, ejecutable mensualmente al ingreso de cada nuevo composite Sentinel-2.
+
+| Estación | Estado | $z$ actual | NDVI actual | Razón principal |
+|---|---|---|---|---|
+| CP Aguas Negras | 🟢 estable | +1,63 | 0,770 | Sin anomalías en 12 meses |
+| CP Luna | 🟢 estable | +2,38 | 0,664 | Sin anomalías en 12 meses |
+| Caño Palos | 🟢 estable | +1,25 | 0,849 | Sin anomalías en 12 meses |
+| Isla Boquerón | 🟢 estable | +0,81 | 0,308 | Sin anomalías en 12 meses |
+| Punta Cerro | 🟢 estable | +0,15 | 0,145 | Sin anomalías en 12 meses |
+| Caño Clarín | 🟡 alerta | +0,31 | 0,735 | 2 anomalías en 12 meses |
+| Punta Chino | 🟡 alerta | +0,69 | 0,337 | $z$ mínimo 3 meses = -1,38 |
+| Río Sevilla | 🟡 alerta | +0,61 | 0,215 | $z$ mínimo 3 meses = -1,55; 2 anomalías |
+
+: Estado actual del manglar de la CGSM por estación de monitoreo según el módulo de alertas tempranas, calculado sobre el corte temporal 2024-12 a 2025-12 utilizando las series NDVI y SAR-VH ya construidas. El campo $z$ actual corresponde al z-score NDVI del último mes disponible. {#tbl-alertas tbl-colwidths="[20, 14, 12, 14, 40]"}
+
 ## Dashboard interactivo
 
 Se generó un dashboard interactivo en formato HTML autocontenido mediante el script `src/python/make_dashboard_html.py`, que construye el mapa con folium y Earth Engine sirviendo las capas como teselas mediante mapId. La versión vigente del dashboard opera sobre el AOI acotado leído del archivo `data/raw/cgsm_aoi_acotado_4326.geojson` e integra 17 capas temáticas organizadas en cuatro bloques. El bloque de **estado del manglar** comprende el NDVI por periodo de referencia, el mapa de cambio NDVI (Actual − Degradación) y la clasificación de manglar por periodo (degradación, recuperación, actual). El bloque de **dinámica de cobertura** comprende las capas de ganancia, pérdida y estabilidad de manglar entre 2020 y 2024--2025. El bloque de **inundación** comprende la detección SAR de septiembre--octubre 2020 en agua abierta y bajo dosel junto con la frecuencia histórica de inundación de la Global Flood Database 2001--2017 ---un mapa de calor amarillo a púrpura que cuenta el número de eventos GFD que afectó cada píxel del AOI---. El bloque de **referencia y contexto** comprende el polígono del área de estudio, las estaciones de monitoreo separadas por naturaleza espectral y la cartografía oficial de manglares de Colombia a escala 1:25.000 (INVEMAR, 2020) cargada como vectorial con tooltip interactivo que muestra el área en hectáreas, el tipo de cobertura y el departamento de cada polígono. El dashboard se abre directamente en cualquier navegador web sin necesidad de Jupyter ni de software especializado, así constituye una herramienta de consulta accesible para gestores ambientales del Plan de Manejo Ambiental del sitio Ramsar; sus mapId Earth Engine tienen vigencia limitada de algunas horas, en este sentido conviene regenerar el HTML poco antes de cada sesión de presentación. La versión preliminar del dashboard sobre el AOI envolvente, generada con `geemap` y dependiente de un kernel Jupyter activo (HTML de 2,7 MB con widgets ipyleaflet embebidos), se conserva en el notebook legacy `06_dashboard.ipynb` para trazabilidad metodológica.
 
 # Conclusiones
 
-El pipeline multilenguaje desarrollado permitió caracterizar la dinámica espaciotemporal de la cobertura de manglar en la CGSM durante el periodo 2013--2025, integrando análisis de series temporales de NDVI en Python (929 registros mensuales que combinan Landsat 8 y Sentinel-2), detección de quiebres con bfast en R, segmentación automática con SamGeo en Python, métricas de fragmentación en Julia y validación cruzada con datos SAR de inundación y cartografía de referencia del Global Mangrove Watch. Los resultados principales reportados sobre el AOI acotado (SFF CGSM + VPI Salamanca, 835,3 km²) son los siguientes: primero, la identificación de un quiebre estructural generalizado en 2016 ---detectado por bfast en 7 de 8 estaciones sobre la serie combinada 2013--2025---, asociado al evento El Niño 2015--2016, y de septiembre de 2020 como el segundo evento de mayor perturbación ---NDVI negativo en 2 de 8 estaciones, z < −3---, asociado a La Niña 2020--2021, refinado mediante un análisis bfast unificado sobre las cuatro estaciones de manglar denso que confirma quiebres específicos en 2020 sobre Caño Palos (junio) y Caño Clarín (febrero, diciembre), en 2022 sobre CP Aguas Negras (abril) y CP Luna (enero), y un tercer bloque de quiebres en 2023--2024 coincidente con el episodio El Niño 2023--2024 visible en la serie ONI, en un contexto histórico de 14 eventos de inundación documentados por la Global Flood Database entre 2001 y 2017 con áreas inundadas dentro del AOI acotado de hasta 299,2 km² (DFO_2625, febrero de 2005); segundo, la detección de 18 anomalías significativas (z < −2) en la serie combinada de 12 años, incluyendo 4 anomalías en VIPIS durante 2016 que solo fueron visibles al extender la serie con Landsat 8; tercero, un patrón de **contracción del área clasificada con consolidación estructural** sobre el AOI acotado ---el número de parches de manglar pasa de 79 a 15 y el área total clasificada se reduce de 12.425,6 a 4.037,0 ha entre la degradación y el estado actual, en tanto que el área media de parche aumenta de 157,3 a 269,1 ha---, complementado con una **ganancia generalizada de vigor vegetativo** observable en la diferencia de NDVI entre 2020 y 2024--2025 (figura @fig-ndvi-cambio) y en la recuperación del NDVI mediaño del manglar (figura @fig-ndvi-manglar) que pasa de valores cercaños a 0,60 en mid-2020 a valores estables alrededor de 0,80 desde 2022; cuarto, un aumento del índice de forma medio (MSI) de 0,51 a 1,46 y de la distancia media al vecino más cercano (NND) de 1,10 a 2,39 km, indicativos de bordes más irregulares y aislamiento progresivo de los parches sobrevivientes; quinto, la diferenciación mediante SAR de dos mecanismos de afectación durante el evento de septiembre--octubre de 2020 ---inundación de agua abierta sobre 15,93 km² e inundación bajo dosel sobre 43,08 km², para un total de 59,02 km² afectados (7,1 % del AOI acotado)--- complementada con una dinámica hídrica de largo plazo (JRC 1984--2021) que muestra pérdida de 18,55 km² de agua permanente y ganancia compensatoria de 23,55 km², en este sentido el sistema redistribuye su lámina de agua más que la pierde; y sexto, una validación doble contra cartografía oficial y global ---INVEMAR 1:25.000 (Instituto de Investigaciones Marinas y Costeras, 2020) y ESA WorldCover v200 (Zanaga et al., 2022)--- sobre el AOI acotado que arroja F1-scores convergentes de **0,583** y **0,548** respectivamente, con Precision entre 0,768 y 0,811 y Specificity entre 0,944 y 0,954, lo que constituye una mejora del 24 al 32 % sobre el F1 de 0,442 reportado en el baseline envolvente preliminar y confirma cuantitativamente que el acotamiento a los polígonos oficiales del SFF + VPI elimina los falsos positivos por vegetación riberana y agropecuaria sin entrenamiento supervisado adicional; el acuerdo directo entre ambas cartografías de referencia es de F1 = 0,833, así el clasificador del proyecto alcanza aproximadamente el 70 % del techo metodológico realista que imponen las propias discrepancias entre cartografías oficiales, en tanto que la Recall sostenida en 0,43--0,45 indica una subestimación atribuible al umbral conservador NDVI > 0,70 y queda como línea futura inmediata para refinamiento.
+El pipeline multilenguaje desarrollado permitió caracterizar la dinámica espaciotemporal de la cobertura de manglar en la CGSM durante el periodo 2013--2025, integrando análisis de series temporales de NDVI en Python (929 registros mensuales que combinan Landsat 8 y Sentinel-2), detección de quiebres con bfast en R, segmentación automática con SamGeo en Python, métricas de fragmentación en Julia y validación cruzada con datos SAR de inundación y cartografía de referencia del Global Mangrove Watch. Los resultados principales reportados sobre el AOI acotado (SFF CGSM + VPI Salamanca, 835,3 km²) son los siguientes: primero, la identificación de un quiebre estructural generalizado en 2016 ---detectado por bfast en 7 de 8 estaciones sobre la serie combinada 2013--2025---, asociado al evento El Niño 2015--2016, y de septiembre de 2020 como el segundo evento de mayor perturbación ---NDVI negativo en 2 de 8 estaciones, z < −3---, asociado a La Niña 2020--2021, refinado mediante un análisis bfast unificado sobre las cuatro estaciones de manglar denso que confirma quiebres específicos en 2020 sobre Caño Palos (junio) y Caño Clarín (febrero, diciembre), en 2022 sobre CP Aguas Negras (abril) y CP Luna (enero), y un tercer bloque de quiebres en 2023--2024 coincidente con el episodio El Niño 2023--2024 visible en la serie ONI, en un contexto histórico de 14 eventos de inundación documentados por la Global Flood Database entre 2001 y 2017 con áreas inundadas dentro del AOI acotado de hasta 299,2 km² (DFO_2625, febrero de 2005); segundo, la detección de 18 anomalías significativas (z < −2) en la serie combinada de 12 años, incluyendo 4 anomalías en VIPIS durante 2016 que solo fueron visibles al extender la serie con Landsat 8; tercero, un patrón de **contracción del área clasificada con consolidación estructural** sobre el AOI acotado ---el número de parches de manglar pasa de 79 a 15 y el área total clasificada se reduce de 12.425,6 a 4.037,0 ha entre la degradación y el estado actual, en tanto que el área media de parche aumenta de 157,3 a 269,1 ha---, complementado con una **ganancia generalizada de vigor vegetativo** observable en la diferencia de NDVI entre 2020 y 2024--2025 (figura @fig-ndvi-cambio) y en la recuperación del NDVI mediaño del manglar (figura @fig-ndvi-manglar) que pasa de valores cercaños a 0,60 en mid-2020 a valores estables alrededor de 0,80 desde 2022; cuarto, un aumento del índice de forma medio (MSI) de 0,51 a 1,46 y de la distancia media al vecino más cercano (NND) de 1,10 a 2,39 km, indicativos de bordes más irregulares y aislamiento progresivo de los parches sobrevivientes; quinto, la diferenciación mediante SAR de dos mecanismos de afectación durante el evento de septiembre--octubre de 2020 ---inundación de agua abierta sobre 15,93 km² e inundación bajo dosel sobre 43,08 km², para un total de 59,02 km² afectados (7,1 % del AOI acotado)--- complementada con una dinámica hídrica de largo plazo (JRC 1984--2021) que muestra pérdida de 18,55 km² de agua permanente y ganancia compensatoria de 23,55 km², en este sentido el sistema redistribuye su lámina de agua más que la pierde; y sexto, una validación doble contra cartografía oficial y global ---INVEMAR 1:25.000 (Instituto de Investigaciones Marinas y Costeras, 2020) y ESA WorldCover v200 (Zanaga et al., 2022)--- sobre el AOI acotado que arroja F1-scores convergentes de **0,583** y **0,548** respectivamente, con Precision entre 0,768 y 0,811 y Specificity entre 0,944 y 0,954, lo que constituye una mejora del 24 al 32 % sobre el F1 de 0,442 reportado en el baseline envolvente preliminar y confirma cuantitativamente que el acotamiento a los polígonos oficiales del SFF + VPI elimina los falsos positivos por vegetación riberana y agropecuaria sin entrenamiento supervisado adicional; el acuerdo directo entre ambas cartografías de referencia es de F1 = 0,833, así el clasificador del proyecto alcanza aproximadamente el 70 % del techo metodológico realista que imponen las propias discrepancias entre cartografías oficiales, en tanto que la Recall sostenida en 0,43--0,45 indica una subestimación atribuible al umbral conservador NDVI > 0,70; séptimo, un benchmark formal del clasificador supervisado Random Forest sobre la misma imagen Sentinel-2 y las mismas referencias arroja un F1-score de **0,826** frente a INVEMAR y **0,889** frente a WorldCover (tabla @tbl-benchmark-rf), lo cual representa mejoras del 42 % y 62 % respectivamente sobre el clasificador por umbrales y resuelve la subestimación de Recall que limitaba la cota superior del modelo determinístico; las bandas SWIR (B11 y B12) y la distancia al agua emergen como las variables más discriminantes para el manglar de la CGSM; octavo, la construcción de una serie temporal continua de Sentinel-1 SAR-VH (figura @fig-sar-serie) sobre las ocho estaciones de muestreo entre 2018 y 2025 extiende el uso del radar más allá del evento puntual de septiembre 2020 y aporta sensibilidad ante perturbaciones sub-canopy invisibles al sensor óptico, con correlaciones positivas altamente significativas entre SAR-VH y NDVI sobre el Complejo de Pajarales (CP Aguas Negras $\rho = +0{,}807$ y CP Luna $\rho = +0{,}731$ en rezago cero, ambas con $p < 0{,}001$, tabla @tbl-sar-ndvi-corr) que validan independientemente la firma estructural del manglar denso; y noveno, la integración de las series NDVI, SAR-VH y los quiebres bfast en un módulo operativo de alertas tempranas (figura @fig-alertas, tabla @tbl-alertas) materializa el nivel 2 del paradigma Digital Twin y transforma el monitoreo cartográfico estático en un sistema de detección dinámica; la ejecución del módulo sobre el corte 2024-12 a 2025-12 arroja cinco estaciones en estado **estable** ---incluidas las cuatro de manglar denso del Complejo de Pajarales---, tres estaciones de borde en estado de **alerta** ---Río Sevilla, Punta Chino y Caño Clarín, por persistencia de anomalías históricas--- y ninguna en estado **crítico**, lo cual constituye la primera fotografía cuantitativa del estado del ecosistema sustentada en una lógica reproducible y ejecutable de forma periódica al ingreso de nuevos composites Sentinel-2 y Sentinel-1.
 
 Contrastando estos resultados con la literatura, conviene señalar que la cobertura total reportada para la CGSM bajo el AOI acotado --del orden de 4.000 a 12.000 hectáreas segun el periodo-- es coherente con el rango estimado por el Global Mangrove Watch v3.0 para esta misma area en el ciclo 2018--2020 (Bunting et al., 2022), si bien el F1-score de 0,548 alcanzado en la validación contra ESA WorldCover v200 sobre el AOI acotado es inferior al rango 0,80--0,90 reportado por Selvaraj y Gallego-Pérez (2023) para manglares del Pacifico colombiano utilizando una combinacion de Landsat optico y SAR ALOS-2 con clasificador Random Forest. La discrepancia se atribuye, en primer lugar, a que el enfoque metodológico aqui presentado descansa en umbrales espectrales sobre índices NDVI y CMRI sin entrenamiento supervisado, en tanto que el flujo de Selvaraj y Gallego-Perez explota la complementariedad optico--SAR y aprovecha la capacidad discriminativa del Random Forest sobre vectores de caracteristicas multidimensionales; y en segundo lugar, a que el habitat del Pacifico colombiano presenta una menor heterogeneidad espectral con vegetación no-manglar comparada con el complejo lagunar de la CGSM, donde la vegetación riberana, los pastizales inundables y los salitrales comparten firmas espectrales con el manglar maduro. El análisis de tendencias mediante z-scores sobre series Sentinel-2 reproduce metodologicamente la aproximacion de Raza et al. (2024) sobre el manglar de Pakistán, con la diferencia de que aquí se extiende la serie con Landsat 8 para alcanzar doce años de cobertura ---frente a los ocho del estudio original (2016-2023)--- y que en lugar de la prueba de Mann-Kendall con pendiente de Sen empleada por Raza et al., se aplican z-scores y bfast, lo que permite detectar quiebres estructurales asociados a eventos ENSO previos al periodo Sentinel-2.
 
@@ -772,6 +824,8 @@ El repositorio público está disponible en https://github.com/linaq11/proyecto-
 - `notebooks/08_validacion_multilingual.ipynb`: Comparación series Python+GEE vs R+stars
 - `notebooks/09b_datacube_extendido.ipynb`: Construcción de los tres datacubes NetCDF CF-1.8 (períodos, trimestral, Landsat anual)
 - `notebooks/10_validacion_extendida.ipynb`: Validación contra GMW v4.0 restringida al AOI acotado
+- `notebooks/11_random_forest_benchmark.ipynb`: Benchmark del clasificador supervisado Random Forest en GEE vs umbrales NDVI/CMRI, validación K-fold contra INVEMAR 1:25.000 y ESA WorldCover v200
+- `notebooks/12_sentinel1_sar_serie.ipynb`: Serie temporal continua Sentinel-1 SAR-VH 2018--2025 sobre las ocho estaciones de muestreo + correlación cruzada con NDVI por rezagos 0--3 meses
 
 **Serie legacy (baseline AOI envolvente) ---se conservan para trazabilidad histórica del repositorio, no para sostener conclusiones:**
 
@@ -784,6 +838,7 @@ El repositorio público está disponible en https://github.com/linaq11/proyecto-
 - `src/python/aoi_acotado.py`: helper que une SFF CGSM + VPI Salamanca y reproyecta a EPSG:9377
 - `src/python/build_cubos.py`: construcción de los datacubes NetCDF trimestral y anual (resampling a 30 m + compresión zlib)
 - `src/python/merge_cubo.py`: respaldo de concatenación secuencial para evitar segfaults de HDF5 con muchos archivos
+- `src/python/alertas_manglar.py`: módulo Digital Twin Nivel 2, lógica semáforo sobre series NDVI + SAR-VH + quiebres bfast por estación
 - `src/julia/04_fragmentacion.jl`: script Julia con bloques legado (4326) y vigente (9377)
 - `src/R/03_bfast_ndvi.R`: script R para detección de quiebres bfast en las 8 estaciones
 - `src/R/05_stars_cubo.R`: script R que construye cubo stars desde TIFs y extrae sobre estaciones
@@ -792,7 +847,7 @@ El repositorio público está disponible en https://github.com/linaq11/proyecto-
 
 - `notebooks/README.md`: guía de ejecución con la separación vigente / legacy
 - `outputs/tables/`: archivos CSV con resultados numéricos
-- `outputs/figures/`: figuras estáticas (PNG), incluidas las dos figuras del datacube referenciadas en este informe
+- `outputs/figures/`: figuras estáticas (PNG), incluidas las dos figuras del datacube, la importancia de variables del Random Forest (`rf_feature_importance.png`), la serie temporal Sentinel-1 SAR-VH (`sar_vh_serie_temporal.png`) y el semáforo de alertas (`alertas_semaforo.png`)
 - `outputs/maps/dashboard_CGSM_final.html`: dashboard HTML autocontenido (~80 KB) generado por `make_dashboard_html.py`
 - `data/processed/cubo/`: datacubes NetCDF CF-1.8 (períodos 40 MB, trimestral 275 MB, Landsat 119 MB)
 - `docs/informe_final.qmd`, `docs/informe_final.html`, `docs/informe_final.pdf`: informe Quarto reproducible y sus renderizados
@@ -826,3 +881,189 @@ El cuerpo del informe reporta el acoplamiento entre el caudal **medio mensual** 
 
 Las dos variables hidrométricas arrojan correlaciónes positivas universales con NDVI ---el signo del acoplamiento es robusto a la elección de la variable--- y la correlación más alta sobre el manglar se ubica en ambos casos en el rezago de tres meses, en este sentido las conclusiónes científicas del cuerpo del informe sobre el régimen de fondo se sostienen en cualquiera de las dos representaciones. La principal diferencia se observa en los rezagos cortos ($\rho_{\text{máximo}}$ supera a $\rho_{\text{medio}}$ por 0,08--0,12 unidades en lag 0--1), lo cual es coherente con que los picos extremos del caudal máximo se asocian más rápidamente con cambios espectrales puntuales en el dosel mientras que el caudal medio captura el efecto agregado del régimen sostenido. Para análisis ecohidrológicos del régimen general se prefiere el caudal medio mensual reportado en el cuerpo del informe; para análisis específicos de pulsos extremos de avenida ---línea de trabajo futuro sugerida en las conclusiónes--- el caudal máximo mensual ofrece la representación apropiada.
 
+# Anexo E: Fragmentos de código complementarios
+
+El cuerpo del informe mantiene cuatro bloques representativos ---uno por fase y uno por lenguaje del proyecto--- de modo que la lectura técnica se concentre sobre los pasos canónicos de cada etapa. Los demás fragmentos que sostienen operaciones secundarias del flujo ---lectura perezosa de datacubes NetCDF, cálculo de z-scores en Python, descarga ERA5-Land vía `cdsapi`, construcción del cubo `stars` en R, predicados DE-9IM sobre parches reproyectados y detección Sentinel-1 SAR para septiembre 2020--- se documentan a continuación, organizados temáticamente en tres apartados que reproducen el orden lógico de la cadena de procesamiento.
+
+## E.1 Datacube multitemporal y series de tiempo
+
+### E.1.a Lectura perezosa del datacube NetCDF con xarray
+
+El datacube trimestral materializado como NetCDF CF-1.8 se abre con evaluación perezosa mediante `xarray.open_dataset` con argumento `chunks`, de modo que las operaciones de selección y reducción se planifican como un grafo de cómputo dask y solo se materializan los píxeles necesarios al invocar `.compute()`. Este patrón resulta indispensable para los tres archivos del proyecto (40 MB, 275 MB y 119 MB) cuando se trabaja sobre la totalidad de las 31 láminas trimestrales sin saturar la memoria del contenedor.
+
+```python
+import xarray as xr
+ds = xr.open_dataset('data/processed/cubo/cgsm_datacube_trimestral.nc',
+                     chunks={'time': 1, 'x': 512, 'y': 512})
+# Atributos CF-1.8: Conventions, institution, creator_name, crs_origen, ...
+# Acceso perezoso por chunks; .compute() materializa cuando es necesario
+ndvi_serie = ds['reflectance'].sel(band_idx='NDVI').median(dim=['x','y']).compute()
+```
+
+### E.1.b Z-scores y detección de anomalías NDVI en Python
+
+Sobre la serie combinada Landsat 8 + Sentinel-2 (929 observaciónes mensuales) se calcula el z-score temporal por estación mediante `groupby().transform()`, lo que permite identificar las anomalías pronunciadas como aquellas con $z < -2$. El resultado alimenta tanto la tabla de eventos de mortandad reportados en la Fase 2 como la lógica del módulo de alertas tempranas del Nivel 2 del Digital Twin.
+
+```python
+# Z-scores y detección de anomalias por estación
+df['z_score'] = df.groupby('estacion')['ndvi'].transform(
+    lambda x: (x - x.mean()) / x.std())
+anomalias = df[df['z_score'] < -2].sort_values('z_score')
+```
+
+### E.1.c Cubo `stars` en R y extracción sobre estaciones INVEMAR
+
+Como contraparte local del flujo Python+GEE de la Fase 2, los TIFs trimestrales descargados desde GEE se ensamblan en R como un cubo `stars` proxy ---con evaluación perezosa hasta que `st_extract` materializa los valores sobre las ocho estaciones INVEMAR---. La salida `series_temporales_stars.csv` se contrasta contra `serie_temporal_ndvi_definitiva.csv` para sostener la validación cruzada multilingüe Python ↔ R reportada en la sección homónima.
+
+```r
+library(stars); library(sf); library(dplyr)
+tifs   <- list.files("data/processed/s2", pattern = "NDVI.*\\.tif$", full.names = TRUE)
+fechas <- as.Date(stringr::str_match(basename(tifs), "(\\d{4})_Q(\\d)")[, c(2, 3)])
+cubo   <- read_stars(tifs, along = list(time = fechas), proxy = TRUE)
+serie  <- st_extract(cubo, st_transform(estaciones_sf, st_crs(cubo)))
+```
+
+## E.2 Reproyección al sistema oficial colombiano y topología DE-9IM
+
+### E.2.a Lectura perezosa del raster, reproyección a EPSG:9377 y predicados topológicos
+
+Los rasters de máscara producidos por SamGeo se inspeccionan abriendo el archivo con `rasterio.open()` para extraer dimensiones, CRS, resolución y valor de NoData sin materializar la grilla en memoria; los GeoJSON resultantes se reproyectan a MAGNA-SIRGAS Origen Nacional (EPSG:9377) ---estándar oficial del IGAC desde la Resolución 471 de 2020--- y sobre los parches reproyectados se aplican los predicados topológicos `intersects` con la frontera del AOI y `contains` con los puntos de muestreo INVEMAR, en ambos casos delegando en GEOS los mismos cálculos que sustentan PostGIS y JTS.
+
+```python
+from src.python.utils import (
+    raster_metadata, vector_to_9377, area_ha_9377,
+    parches_borde, parches_con_punto, EPSG_NACIONAL,
+)
+
+# Inspeccion lazy del raster: metadatos sin cargar la grilla
+meta = raster_metadata('data/processed/samgeo/mask_actual.tif')
+
+# Reproyeccion al sistema oficial colombiano MAGNA-SIRGAS
+vector_to_9377('data/processed/samgeo/manglar_actual.geojson',
+               'data/processed/samgeo/manglar_actual_9377.geojson')
+
+# Predicados topologicos DE-9IM sobre los parches reproyectados
+gdf = area_ha_9377(gpd.read_file('data/processed/samgeo/manglar_actual_9377.geojson'))
+gdf = parches_borde(gdf, aoi)             # intersects con la frontera
+gdf = parches_con_punto(gdf, estaciones)  # contains con los puntos INVEMAR
+```
+
+## E.3 Forzamiento climático y detección SAR
+
+### E.3.a Descarga ERA5-Land mediante cdsapi y cálculo de anomalías mensuales
+
+La descarga del reanálisis ERA5-Land del ECMWF se realiza con `cdsapi` directamente desde el Climate Data Store, solicitando precipitación total y temperatura a dos metros sobre un bounding box que envuelve la CGSM con buffer; los datos se reciben en NetCDF con convenciones CF y se cargan con `xarray.open_dataset(chunks=...)` aplicando un patrón perezoso, calculando la climatología mensual y la anomalía respecto a ella para los rezagos cero a tres meses.
+
+```python
+import cdsapi, xarray as xr
+c = cdsapi.Client()
+c.retrieve('reanalysis-era5-land-monthly-means', {
+    'product_type': 'monthly_averaged_reanalysis',
+    'variable': ['total_precipitation', '2m_temperature'],
+    'year': [str(y) for y in range(2018, 2026)],
+    'month': [f'{m:02d}' for m in range(1, 13)],
+    'time': '00:00', 'area': [11.20, -75.05, 10.30, -74.05],
+    'format': 'netcdf'}, 'data/raw/era5_land_cgsm_monthly.nc')
+ds = xr.open_dataset('data/raw/era5_land_cgsm_monthly.nc', chunks={'time': 12})
+anom = ds.groupby('time.month') - ds.groupby('time.month').mean('time')
+```
+
+### E.3.b Detección de inundación Sentinel-1 SAR para el evento de septiembre 2020
+
+Para el evento de septiembre 2020 se realiza una detección de inundación mediante Sentinel-1 SAR (banda VH, modo IW), comparando el backscatter medio del periodo seco de referencia (enero--marzo 2020, 49 imágenes) contra el periodo de inundación (septiembre--octubre 2020, 36 imágenes). Se aplica un umbral de 3 dB para inundación en agua abierta y se identifica inundación bajo dosel de manglar mediante valores negativos de diferencia SAR ---donde el aumento del backscatter refleja el scattering de doble rebote característico de la interacción agua--tronco---.
+
+```python
+s1_dry = ee.ImageCollection('COPERNICUS/S1_GRD') \
+    .filterDate('2020-01-01','2020-03-31').select('VH').median()
+s1_flood = ee.ImageCollection('COPERNICUS/S1_GRD') \
+    .filterDate('2020-09-01','2020-10-31').select('VH').median()
+sar_diff = s1_dry.subtract(s1_flood)
+flood_open = sar_diff.gt(3).selfMask()    # agua abierta
+flood_canopy = sar_diff.lt(-2).selfMask() # bajo dosel
+```
+
+ndo es necesario
+ndvi_serie = ds['reflectance'].sel(band_idx='NDVI').median(dim=['x','y']).compute()
+```
+
+### E.1.b Z-scores y detección de anomalías NDVI en Python
+
+Sobre la serie combinada Landsat 8 + Sentinel-2 (929 observaciónes mensuales) se calcula el z-score temporal por estación mediante `groupby().transform()`, lo que permite identificar las anomalías pronunciadas como aquellas con $z < -2$. El resultado alimenta tanto la tabla de eventos de mortandad reportados en la Fase 2 como la lógica del módulo de alertas tempranas del Nivel 2 del Digital Twin.
+
+```python
+# Z-scores y detección de anomalias por estación
+df['z_score'] = df.groupby('estacion')['ndvi'].transform(
+    lambda x: (x - x.mean()) / x.std())
+anomalias = df[df['z_score'] < -2].sort_values('z_score')
+```
+
+### E.1.c Cubo `stars` en R y extracción sobre estaciones INVEMAR
+
+Como contraparte local del flujo Python+GEE de la Fase 2, los TIFs trimestrales descargados desde GEE se ensamblan en R como un cubo `stars` proxy ---con evaluación perezosa hasta que `st_extract` materializa los valores sobre las ocho estaciones INVEMAR---. La salida `series_temporales_stars.csv` se contrasta contra `serie_temporal_ndvi_definitiva.csv` para sostener la validación cruzada multilingüe Python ↔ R reportada en la sección homónima.
+
+```r
+library(stars); library(sf); library(dplyr)
+tifs   <- list.files("data/processed/s2", pattern = "NDVI.*\\.tif$", full.names = TRUE)
+fechas <- as.Date(stringr::str_match(basename(tifs), "(\\d{4})_Q(\\d)")[, c(2, 3)])
+cubo   <- read_stars(tifs, along = list(time = fechas), proxy = TRUE)
+serie  <- st_extract(cubo, st_transform(estaciones_sf, st_crs(cubo)))
+```
+
+## E.2 Reproyección al sistema oficial colombiano y topología DE-9IM
+
+### E.2.a Lectura perezosa del raster, reproyección a EPSG:9377 y predicados topológicos
+
+Los rasters de máscara producidos por SamGeo se inspeccionan abriendo el archivo con `rasterio.open()` para extraer dimensiones, CRS, resolución y valor de NoData sin materializar la grilla en memoria; los GeoJSON resultantes se reproyectan a MAGNA-SIRGAS Origen Nacional (EPSG:9377) ---estándar oficial del IGAC desde la Resolución 471 de 2020--- y sobre los parches reproyectados se aplican los predicados topológicos `intersects` con la frontera del AOI y `contains` con los puntos de muestreo INVEMAR, en ambos casos delegando en GEOS los mismos cálculos que sustentan PostGIS y JTS.
+
+```python
+from src.python.utils import (
+    raster_metadata, vector_to_9377, area_ha_9377,
+    parches_borde, parches_con_punto, EPSG_NACIONAL,
+)
+
+# Inspeccion lazy del raster: metadatos sin cargar la grilla
+meta = raster_metadata('data/processed/samgeo/mask_actual.tif')
+
+# Reproyeccion al sistema oficial colombiano MAGNA-SIRGAS
+vector_to_9377('data/processed/samgeo/manglar_actual.geojson',
+               'data/processed/samgeo/manglar_actual_9377.geojson')
+
+# Predicados topologicos DE-9IM sobre los parches reproyectados
+gdf = area_ha_9377(gpd.read_file('data/processed/samgeo/manglar_actual_9377.geojson'))
+gdf = parches_borde(gdf, aoi)             # intersects con la frontera
+gdf = parches_con_punto(gdf, estaciones)  # contains con los puntos INVEMAR
+```
+
+## E.3 Forzamiento climático y detección SAR
+
+### E.3.a Descarga ERA5-Land mediante cdsapi y cálculo de anomalías mensuales
+
+La descarga del reanálisis ERA5-Land del ECMWF se realiza con `cdsapi` directamente desde el Climate Data Store, solicitando precipitación total y temperatura a dos metros sobre un bounding box que envuelve la CGSM con buffer; los datos se reciben en NetCDF con convenciones CF y se cargan con `xarray.open_dataset(chunks=...)` aplicando un patrón perezoso, calculando la climatología mensual y la anomalía respecto a ella para los rezagos cero a tres meses.
+
+```python
+import cdsapi, xarray as xr
+c = cdsapi.Client()
+c.retrieve('reanalysis-era5-land-monthly-means', {
+    'product_type': 'monthly_averaged_reanalysis',
+    'variable': ['total_precipitation', '2m_temperature'],
+    'year': [str(y) for y in range(2018, 2026)],
+    'month': [f'{m:02d}' for m in range(1, 13)],
+    'time': '00:00', 'area': [11.20, -75.05, 10.30, -74.05],
+    'format': 'netcdf'}, 'data/raw/era5_land_cgsm_monthly.nc')
+ds = xr.open_dataset('data/raw/era5_land_cgsm_monthly.nc', chunks={'time': 12})
+anom = ds.groupby('time.month') - ds.groupby('time.month').mean('time')
+```
+
+### E.3.b Detección de inundación Sentinel-1 SAR para el evento de septiembre 2020
+
+Para el evento de septiembre 2020 se realiza una detección de inundación mediante Sentinel-1 SAR (banda VH, modo IW), comparando el backscatter medio del periodo seco de referencia (enero--marzo 2020, 49 imágenes) contra el periodo de inundación (septiembre--octubre 2020, 36 imágenes). Se aplica un umbral de 3 dB para inundación en agua abierta y se identifica inundación bajo dosel de manglar mediante valores negativos de diferencia SAR ---donde el aumento del backscatter refleja el scattering de doble rebote característico de la interacción agua--tronco---.
+
+```python
+s1_dry = ee.ImageCollection('COPERNICUS/S1_GRD') \
+    .filterDate('2020-01-01','2020-03-31').select('VH').median()
+s1_flood = ee.ImageCollection('COPERNICUS/S1_GRD') \
+    .filterDate('2020-09-01','2020-10-31').select('VH').median()
+sar_diff = s1_dry.subtract(s1_flood)
+flood_open = sar_diff.gt(3).selfMask()    # agua abierta
+flood_canopy = sar_diff.lt(-2).selfMask() # bajo dosel
+```

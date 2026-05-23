@@ -1,0 +1,9 @@
+estacion,estado,z_actual,ndvi_actual,razon,icono
+CP_Aguas_Negras,estable,1.633,0.77,Sin anomalías significativas en 12 meses,🟢
+CP_Luna,estable,2.38,0.664,Sin anomalías significativas en 12 meses,🟢
+Cano_Clarin,alerta,0.314,0.735,z mínimo últimos 3 meses = 0.31 · 2 anomalías 12 meses,🟡
+Cano_Palos,estable,1.246,0.849,Sin anomalías significativas en 12 meses,🟢
+Isla_Boqueron,estable,0.808,0.308,Sin anomalías significativas en 12 meses,🟢
+Punta_Cerro,estable,0.153,0.145,Sin anomalías significativas en 12 meses,🟢
+Punta_Chino,alerta,0.693,0.337,z mínimo últimos 3 meses = -1.38 · 1 anomalías 12 meses,🟡
+Rio_Sevilla,alerta,0.612,0.215,z mínimo últimos 3 meses = -1.55 · 2 anomalías 12 meses,🟡

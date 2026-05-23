@@ -18,6 +18,7 @@ from pathlib import Path
 import ee
 import folium
 import geopandas as gpd
+import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT_DIR = ROOT / 'outputs' / 'maps'
@@ -119,6 +120,35 @@ md = manglar('2020-07-01', '2020-12-31')
 mr = manglar('2022-01-01', '2022-06-30')
 ma = manglar('2024-07-01', '2025-06-30')
 
+# === Clasificador Random Forest (notebook 11) ===
+# Replica del clasificador supervisado entrenado con 1.000 puntos estratificados
+# sobre ESA WorldCover v200 (F1=0,889 contra WorldCover; F1=0,826 contra INVEMAR).
+# Usa la misma mediana Sentinel-2 del periodo actual y las 15 variables predictoras.
+print('Entrenando Random Forest sobre WorldCover (esto tarda 1-2 min)...')
+img_rf = (s2.filterDate('2024-07-01', '2025-06-30')
+          .median()
+          .select(['B2','B3','B4','B5','B6','B7','B8','B8A','B11','B12',
+                   'NDVI','NDWI','CMRI'])
+          .addBands(srtm.rename('ELEV'))
+          .addBands(jrc.unmask(0).rename('JRC_OCC'))
+          .clip(aoi))
+BANDAS_RF = img_rf.bandNames()
+
+wc = ee.Image('ESA/WorldCover/v200/2021').select('Map').clip(aoi)
+wc_mangrove = wc.eq(95).rename('mangrove')   # clase 95 = manglar
+
+muestras = wc_mangrove.addBands(img_rf).stratifiedSample(
+    numPoints=500, classBand='mangrove', region=aoi, scale=10, seed=42,
+    geometries=False)
+
+rf = (ee.Classifier.smileRandomForest(numberOfTrees=100, minLeafPopulation=5,
+                                       seed=42)
+      .train(features=muestras, classProperty='mangrove',
+             inputProperties=BANDAS_RF))
+
+ma_rf = img_rf.classify(rf).rename('manglar_rf').eq(1).selfMask().clip(aoi)
+print('  Random Forest listo, generando tile...')
+
 db = md.unmask(0).gt(0)
 ab = ma.unmask(0).gt(0)
 perdida  = db.And(ab.Not()).selfMask()
@@ -135,16 +165,42 @@ s1f = (ee.ImageCollection('COPERNICUS/S1_GRD')
        .select('VH').median().clip(aoi))
 sar_diff = s1d.subtract(s1f)
 
+# Las 8 estaciones canónicas del proyecto (5 INVEMAR-GBIF + 3 complementarias)
 stations = {
-    'Isla Boqueron':  (-74.298, 10.962, 'I'),
-    'Punta Cerro':    (-74.283, 10.973, 'I'),
-    'Punta Chino':    (-74.305, 10.912, 'I'),
-    'Rio Sevilla':    (-74.325, 10.880, 'I'),
-    'Cano Palos':     (-74.471, 10.758, 'I'),
-    'CP Pajarales':   (-74.75,  10.85,  'C'),
-    'Cano Clarin':    (-74.55,  10.55,  'C'),
-    'VIPIS':          (-74.65,  11.02,  'C'),
+    'Isla Boqueron':   (-74.298, 10.962, 'I'),
+    'Punta Cerro':     (-74.283, 10.973, 'I'),
+    'Punta Chino':     (-74.305, 10.912, 'I'),
+    'Rio Sevilla':     (-74.325, 10.880, 'I'),
+    'Cano Palos':      (-74.471, 10.758, 'I'),
+    'CP Luna':         (-74.560, 10.870, 'C'),
+    'CP Aguas Negras': (-74.570, 10.800, 'C'),
+    'Cano Clarin':     (-74.500, 10.600, 'C'),
 }
+
+# === Cargar estado semáforo (Digital Twin Nivel 2) ===
+ALERTAS_CSV = ROOT / 'outputs' / 'tables' / 'alertas_estaciones.csv'
+ESTADO_COLORS = {'estable': '#43A047', 'alerta': '#FBC02D',
+                 'critica': '#D32F2F', 'sin_datos': '#9E9E9E'}
+ESTADO_ICON = {'estable': '🟢', 'alerta': '🟡',
+               'critica': '🔴', 'sin_datos': '⚪'}
+
+if ALERTAS_CSV.exists():
+    df_alertas = pd.read_csv(ALERTAS_CSV)
+    estado_por_estacion = {
+        row['estacion'].replace('_', ' '): {
+            'estado': row['estado'],
+            'razon': row.get('razon', ''),
+            'z_actual': row.get('z_actual', None),
+            'ndvi_actual': row.get('ndvi_actual', None),
+        }
+        for _, row in df_alertas.iterrows()
+    }
+    conteo_estados = df_alertas['estado'].value_counts().to_dict()
+    print(f'Estado semáforo cargado: {conteo_estados}')
+else:
+    estado_por_estacion = {}
+    conteo_estados = {}
+    print('AVISO: alertas_estaciones.csv no encontrado, se usará coloreo por fuente')
 inv = [ee.Feature(ee.Geometry.Point([lon, lat]).buffer(500))
        for n, (lon, lat, t) in stations.items() if t == 'I']
 com = [ee.Feature(ee.Geometry.Point([lon, lat]).buffer(500))
@@ -172,9 +228,10 @@ ly_ndvi_rec = m.add_ee_layer(ndvi_rec,    vis_ndvi,   'NDVI Recuperación (2022)
 ly_ndvi_chg = m.add_ee_layer(ndvi_change, vis_change, 'Cambio NDVI (Actual − Degradación)', shown=False)
 
 # --- Manglar por periodo (clasificación) ---
-ly_md = m.add_ee_layer(md, {'palette': ['#E57373']}, 'Manglar Degradación (2020)',  shown=False, opacity=0.75)
-ly_mr = m.add_ee_layer(mr, {'palette': ['#FFB74D']}, 'Manglar Recuperación (2022)', shown=False, opacity=0.75)
-ly_ma = m.add_ee_layer(ma, {'palette': ['#81C784']}, 'Manglar Actual (2024-2025)',  shown=False, opacity=0.75)
+ly_md = m.add_ee_layer(md, {'palette': ['#E57373']}, 'Manglar Degradación (2020, umbrales)',  shown=False, opacity=0.75)
+ly_mr = m.add_ee_layer(mr, {'palette': ['#FFB74D']}, 'Manglar Recuperación (2022, umbrales)', shown=False, opacity=0.75)
+ly_ma = m.add_ee_layer(ma, {'palette': ['#81C784']}, 'Manglar Actual (2024-2025, umbrales · F1=0,55)',  shown=False, opacity=0.75)
+ly_rf = m.add_ee_layer(ma_rf, {'palette': ['#2E7D32']}, 'Manglar Actual (Random Forest · F1=0,83)', shown=False, opacity=0.80)
 
 # --- Dinámica de cambio 2020 → 2024-2025 ---
 ly_perdida  = m.add_ee_layer(perdida,  {'palette': ['#EF5350']}, 'Pérdida de manglar',  shown=True, opacity=0.8)
@@ -194,37 +251,66 @@ ly_com_buf = m.add_ee_layer(cst, {}, 'Estaciones complementarias')
 from folium import FeatureGroup, CircleMarker, Marker
 from folium.features import DivIcon
 
-manglar_set     = {'Cano Palos', 'Cano Clarin', 'CP Pajarales', 'VIPIS'}
+manglar_set     = {'Cano Palos', 'Cano Clarin', 'CP Aguas Negras', 'CP Luna'}
 limnologica_set = {'Isla Boqueron', 'Punta Cerro', 'Punta Chino', 'Rio Sevilla'}
 
-# Centroides de estaciones — añadidos directamente al mapa (no como capa controlable)
-# para evitar duplicar leyendas con "Estaciones INVEMAR" y "Estaciones complementarias".
-# Se colorean por fuente para que coincidan con las capas de buffer correspondientes.
+# FeatureGroups por estado — sin entrada en LayerControl, controlables desde
+# el panel de filtros que se inyecta abajo.
+fg_estable = FeatureGroup(name='__fg_estable', show=True, control=False)
+fg_alerta  = FeatureGroup(name='__fg_alerta',  show=True, control=False)
+fg_critica = FeatureGroup(name='__fg_critica', show=True, control=False)
+fg_sindat  = FeatureGroup(name='__fg_sindatos', show=True, control=False)
+fg_por_estado = {'estable': fg_estable, 'alerta': fg_alerta,
+                 'critica': fg_critica, 'sin_datos': fg_sindat}
+
+# Centroides de estaciones — coloreados por estado semáforo del módulo de alertas
+# tempranas (Digital Twin Nivel 2). Si no hay alertas disponibles, se vuelve al
+# coloreo por fuente como respaldo visual.
 for nombre, (lon, lat, tipo) in stations.items():
     fuente     = 'INVEMAR-GBIF' if tipo == 'I' else 'Complementaria'
     naturaleza = 'manglar' if nombre in manglar_set else 'limnológica'
-    color = '#E91E63' if tipo == 'I' else '#FF9800'
 
-    CircleMarker(
+    info = estado_por_estacion.get(nombre, {})
+    estado = info.get('estado', 'sin_datos')
+    color  = ESTADO_COLORS.get(estado, '#9E9E9E')
+    icono  = ESTADO_ICON.get(estado, '⚪')
+
+    z_str    = f"{info.get('z_actual'):+.2f}" if info.get('z_actual') is not None else '—'
+    ndvi_str = f"{info.get('ndvi_actual'):.3f}" if info.get('ndvi_actual') is not None else '—'
+    razon    = info.get('razon', 'Sin información de alertas')
+
+    marker = CircleMarker(
         location=[lat, lon],
-        radius=5,
+        radius=7,
         color='white',
-        weight=1.5,
+        weight=2,
         fill=True,
         fill_color=color,
         fill_opacity=0.95,
         tooltip=folium.Tooltip(
-            f'<b>{nombre}</b><br><span style="font-size:10px">{naturaleza} · {fuente}</span>',
+            f'<b>{icono} {nombre}</b><br>'
+            f'<span style="font-size:10px">Estado: <b>{estado}</b> · '
+            f'{naturaleza} · {fuente}</span>',
             sticky=False,
         ),
         popup=folium.Popup(
-            f'<b>{nombre}</b><br>'
-            f'Fuente: {fuente}<br>'
-            f'Naturaleza espectral: {naturaleza}<br>'
-            f'Coordenadas: {lat:.4f}, {lon:.4f}',
-            max_width=260,
+            f'<b>{icono} {nombre}</b><br>'
+            f'<b>Estado semáforo:</b> {estado}<br>'
+            f'<b>Naturaleza espectral:</b> {naturaleza}<br>'
+            f'<b>Fuente:</b> {fuente}<br>'
+            f'<b>z NDVI actual:</b> {z_str} · <b>NDVI:</b> {ndvi_str}<br>'
+            f'<b>Razón:</b> {razon}<br>'
+            f'<b>Coords:</b> {lat:.4f}, {lon:.4f}',
+            max_width=300,
         ),
-    ).add_to(m)
+    )
+    marker.add_to(fg_por_estado.get(estado, fg_sindat))
+
+# Agregar los grupos al mapa
+fg_estable.add_to(m)
+fg_alerta.add_to(m)
+fg_critica.add_to(m)
+fg_sindat.add_to(m)
 
 # Capa 2: etiquetas con nombres (sin fondo, opcional/prendible-apagable)
 grupo_etiquetas = FeatureGroup(name='Etiquetas de estaciones', show=False)
@@ -294,7 +380,7 @@ folium.LayerControl(collapsed=False, position='topright').add_to(m)
 GroupedLayerControl(
     groups={
         '🌿 Estado del manglar (NDVI)': [ly_ndvi_act, ly_ndvi_deg, ly_ndvi_rec, ly_ndvi_chg],
-        '🗺️ Clasificación por periodo': [ly_md, ly_mr, ly_ma],
+        '🗺️ Clasificación por periodo': [ly_md, ly_mr, ly_ma, ly_rf],
         '🔄 Dinámica de cambio 2020→2024': [ly_perdida, ly_estable, ly_ganancia],
         '💧 Inundación SAR sept-2020': [ly_sar_open, ly_sar_dose],
         '📍 Estaciones y AOI': [ly_aoi, grupo_etiquetas, ly_inv_buf, ly_com_buf],
@@ -326,7 +412,8 @@ setTimeout(function () {
     'Cambio NDVI': {tipo:'grad', from:'#d73027', to:'#1a9850'},
     'Manglar Degradación': {tipo:'fill', color:'#E57373'},
     'Manglar Recuperación': {tipo:'fill', color:'#FFB74D'},
-    'Manglar Actual': {tipo:'fill', color:'#81C784'},
+    'Manglar Actual (2024-2025, umbrales': {tipo:'fill', color:'#81C784'},
+    'Manglar Actual (Random Forest': {tipo:'fill', color:'#2E7D32'},
     'Pérdida de manglar': {tipo:'fill', color:'#EF5350'},
     'Manglar estable': {tipo:'fill', color:'#66BB6A'},
     'Ganancia de manglar': {tipo:'fill', color:'#42A5F5'},
@@ -424,9 +511,15 @@ class TimeSlider(MacroElement):
       <span id="cgsm-year-label" style="color:#1f5a4b; font-weight:700;
             font-size:14px; margin-left:4px;">{{this.year_max}}</span>
     </span>
-    <button id="cgsm-ts-toggle" style="padding:3px 10px; font-size:11px;
-            border:1px solid #1f5a4b; background:#1f5a4b; color:white;
-            border-radius:4px; cursor:pointer; font-weight:600;">▶ Activar</button>
+    <div style="display:flex; gap:4px;">
+      <button id="cgsm-ts-toggle" style="padding:3px 8px; font-size:11px;
+              border:1px solid #1f5a4b; background:#1f5a4b; color:white;
+              border-radius:4px; cursor:pointer; font-weight:600;">▶ Activar</button>
+      <button id="cgsm-ts-play" style="padding:3px 8px; font-size:11px;
+              border:1px solid #aa4c2a; background:white; color:#aa4c2a;
+              border-radius:4px; cursor:pointer; font-weight:600;"
+              title="Animar año por año">▶▶ Auto</button>
+    </div>
   </div>
   <input type="range" min="{{this.year_min}}" max="{{this.year_max}}" step="1"
          value="{{this.year_max}}" id="cgsm-year-slider"
@@ -464,6 +557,8 @@ setTimeout(function() {
   var slider = document.getElementById('cgsm-year-slider');
   var label  = document.getElementById('cgsm-year-label');
   var toggle = document.getElementById('cgsm-ts-toggle');
+  var playBtn = document.getElementById('cgsm-ts-play');
+  var cgsmPlayInterval = null;
 
   slider.addEventListener('input', function(e) {
     label.innerText = e.target.value;
@@ -482,6 +577,30 @@ setTimeout(function() {
       toggle.style.background = '#aa4c2a';
     }
   });
+
+  playBtn.addEventListener('click', function() {
+    if (cgsmPlayInterval) {
+      clearInterval(cgsmPlayInterval);
+      cgsmPlayInterval = null;
+      playBtn.innerText = '▶▶ Auto';
+      playBtn.style.background = 'white';
+      playBtn.style.color = '#aa4c2a';
+      return;
+    }
+    if (!cgsmActiveLayer) { toggle.click(); }
+    playBtn.innerText = '■ Pausar';
+    playBtn.style.background = '#aa4c2a';
+    playBtn.style.color = 'white';
+    cgsmPlayInterval = setInterval(function() {
+      var y = parseInt(slider.value);
+      var max = parseInt(slider.max);
+      var min = parseInt(slider.min);
+      y = (y >= max) ? min : (y + 1);
+      slider.value = y;
+      label.innerText = y;
+      cgsmShowYear(y);
+    }, 1500);
+  });
 }, 400);
 {% endmacro %}
         """)
@@ -495,8 +614,383 @@ print(f'  {len(ndvi_urls)} URLs registradas.')
 
 m.add_child(TimeSlider(ndvi_urls, vis_ndvi['palette']))
 
+
+# ========================================================================
+# DATOS PARA PANELES DINÁMICOS (Plotly + Datatable)
+# ========================================================================
+NDVI_CSV = ROOT / 'outputs' / 'tables' / 'ndvi_combinado_2013_2025.csv'
+
+def _norm_name(s):
+    """Normaliza nombres con underscores → espacios para empatar con stations."""
+    return s.replace('_', ' ').strip()
+
+ndvi_series = {}
+if NDVI_CSV.exists():
+    df_ndvi = pd.read_csv(NDVI_CSV)
+    df_ndvi['estacion'] = df_ndvi['estacion'].astype(str).map(_norm_name)
+    # Filtrar solo estaciones canónicas del dashboard
+    df_ndvi = df_ndvi[df_ndvi['estacion'].isin(stations.keys())]
+    for est in stations.keys():
+        sub = df_ndvi[df_ndvi['estacion'] == est].sort_values('fecha')
+        if len(sub):
+            ndvi_series[est] = {
+                'fechas': sub['fecha'].astype(str).tolist(),
+                'ndvi':   [round(float(v), 4) for v in sub['ndvi'].tolist()],
+            }
+    print(f'Serie NDVI cargada: {len(ndvi_series)} estaciones')
+
+# Tabla resumen del semáforo
+alertas_data = []
+for est, info in estado_por_estacion.items():
+    if est not in stations:
+        continue
+    icono = ESTADO_ICON.get(info['estado'], '⚪')
+    alertas_data.append({
+        'estacion': est,
+        'icono': icono,
+        'estado': info['estado'],
+        'z_actual': f"{info['z_actual']:+.2f}" if info.get('z_actual') is not None else '—',
+        'ndvi_actual': f"{info['ndvi_actual']:.3f}" if info.get('ndvi_actual') is not None else '—',
+        'razon': info.get('razon', '—'),
+    })
+
+n_estable = conteo_estados.get('estable', 0)
+n_alerta  = conteo_estados.get('alerta', 0)
+n_critica = conteo_estados.get('critica', 0)
+
+
+# ========================================================================
+# PANEL HEADER + FILTROS + AYUDA
+# ========================================================================
+class HeaderPanel(MacroElement):
+    """Cabecera flotante arriba-izquierda con: título, contador semáforo,
+    filtros por estado y botón de ayuda."""
+    def __init__(self, n_estable, n_alerta, n_critica,
+                 fg_estable_name, fg_alerta_name, fg_critica_name):
+        super().__init__()
+        self.n_estable = n_estable
+        self.n_alerta  = n_alerta
+        self.n_critica = n_critica
+        self.fg_estable = fg_estable_name
+        self.fg_alerta  = fg_alerta_name
+        self.fg_critica = fg_critica_name
+        self._template = Template(r"""
+{% macro html(this, kwargs) %}
+<div id="cgsm-header" style="position:absolute; top:12px; left:60px;
+     z-index:1000;
+     background:rgba(255,255,255,0.97); padding:10px 14px; border-radius:8px;
+     box-shadow:0 2px 8px rgba(0,0,0,0.18);
+     font-family:'Inter',-apple-system,sans-serif; font-size:12px;
+     border:1px solid #d4e4dd; width:340px;">
+  <div style="display:flex; align-items:center; justify-content:space-between;">
+    <div>
+      <div style="font-size:14px; font-weight:700; color:#1f5a4b;">
+        CGSM · Monitor de manglar 2018-2025
+      </div>
+      <div style="font-size:10.5px; color:#666; margin-top:1px;">
+        Pipeline multilenguaje · Digital Twin Nivel 2
+      </div>
+    </div>
+    <button id="cgsm-help-btn" title="Ayuda"
+            style="border:1px solid #1f5a4b; background:white; color:#1f5a4b;
+                   width:26px; height:26px; border-radius:50%; cursor:pointer;
+                   font-weight:700; font-size:13px;">?</button>
+  </div>
+  <div style="margin-top:8px; padding:6px 8px; background:#f5f8fa;
+       border-radius:4px; font-size:11px;">
+    <b>Estado actual:</b>
+    <span style="margin-left:6px; cursor:pointer; user-select:none;"
+          id="cgsm-flt-estable" data-active="1"
+          title="Click para ocultar/mostrar estables">
+      🟢 <b>{{this.n_estable}}</b> estables</span>
+    <span style="margin-left:10px; cursor:pointer; user-select:none;"
+          id="cgsm-flt-alerta" data-active="1"
+          title="Click para ocultar/mostrar alertas">
+      🟡 <b>{{this.n_alerta}}</b> en alerta</span>
+    <span style="margin-left:10px; cursor:pointer; user-select:none;"
+          id="cgsm-flt-critica" data-active="1"
+          title="Click para ocultar/mostrar críticas">
+      🔴 <b>{{this.n_critica}}</b> críticas</span>
+  </div>
+</div>
+
+<div id="cgsm-help-modal" style="display:none; position:absolute; top:80px;
+     left:60px; z-index:1001;
+     background:white; padding:16px 18px; border-radius:8px;
+     box-shadow:0 4px 16px rgba(0,0,0,0.28);
+     font-family:'Inter',-apple-system,sans-serif; font-size:12px;
+     border:1px solid #d4e4dd; width:380px; line-height:1.5;">
+  <div style="display:flex; justify-content:space-between; align-items:center;
+       border-bottom:1px solid #eee; padding-bottom:6px; margin-bottom:10px;">
+    <b style="color:#1f5a4b; font-size:13px;">¿Cómo usar este dashboard?</b>
+    <span id="cgsm-help-close" style="cursor:pointer; color:#aa4c2a;
+          font-weight:700; padding:0 6px;">×</span>
+  </div>
+  <p style="margin:0 0 8px 0;"><b>1. Panel de capas (arriba-derecha):</b>
+     prende/apaga capas por temática: estado del manglar (NDVI), clasificación
+     por periodo (umbrales y Random Forest), dinámica de cambio 2020→2024,
+     inundación SAR y referencias cartográficas (INVEMAR, GFD).</p>
+  <p style="margin:0 0 8px 0;"><b>2. Estaciones de muestreo:</b>
+     los círculos del mapa están coloreados por el módulo de alertas tempranas
+     (🟢 estable, 🟡 alerta, 🔴 crítica). Haz click sobre cualquiera para ver
+     z-score, NDVI actual y la razón del estado.</p>
+  <p style="margin:0 0 8px 0;"><b>3. Filtros:</b>
+     en el contador superior puedes click en 🟢/🟡/🔴 para ocultar o mostrar
+     ese subconjunto de estaciones.</p>
+  <p style="margin:0 0 8px 0;"><b>4. Slider temporal (abajo-izquierda):</b>
+     desliza el año (2018-2025) para ver la mediana NDVI de cada periodo, o
+     pulsa <b>▶▶ Auto</b> para animar año por año.</p>
+  <p style="margin:0;"><b>5. Panel de análisis (abajo-derecha):</b>
+     alterna entre la <b>gráfica</b> de serie temporal por estación y la
+     <b>tabla</b> con el detalle del semáforo.</p>
+</div>
+{% endmacro %}
+
+{% macro script(this, kwargs) %}
+setTimeout(function() {
+  var helpBtn   = document.getElementById('cgsm-help-btn');
+  var helpModal = document.getElementById('cgsm-help-modal');
+  var helpClose = document.getElementById('cgsm-help-close');
+  if (helpBtn) helpBtn.addEventListener('click', function() {
+    helpModal.style.display = (helpModal.style.display === 'none') ? 'block' : 'none';
+  });
+  if (helpClose) helpClose.addEventListener('click', function() {
+    helpModal.style.display = 'none';
+  });
+
+  // Filtros — toggle FeatureGroups por estado
+  var fgRef = {
+    'estable': {{this.fg_estable}},
+    'alerta':  {{this.fg_alerta}},
+    'critica': {{this.fg_critica}}
+  };
+  var mapRef = {{this._parent.get_name()}};
+
+  function applyFilter(estado) {
+    var el = document.getElementById('cgsm-flt-' + estado);
+    if (!el) return;
+    var active = el.dataset.active === '1';
+    var fg = fgRef[estado];
+    if (!fg) return;
+    if (active) {
+      mapRef.removeLayer(fg);
+      el.dataset.active = '0';
+      el.style.opacity = '0.35';
+      el.style.textDecoration = 'line-through';
+    } else {
+      mapRef.addLayer(fg);
+      el.dataset.active = '1';
+      el.style.opacity = '1';
+      el.style.textDecoration = 'none';
+    }
+  }
+  ['estable','alerta','critica'].forEach(function(estado) {
+    var el = document.getElementById('cgsm-flt-' + estado);
+    if (el) el.addEventListener('click', function() { applyFilter(estado); });
+  });
+}, 700);
+{% endmacro %}
+        """)
+
+m.add_child(HeaderPanel(n_estable, n_alerta, n_critica,
+                         fg_estable.get_name(), fg_alerta.get_name(),
+                         fg_critica.get_name()))
+
+
+# ========================================================================
+# PANEL ESTADÍSTICO (Plotly + Datatable con tabs)
+# ========================================================================
+class StatsPanel(MacroElement):
+    """Panel flotante abajo-derecha con dos pestañas:
+    1) Gráfica Plotly de serie temporal NDVI por estación
+    2) Tabla interactiva (Datatables) con el estado del semáforo."""
+    def __init__(self, ndvi_series, alertas_data):
+        super().__init__()
+        import json
+        self.ndvi_json   = json.dumps(ndvi_series, ensure_ascii=False)
+        self.tabla_json  = json.dumps(alertas_data, ensure_ascii=False)
+        self._template = Template(r"""
+{% macro header(this, kwargs) %}
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+{% endmacro %}
+
+{% macro html(this, kwargs) %}
+<div id="cgsm-stats" style="position:absolute; bottom:24px; right:12px;
+     z-index:1000;
+     background:rgba(255,255,255,0.97); padding:8px 10px; border-radius:8px;
+     box-shadow:0 2px 8px rgba(0,0,0,0.2);
+     font-family:'Inter',-apple-system,sans-serif; font-size:11px;
+     border:1px solid #d4e4dd; width:440px;">
+  <div style="display:flex; gap:6px; margin-bottom:6px;">
+    <button id="cgsm-tab-plot" class="cgsm-tab"
+            style="padding:4px 10px; border:1px solid #1f5a4b;
+                   background:#1f5a4b; color:white; border-radius:4px;
+                   cursor:pointer; font-weight:600; font-size:11px;">
+      📈 Serie NDVI</button>
+    <button id="cgsm-tab-table" class="cgsm-tab"
+            style="padding:4px 10px; border:1px solid #1f5a4b;
+                   background:white; color:#1f5a4b; border-radius:4px;
+                   cursor:pointer; font-weight:600; font-size:11px;">
+      📋 Tabla semáforo</button>
+    <span style="flex:1;"></span>
+    <button id="cgsm-stats-min" title="Minimizar"
+            style="border:1px solid #aaa; background:white; color:#666;
+                   width:22px; height:22px; border-radius:4px;
+                   cursor:pointer; font-size:13px; padding:0;">−</button>
+  </div>
+  <div id="cgsm-tab-plot-body" style="display:block;">
+    <div style="margin-bottom:4px; font-size:10.5px; color:#666;">
+      Estación: <select id="cgsm-plot-station"
+                       style="font-size:11px; padding:1px 4px;"></select>
+      <label style="margin-left:8px;">
+        <input type="checkbox" id="cgsm-plot-allstations"
+               style="vertical-align:middle;"> Comparar todas
+      </label>
+    </div>
+    <div id="cgsm-plot" style="width:100%; height:230px;"></div>
+  </div>
+  <div id="cgsm-tab-table-body" style="display:none;">
+    <table id="cgsm-table" style="width:100%; font-size:10.5px;" class="display compact">
+      <thead><tr>
+        <th></th><th>Estación</th><th>Estado</th><th>z</th><th>NDVI</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro script(this, kwargs) %}
+setTimeout(function() {
+  var ndviSeries = {{this.ndvi_json|safe}};
+  var alertasData = {{this.tabla_json|safe}};
+  var statsBox = document.getElementById('cgsm-stats');
+  var tabPlot  = document.getElementById('cgsm-tab-plot');
+  var tabTable = document.getElementById('cgsm-tab-table');
+  var bodyPlot  = document.getElementById('cgsm-tab-plot-body');
+  var bodyTable = document.getElementById('cgsm-tab-table-body');
+  var minBtn = document.getElementById('cgsm-stats-min');
+
+  // Populate station selector
+  var sel = document.getElementById('cgsm-plot-station');
+  var stations = Object.keys(ndviSeries);
+  stations.forEach(function(s) {
+    var opt = document.createElement('option');
+    opt.value = s; opt.text = s;
+    sel.appendChild(opt);
+  });
+
+  function renderPlot() {
+    var allMode = document.getElementById('cgsm-plot-allstations').checked;
+    var traces = [];
+    if (allMode) {
+      var palette = ['#1f5a4b','#aa4c2a','#D32F2F','#FBC02D','#43A047',
+                     '#7B1FA2','#0288D1','#5D4037'];
+      stations.forEach(function(s, i) {
+        var d = ndviSeries[s];
+        if (!d) return;
+        traces.push({
+          x: d.fechas, y: d.ndvi, mode: 'lines', name: s,
+          line: {width: 1.4, color: palette[i % palette.length]}
+        });
+      });
+    } else {
+      var s = sel.value;
+      var d = ndviSeries[s];
+      if (d) {
+        traces.push({
+          x: d.fechas, y: d.ndvi, mode: 'lines+markers', name: s,
+          line: {color: '#1f5a4b', width: 2},
+          marker: {size: 3, color: '#1f5a4b'}
+        });
+      }
+    }
+    var layout = {
+      margin: {t: 16, r: 10, b: 32, l: 36},
+      xaxis: {title: '', tickfont: {size: 9}, type: 'category',
+              tickmode: 'auto', nticks: 8},
+      yaxis: {title: 'NDVI', titlefont: {size: 10},
+              tickfont: {size: 9}, range: [-0.2, 0.95]},
+      showlegend: allMode, legend: {font: {size: 9}, orientation: 'h',
+                                     y: -0.22},
+      hovermode: 'closest', height: 230, plot_bgcolor: '#fafafa'
+    };
+    Plotly.newPlot('cgsm-plot', traces, layout,
+                   {displayModeBar: false, responsive: true});
+  }
+  if (stations.length) {
+    renderPlot();
+    sel.addEventListener('change', renderPlot);
+    document.getElementById('cgsm-plot-allstations')
+            .addEventListener('change', renderPlot);
+  }
+
+  // Datatable
+  var tbody = document.querySelector('#cgsm-table tbody');
+  alertasData.forEach(function(r) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + r.icono + '</td>' +
+                   '<td>' + r.estacion + '</td>' +
+                   '<td>' + r.estado + '</td>' +
+                   '<td>' + r.z_actual + '</td>' +
+                   '<td>' + r.ndvi_actual + '</td>';
+    tr.title = r.razon;
+    tbody.appendChild(tr);
+  });
+  if (window.jQuery && jQuery.fn.DataTable) {
+    jQuery('#cgsm-table').DataTable({
+      paging: false, searching: true, info: false,
+      order: [[2, 'asc']],
+      language: {
+        search: 'Buscar:', emptyTable: 'Sin datos',
+        zeroRecords: 'Sin coincidencias'
+      }
+    });
+  }
+
+  // Tab switching
+  function activate(which) {
+    var isPlot = (which === 'plot');
+    bodyPlot.style.display  = isPlot ? 'block' : 'none';
+    bodyTable.style.display = isPlot ? 'none' : 'block';
+    tabPlot.style.background  = isPlot ? '#1f5a4b' : 'white';
+    tabPlot.style.color       = isPlot ? 'white' : '#1f5a4b';
+    tabTable.style.background = isPlot ? 'white' : '#1f5a4b';
+    tabTable.style.color      = isPlot ? '#1f5a4b' : 'white';
+  }
+  tabPlot.addEventListener('click',  function() { activate('plot'); });
+  tabTable.addEventListener('click', function() { activate('table'); });
+
+  // Minimize
+  var minimized = false;
+  var prevBodies = null;
+  minBtn.addEventListener('click', function() {
+    if (!minimized) {
+      prevBodies = [bodyPlot.style.display, bodyTable.style.display];
+      bodyPlot.style.display = 'none';
+      bodyTable.style.display = 'none';
+      minBtn.innerText = '+';
+      minimized = true;
+    } else {
+      bodyPlot.style.display  = prevBodies[0];
+      bodyTable.style.display = prevBodies[1];
+      minBtn.innerText = '−';
+      minimized = false;
+    }
+  });
+}, 900);
+{% endmacro %}
+        """)
+
+m.add_child(StatsPanel(ndvi_series, alertas_data))
+
 m.save(str(OUT_HTML))
 
 print(f'\nDashboard exportado: {OUT_HTML}')
 print(f'Tamano: {OUT_HTML.stat().st_size / 1024:.0f} KB')
-print('Capas totales: 17 + slider NDVI anual 2018-2025')
+print('Capas totales: 18 + slider NDVI anual con animación 2018-2025')
+print('Paneles dinámicos: header semaforo + filtros estado + ayuda contextual')
+print('                   + tabs Plotly serie NDVI + Datatable interactiva')
