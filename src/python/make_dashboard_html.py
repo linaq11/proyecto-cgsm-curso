@@ -499,12 +499,12 @@ class TimeSlider(MacroElement):
         self.gradient = ','.join(palette)
         self._template = Template("""
 {% macro html(this, kwargs) %}
-<div id="cgsm-timeslider" style="position:absolute; bottom:24px; left:12px;
+<div id="cgsm-timeslider" style="position:absolute; top:175px; left:12px;
      z-index:1000;
      background:rgba(255,255,255,0.97); padding:10px 14px; border-radius:8px;
      box-shadow:0 2px 6px rgba(0,0,0,0.2);
      font-family:'Inter',-apple-system,sans-serif; font-size:12px;
-     border:1px solid #d4e4dd; width:300px;">
+     border:1px solid #d4e4dd; width:340px;">
   <div style="display:flex; align-items:center; justify-content:space-between;
        margin-bottom:6px;">
     <span><b style="color:#1f5a4b;">NDVI año:</b>
@@ -818,30 +818,45 @@ class StatsPanel(MacroElement):
 {% endmacro %}
 
 {% macro html(this, kwargs) %}
-<div id="cgsm-stats" style="position:absolute; bottom:24px; right:12px;
+<div id="cgsm-stats" style="position:absolute; bottom:24px; left:12px;
      z-index:1000;
      background:rgba(255,255,255,0.97); padding:8px 10px; border-radius:8px;
      box-shadow:0 2px 8px rgba(0,0,0,0.2);
      font-family:'Inter',-apple-system,sans-serif; font-size:11px;
-     border:1px solid #d4e4dd; width:440px;">
-  <div style="display:flex; gap:6px; margin-bottom:6px;">
+     border:1px solid #d4e4dd; width:580px; box-sizing:border-box;
+     overflow:hidden;">
+  <div style="display:flex; gap:4px; margin-bottom:6px; flex-wrap:wrap;">
     <button id="cgsm-tab-plot" class="cgsm-tab"
-            style="padding:4px 10px; border:1px solid #1f5a4b;
+            style="padding:4px 8px; border:1px solid #1f5a4b;
                    background:#1f5a4b; color:white; border-radius:4px;
-                   cursor:pointer; font-weight:600; font-size:11px;">
-      📈 Serie NDVI</button>
+                   cursor:pointer; font-weight:600; font-size:11px;">📈 Serie</button>
     <button id="cgsm-tab-table" class="cgsm-tab"
-            style="padding:4px 10px; border:1px solid #1f5a4b;
+            style="padding:4px 8px; border:1px solid #1f5a4b;
                    background:white; color:#1f5a4b; border-radius:4px;
-                   cursor:pointer; font-weight:600; font-size:11px;">
-      📋 Tabla semáforo</button>
+                   cursor:pointer; font-weight:600; font-size:11px;">📋 Tabla</button>
+    <button id="cgsm-tab-guide" class="cgsm-tab"
+            style="padding:4px 8px; border:1px solid #1f5a4b;
+                   background:white; color:#1f5a4b; border-radius:4px;
+                   cursor:pointer; font-weight:600; font-size:11px;">📘 Guía</button>
+    <button id="cgsm-tab-events" class="cgsm-tab"
+            style="padding:4px 8px; border:1px solid #1f5a4b;
+                   background:white; color:#1f5a4b; border-radius:4px;
+                   cursor:pointer; font-weight:600; font-size:11px;">🎯 Eventos</button>
+    <button id="cgsm-tab-rf" class="cgsm-tab"
+            style="padding:4px 8px; border:1px solid #1f5a4b;
+                   background:white; color:#1f5a4b; border-radius:4px;
+                   cursor:pointer; font-weight:600; font-size:11px;">📊 RF vs Umb.</button>
+    <button id="cgsm-tab-station" class="cgsm-tab"
+            style="padding:4px 8px; border:1px solid #1f5a4b;
+                   background:white; color:#1f5a4b; border-radius:4px;
+                   cursor:pointer; font-weight:600; font-size:11px;">🔍 Estación</button>
     <span style="flex:1;"></span>
-    <button id="cgsm-stats-min" title="Minimizar"
+    <button id="cgsm-stats-min" title="Expandir / minimizar panel"
             style="border:1px solid #aaa; background:white; color:#666;
                    width:22px; height:22px; border-radius:4px;
-                   cursor:pointer; font-size:13px; padding:0;">−</button>
+                   cursor:pointer; font-size:13px; padding:0;">+</button>
   </div>
-  <div id="cgsm-tab-plot-body" style="display:block;">
+  <div id="cgsm-tab-plot-body" style="display:none;">
     <div style="margin-bottom:4px; font-size:10.5px; color:#666;">
       Estación: <select id="cgsm-plot-station"
                        style="font-size:11px; padding:1px 4px;"></select>
@@ -850,15 +865,110 @@ class StatsPanel(MacroElement):
                style="vertical-align:middle;"> Comparar todas
       </label>
     </div>
-    <div id="cgsm-plot" style="width:100%; height:230px;"></div>
+    <div id="cgsm-plot" style="width:548px; height:260px; max-width:100%;"></div>
+    <div style="font-size:9.5px; color:#555; margin-top:4px; padding:5px 7px;
+         background:#f5f8fa; border-radius:4px; line-height:1.45;">
+      <b>Cómo leerla:</b> la franja superior (NDVI &gt; 0,70, verde) marca
+      manglar denso saludable; la zona media (0,40-0,70) corresponde a
+      vegetación intermedia o manglar joven; valores &lt; 0,30 indican
+      agua o suelo desnudo. Las estaciones limnológicas
+      (Isla Boquerón, Punta Cerro, Punta Chino, Río Sevilla) muestran
+      valores bajos porque monitorean la lámina de agua, no el dosel.
+    </div>
   </div>
   <div id="cgsm-tab-table-body" style="display:none;">
-    <table id="cgsm-table" style="width:100%; font-size:10.5px;" class="display compact">
+    <table id="cgsm-table" style="width:100%; font-size:10.5px;" class="display compact cell-border row-border hover">
       <thead><tr>
         <th></th><th>Estación</th><th>Estado</th><th>z</th><th>NDVI</th>
       </tr></thead>
       <tbody></tbody>
     </table>
+    <div style="font-size:9.5px; color:#555; margin-top:6px; padding:5px 7px;
+         background:#f5f8fa; border-radius:4px; line-height:1.45;">
+      <b>Lógica del semáforo:</b> 🟢 <i>estable</i> = sin anomalías
+      significativas; 🟡 <i>alerta</i> = z entre -1 y -2 en últimos 3
+      meses, o 2+ anomalías z &lt; -1 en el año; 🔴 <i>crítica</i> = z
+      &lt; -2 en el último mes, o 2+ anomalías z &lt; -2. El campo
+      <i>z</i> reporta el z-score NDVI del mes más reciente disponible.
+    </div>
+  </div>
+  <div id="cgsm-tab-guide-body" style="display:none; max-height:280px; overflow-y:auto;">
+    <div style="font-size:10.5px; color:#333; line-height:1.5;">
+      <p style="margin:0 0 6px 0;"><b>Cómo navegar el dashboard:</b></p>
+      <ol style="margin:0 0 8px 16px; padding:0;">
+        <li><b>Mapa central:</b> cobertura del manglar de la CGSM con ocho estaciones de monitoreo coloreadas por estado.</li>
+        <li><b>Panel de capas (derecha):</b> activa/desactiva temáticas (NDVI por periodo, Random Forest, dinámica, SAR, INVEMAR).</li>
+        <li><b>Filtros del header:</b> click sobre 🟢/🟡/🔴 oculta o muestra estaciones por estado.</li>
+        <li><b>Slider NDVI:</b> desliza años 2018-2025 o pulsa ▶▶ Auto para animar.</li>
+      </ol>
+      <p style="margin:8px 0 4px 0;"><b>Glosario de términos:</b></p>
+      <dl style="margin:0; font-size:10px;">
+        <dt><b>NDVI</b></dt><dd style="margin:0 0 4px 8px;">Normalized Difference Vegetation Index. Mide vigor vegetal: &gt;0,7 manglar denso, 0,4-0,7 vegetación intermedia, &lt;0,3 agua o suelo.</dd>
+        <dt><b>CMRI</b></dt><dd style="margin:0 0 4px 8px;">Combined Mangrove Recognition Index (NDVI − NDWI). Discrimina manglar de otras coberturas en ambientes estuarinos.</dd>
+        <dt><b>SAR-VH</b></dt><dd style="margin:0 0 4px 8px;">Backscatter Sentinel-1 polarización vertical-horizontal. Sensible a humedad y estructura del dosel. Útil bajo cubierta de nubes.</dd>
+        <dt><b>bfast</b></dt><dd style="margin:0 0 4px 8px;">Breaks For Additive Season and Trend. Detecta quiebres estructurales en series temporales.</dd>
+        <dt><b>z-score</b></dt><dd style="margin:0 0 4px 8px;">Anomalía estandarizada respecto a la media histórica: z = (valor − media) / σ. |z|&gt;2 indica anomalía pronunciada.</dd>
+        <dt><b>Random Forest</b></dt><dd style="margin:0 0 4px 8px;">Clasificador supervisado por ensamble de árboles de decisión. F1=0,83 en este proyecto.</dd>
+        <dt><b>Digital Twin Nivel 2</b></dt><dd style="margin:0 0 4px 8px;">Réplica operativa que detecta anomalías sobre el sistema real, sin componente predictivo (Nivel 3).</dd>
+        <dt><b>F1-score</b></dt><dd style="margin:0;">Media armónica de Precision y Recall. 1 = perfecto, 0 = ninguna concordancia.</dd>
+      </dl>
+    </div>
+  </div>
+  <div id="cgsm-tab-events-body" style="display:none; max-height:280px; overflow-y:auto;">
+    <div style="font-size:10.5px; color:#333; line-height:1.55;">
+      <p style="margin:0 0 8px 0;"><b>Eventos climáticos y de mortandad documentados (2013-2025):</b></p>
+      <div style="border-left:3px solid #D32F2F; padding:4px 8px; margin-bottom:6px; background:#fff5f5;">
+        <b>2015-2016 · El Niño</b><br>
+        Sequía sostenida. Quiebres bfast detectados en 7 de 8 estaciones entre abril y diciembre de 2016. NDVI cae por debajo de la media histórica.
+      </div>
+      <div style="border-left:3px solid #1565C0; padding:4px 8px; margin-bottom:6px; background:#f3f8ff;">
+        <b>Septiembre 2020 · Mortandad asociada a La Niña</b><br>
+        59 km² afectados: 16 km² agua abierta + 43 km² inundación bajo dosel (detectados por SAR-VH). Quiebres bfast febrero y diciembre 2020 sobre Caño Clarín; junio 2020 sobre Caño Palos.
+      </div>
+      <div style="border-left:3px solid #43A047; padding:4px 8px; margin-bottom:6px; background:#f3fff5;">
+        <b>2022 · Recuperación post-La Niña</b><br>
+        NDVI mediano del manglar denso pasa de 0,60 a 0,80. Quiebres bfast enero y abril 2022 sobre CP Aguas Negras y CP Luna. Aporte hídrico sostenido del Magdalena.
+      </div>
+      <div style="border-left:3px solid #D32F2F; padding:4px 8px; margin-bottom:6px; background:#fff5f5;">
+        <b>2023-2024 · El Niño</b><br>
+        Quiebres bfast entre agosto 2023 y junio 2024 sobre las cuatro estaciones de manglar denso. Visible en serie ONI y precipitación CHIRPS.
+      </div>
+      <div style="border-left:3px solid #1B5E20; padding:4px 8px; background:#f0f8f0;">
+        <b>2024-2025 · Estado actual</b><br>
+        Sistema en consolidación estructural: 5 estaciones estables, 3 en alerta, 0 críticas. Backscatter SAR-VH sube 3-5 dB sobre Complejo de Pajarales respecto a 2018-2019.
+      </div>
+    </div>
+  </div>
+  <div id="cgsm-tab-rf-body" style="display:none; max-height:280px; overflow-y:auto;">
+    <div style="font-size:10.5px; color:#333; line-height:1.5;">
+      <p style="margin:0 0 6px 0;"><b>Benchmark de clasificadores sobre Sentinel-2 2024-2025:</b></p>
+      <table style="width:100%; border-collapse:collapse; font-size:10px; margin-bottom:6px;">
+        <tr style="background:#f5f8fa;">
+          <th style="border:1px solid #ccc; padding:4px;">Método</th>
+          <th style="border:1px solid #ccc; padding:4px;">Referencia</th>
+          <th style="border:1px solid #ccc; padding:4px;">F1</th>
+          <th style="border:1px solid #ccc; padding:4px;">Recall</th>
+          <th style="border:1px solid #ccc; padding:4px;">Precision</th>
+        </tr>
+        <tr><td style="border:1px solid #ccc; padding:4px;">Umbrales NDVI/CMRI</td><td style="border:1px solid #ccc; padding:4px;">INVEMAR</td><td style="border:1px solid #ccc; padding:4px;">0,583</td><td style="border:1px solid #ccc; padding:4px;">0,454</td><td style="border:1px solid #ccc; padding:4px;">0,811</td></tr>
+        <tr><td style="border:1px solid #ccc; padding:4px;">Umbrales NDVI/CMRI</td><td style="border:1px solid #ccc; padding:4px;">WorldCover</td><td style="border:1px solid #ccc; padding:4px;">0,548</td><td style="border:1px solid #ccc; padding:4px;">0,426</td><td style="border:1px solid #ccc; padding:4px;">0,768</td></tr>
+        <tr style="background:#e8f5e9;"><td style="border:1px solid #ccc; padding:4px;"><b>Random Forest</b></td><td style="border:1px solid #ccc; padding:4px;">INVEMAR</td><td style="border:1px solid #ccc; padding:4px;"><b>0,826</b></td><td style="border:1px solid #ccc; padding:4px;"><b>0,926</b></td><td style="border:1px solid #ccc; padding:4px;">0,745</td></tr>
+        <tr style="background:#e8f5e9;"><td style="border:1px solid #ccc; padding:4px;"><b>Random Forest</b></td><td style="border:1px solid #ccc; padding:4px;">WorldCover</td><td style="border:1px solid #ccc; padding:4px;"><b>0,889</b></td><td style="border:1px solid #ccc; padding:4px;"><b>0,937</b></td><td style="border:1px solid #ccc; padding:4px;">0,846</td></tr>
+      </table>
+      <p style="margin:4px 0; font-size:9.5px;"><b>Variables más discriminantes (Gini):</b> B11/B12 SWIR Sentinel-2 (33,9), distancia al agua JRC (16,0), CMRI (11,4), NDWI (11,1). NDVI solo aporta 8,4.</p>
+      <p style="margin:0; font-size:9.5px; color:#555;"><b>Para comparar visualmente:</b> abre el panel de capas (derecha) y prende "Manglar Actual umbrales" y "Manglar Actual Random Forest" simultáneamente.</p>
+    </div>
+  </div>
+  <div id="cgsm-tab-station-body" style="display:none; max-height:280px; overflow-y:auto;">
+    <div style="font-size:10.5px; color:#333; line-height:1.5;">
+      <div style="margin-bottom:6px;">
+        Selecciona estación:
+        <select id="cgsm-station-detail" style="font-size:11px; padding:1px 4px;"></select>
+      </div>
+      <div id="cgsm-station-info" style="background:#f5f8fa; border-radius:4px; padding:8px; min-height:120px;">
+        Cargando...
+      </div>
+    </div>
   </div>
 </div>
 {% endmacro %}
@@ -910,16 +1020,33 @@ setTimeout(function() {
     }
     var layout = {
       margin: {t: 16, r: 10, b: 32, l: 36},
-      xaxis: {title: '', tickfont: {size: 9}, type: 'category',
-              tickmode: 'auto', nticks: 8},
+      xaxis: {title: '', tickfont: {size: 9}, type: 'date',
+              tickformat: '%Y', dtick: 'M12'},
       yaxis: {title: 'NDVI', titlefont: {size: 10},
               tickfont: {size: 9}, range: [-0.2, 0.95]},
       showlegend: allMode, legend: {font: {size: 9}, orientation: 'h',
                                      y: -0.22},
-      hovermode: 'closest', height: 230, plot_bgcolor: '#fafafa'
+      hovermode: 'closest', height: 240, width: 548, autosize: false,
+      plot_bgcolor: '#fafafa',
+      shapes: [
+        {type:'line', xref:'paper', x0:0, x1:1, y0:0.4, y1:0.4,
+         line:{color:'#FB8C00', width:1, dash:'dash'}, opacity:0.55},
+        {type:'line', xref:'paper', x0:0, x1:1, y0:0.7, y1:0.7,
+         line:{color:'#1B5E20', width:1, dash:'dash'}, opacity:0.55}
+      ],
+      annotations: [
+        {xref:'paper', yref:'y', x:0.99, y:0.42, xanchor:'right',
+         showarrow:false, text:'manglar saludable',
+         font:{size:8.5, color:'#FB8C00'},
+         bgcolor:'rgba(255,255,255,0.85)'},
+        {xref:'paper', yref:'y', x:0.99, y:0.72, xanchor:'right',
+         showarrow:false, text:'manglar denso',
+         font:{size:8.5, color:'#1B5E20'},
+         bgcolor:'rgba(255,255,255,0.85)'}
+      ]
     };
     Plotly.newPlot('cgsm-plot', traces, layout,
-                   {displayModeBar: false, responsive: true});
+                   {displayModeBar: false, responsive: false, staticPlot: false});
   }
   if (stations.length) {
     renderPlot();
@@ -964,23 +1091,197 @@ setTimeout(function() {
   tabPlot.addEventListener('click',  function() { activate('plot'); });
   tabTable.addEventListener('click', function() { activate('table'); });
 
-  // Minimize
-  var minimized = false;
-  var prevBodies = null;
+  // Minimize — el panel INICIA MINIMIZADO para no tapar la leyenda.
+  // Solo las pestañas son visibles; al hacer click en + se expande.
+  var minimized = true;
+  var activeTab = 'plot';
+  function expandBody() {
+    bodyPlot.style.display  = (activeTab === 'plot')  ? 'block' : 'none';
+    bodyTable.style.display = (activeTab === 'table') ? 'block' : 'none';
+  }
+  // Reescribir tab handlers para que también marquen activeTab y expandan
+  tabPlot.addEventListener('click', function() {
+    activeTab = 'plot';
+    if (minimized) { minimized = false; minBtn.innerText = '−'; }
+    expandBody();
+  });
+  tabTable.addEventListener('click', function() {
+    activeTab = 'table';
+    if (minimized) { minimized = false; minBtn.innerText = '−'; }
+    expandBody();
+  });
   minBtn.addEventListener('click', function() {
-    if (!minimized) {
-      prevBodies = [bodyPlot.style.display, bodyTable.style.display];
+    if (minimized) {
+      minimized = false;
+      minBtn.innerText = '−';
+      expandBody();
+    } else {
+      minimized = true;
+      minBtn.innerText = '+';
       bodyPlot.style.display = 'none';
       bodyTable.style.display = 'none';
-      minBtn.innerText = '+';
-      minimized = true;
-    } else {
-      bodyPlot.style.display  = prevBodies[0];
-      bodyTable.style.display = prevBodies[1];
-      minBtn.innerText = '−';
-      minimized = false;
     }
   });
+
+  // === Handlers de las 4 pestañas nuevas ===
+  var tabGuide   = document.getElementById('cgsm-tab-guide');
+  var tabEvents  = document.getElementById('cgsm-tab-events');
+  var tabRf      = document.getElementById('cgsm-tab-rf');
+  var tabStation = document.getElementById('cgsm-tab-station');
+  var bodyGuide   = document.getElementById('cgsm-tab-guide-body');
+  var bodyEvents  = document.getElementById('cgsm-tab-events-body');
+  var bodyRf      = document.getElementById('cgsm-tab-rf-body');
+  var bodyStation = document.getElementById('cgsm-tab-station-body');
+
+  function showOnlyTab(name) {
+    var bodies = {
+      'plot': bodyPlot, 'table': bodyTable, 'guide': bodyGuide,
+      'events': bodyEvents, 'rf': bodyRf, 'station': bodyStation
+    };
+    var tabs = {
+      'plot': tabPlot, 'table': tabTable, 'guide': tabGuide,
+      'events': tabEvents, 'rf': tabRf, 'station': tabStation
+    };
+    for (var k in bodies) {
+      if (bodies[k]) bodies[k].style.display = (k === name) ? 'block' : 'none';
+      if (tabs[k]) {
+        tabs[k].style.background = (k === name) ? '#1f5a4b' : 'white';
+        tabs[k].style.color      = (k === name) ? 'white' : '#1f5a4b';
+      }
+    }
+    activeTab = name;
+    if (minimized) { minimized = false; minBtn.innerText = '−'; }
+  }
+  if (tabGuide)   tabGuide.addEventListener('click',   function() { showOnlyTab('guide'); });
+  if (tabEvents)  tabEvents.addEventListener('click',  function() { showOnlyTab('events'); });
+  if (tabRf)      tabRf.addEventListener('click',      function() { showOnlyTab('rf'); });
+  if (tabStation) tabStation.addEventListener('click', function() { showOnlyTab('station'); });
+  // Sobreescribir handlers de plot y table también para que usen showOnlyTab
+  tabPlot.addEventListener('click',  function() { showOnlyTab('plot'); });
+  tabTable.addEventListener('click', function() { showOnlyTab('table'); });
+
+  // Llenar selector de detalle por estación
+  var detSel = document.getElementById('cgsm-station-detail');
+  var detInfo = document.getElementById('cgsm-station-info');
+  if (detSel && detInfo) {
+    alertasData.forEach(function(r) {
+      var opt = document.createElement('option');
+      opt.value = r.estacion; opt.text = r.icono + ' ' + r.estacion;
+      detSel.appendChild(opt);
+    });
+    function renderStationDetail() {
+      var sel = detSel.value;
+      var info = alertasData.find(function(r) { return r.estacion === sel; });
+      if (!info) { detInfo.innerHTML = 'Sin datos'; return; }
+      var serieEst = ndviSeries[sel];
+      var nObs = serieEst ? serieEst.fechas.length : 0;
+      var rango = serieEst ? (serieEst.fechas[0] + ' a ' + serieEst.fechas[serieEst.fechas.length-1]) : '—';
+      detInfo.innerHTML =
+        '<div style="font-size:13px;"><b>' + info.icono + ' ' + info.estacion + '</b></div>' +
+        '<div style="margin-top:4px;"><b>Estado:</b> ' + info.estado + '</div>' +
+        '<div><b>z NDVI actual:</b> ' + info.z_actual + ' · <b>NDVI:</b> ' + info.ndvi_actual + '</div>' +
+        '<div style="margin-top:4px; font-size:9.5px; color:#555;"><b>Razón:</b> ' + info.razon + '</div>' +
+        '<div style="margin-top:4px; font-size:9.5px; color:#555;"><b>Serie NDVI:</b> ' + nObs + ' observaciones (' + rango + ')</div>' +
+        '<div style="margin-top:6px; font-size:9.5px;">Para ver la serie completa, abre la pestaña <b>📈 Serie</b> y selecciona esta estación.</div>';
+    }
+    detSel.addEventListener('change', renderStationDetail);
+    renderStationDetail();
+  }
+
+
+  // === Tooltips inline en términos técnicos (definiciones tipo Wikipedia) ===
+  // Inyecta estilo CSS para abbr.cgsm-term (subrayado punteado + cursor help)
+  var cgsmStyle = document.createElement('style');
+  cgsmStyle.textContent = ''
+    + 'abbr.cgsm-term {'
+    + '  border-bottom: 1px dotted #1f5a4b !important;'
+    + '  cursor: help !important;'
+    + '  text-decoration: none !important;'
+    + '  color: #1f5a4b !important;'
+    + '  font-weight: 500;'
+    + '}'
+    + 'abbr.cgsm-term:hover { background: rgba(31, 90, 75, 0.08); }';
+  document.head.appendChild(cgsmStyle);
+
+  var cgsmTerms = {
+    'NDVI':         'Normalized Difference Vegetation Index — índice de vegetación. >0,7 = manglar denso, 0,4-0,7 = vegetación intermedia, <0,3 = agua o suelo desnudo.',
+    'CMRI':         'Combined Mangrove Recognition Index = NDVI − NDWI. Discrimina manglar de otras coberturas en ambientes estuarinos (Gupta et al., 2018).',
+    'NDWI':         'Normalized Difference Water Index — índice que detecta cuerpos de agua.',
+    'SAR-VH':       'Sentinel-1 SAR polarización vertical-horizontal — sensor radar activo que penetra nubes y mide humedad y estructura del dosel.',
+    'SAR':          'Synthetic Aperture Radar — sensor radar activo. Funciona en cualquier condición climática y mide rugosidad y humedad.',
+    'bfast':        'Breaks For Additive Season and Trend (Verbesselt et al., 2010) — algoritmo R que detecta quiebres estructurales en series temporales de NDVI.',
+    'z-score':      'Anomalía estandarizada = (valor − media histórica) / desviación estándar. |z| > 2 indica anomalía pronunciada.',
+    'Random Forest':'Clasificador supervisado por ensamble de árboles de decisión. En este proyecto alcanza F1 = 0,83 frente a INVEMAR, una mejora del 42 % sobre umbrales.',
+    'Digital Twin': 'Réplica digital operativa del ecosistema real. Nivel 2 = detección de anomalías y alertas; Nivel 3 (futuro) = predicción.',
+    'F1-score':     'Media armónica de Precision y Recall: F1 = 2·P·R/(P+R). 1 = clasificador perfecto, 0 = ninguna concordancia.',
+    'Recall':       'Sensibilidad o tasa de verdaderos positivos: VP / (VP + falsos negativos). Mide cuánto del manglar real se detectó.',
+    'Precision':    'Valor predictivo positivo: VP / (VP + falsos positivos). Mide cuán confiable es una predicción positiva.',
+    'INVEMAR':      'Instituto de Investigaciones Marinas y Costeras de Colombia — provee cartografía oficial de manglares a 1:25.000.',
+    'WorldCover':   'ESA WorldCover v200 (Zanaga et al., 2022) — clasificación global de coberturas a 10 m de resolución.',
+    'Sentinel-2':   'Satélite óptico de la ESA, 10 m de resolución, revisita cada 5 días. Provee 13 bandas espectrales.',
+    'Sentinel-1':   'Satélite radar SAR de la ESA, 10 m de resolución, funciona en todo clima (incluso bajo nubes).',
+    'Landsat':      'Programa USGS/NASA de observación terrestre, 30 m de resolución, serie histórica desde 1984.',
+    'ENSO':         'El Niño-Oscilación del Sur — oscilación climática del Pacífico ecuatorial que modula precipitación en Colombia.',
+    'La Niña':      'Fase fría de ENSO — asociada a más lluvia en el Caribe colombiano. La Niña 2020-2022 se ligó a la mortandad de septiembre 2020.',
+    'El Niño':      'Fase cálida de ENSO — asociada a sequía en Colombia. El Niño 2015-2016 generó quiebres bfast en 7 de 8 estaciones.',
+    'AOI':          'Area Of Interest — zona delimitada del análisis. Aquí: 835,3 km² del SFF CGSM + Vía Parque Isla de Salamanca.',
+    'ERA5':         'Reanálisis climático global del ECMWF (Hersbach et al., 2020). Resolución horaria, ~9 km espacial.',
+    'JRC':          'Joint Research Centre Global Surface Water — mapa global de ocurrencia de agua superficial 1984-2021.',
+    'GFD':          'Global Flood Database — registro histórico de inundaciones detectadas por satélite (2001-2017).'
+  };
+
+  function cgsmAddTooltips(root) {
+    if (!root) return;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var nodes = [];
+    var n;
+    while ((n = walker.nextNode())) {
+      var p = n.parentNode;
+      if (!p) continue;
+      var tag = p.tagName;
+      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'OPTION') continue;
+      if (p.closest && p.closest('abbr.cgsm-term')) continue;
+      nodes.push(n);
+    }
+    var sortedTerms = Object.keys(cgsmTerms).sort(function(a, b) {
+      return b.length - a.length;
+    });
+    var wrappedInDoc = new Set();
+    nodes.forEach(function(textNode) {
+      var text = textNode.nodeValue;
+      var html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      var changed = false;
+      sortedTerms.forEach(function(term) {
+        if (wrappedInDoc.has(term)) return;
+        var esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        var pat = new RegExp('(^|\\s|\\(|>)(' + esc + ')(?=$|\\s|[.,;:!?)\\u2014\\-/])', '');
+        var m = html.match(pat);
+        if (m) {
+          var def = cgsmTerms[term].replace(/"/g, '&quot;');
+          html = html.replace(pat,
+            m[1] + '<abbr class="cgsm-term" title="' + def + '">' + m[2] + '</abbr>');
+          wrappedInDoc.add(term);
+          changed = true;
+        }
+      });
+      if (changed) {
+        var span = document.createElement('span');
+        span.innerHTML = html;
+        textNode.parentNode.replaceChild(span, textNode);
+      }
+    });
+  }
+
+  // Aplicar al panel stats, al header, al modal de ayuda y al control de capas
+  setTimeout(function() {
+    cgsmAddTooltips(document.getElementById('cgsm-stats'));
+    cgsmAddTooltips(document.getElementById('cgsm-header'));
+    cgsmAddTooltips(document.getElementById('cgsm-help-modal'));
+    document.querySelectorAll('.leaflet-control-layers').forEach(function(el) {
+      cgsmAddTooltips(el);
+    });
+  }, 1400);
+
 }, 900);
 {% endmacro %}
         """)
@@ -994,3 +1295,4 @@ print(f'Tamano: {OUT_HTML.stat().st_size / 1024:.0f} KB')
 print('Capas totales: 18 + slider NDVI anual con animación 2018-2025')
 print('Paneles dinámicos: header semaforo + filtros estado + ayuda contextual')
 print('                   + tabs Plotly serie NDVI + Datatable interactiva')
+print('                   + Guía/glosario, Eventos, RF vs Umb., Detalle estación')
