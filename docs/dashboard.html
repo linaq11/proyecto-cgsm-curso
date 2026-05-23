@@ -189,6 +189,12 @@ html[data-theme="dark"] .card.lead .card-body strong { color:var(--primary); }
 }
 .purpose i { color:var(--primary); font-size:18px; }
 .purpose strong { color:var(--primary); font-weight:600; }
+.purpose a {
+  color:var(--primary); text-decoration:none; font-weight:500;
+  margin-left:6px; white-space:nowrap;
+  border-bottom:1px solid transparent; transition:border-color var(--trans);
+}
+.purpose a:hover { border-bottom-color:var(--primary); }
 
 /* ================= GLOSSARY ================= */
 .glossary {
@@ -369,6 +375,33 @@ html[data-theme="dark"] .about .question { background:rgba(52,211,153,.08); }
   border:1px solid var(--border-soft);
 }
 
+/* ================= ABBR TOOLTIP ================= */
+abbr[title] {
+  text-decoration: underline dotted var(--primary);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  cursor: help;
+  border: 0;
+  transition: background var(--trans);
+  padding: 0 1px;
+  border-radius: 2px;
+}
+abbr[title]:hover {
+  background: var(--primary-soft);
+}
+html[data-theme="dark"] abbr[title]:hover {
+  background: rgba(52,211,153,.15);
+}
+/* No mostrar el underline punteado en headers y tablas (ya tienen contexto) */
+.card-title abbr[title],
+table.data thead abbr[title] {
+  text-decoration: none;
+  cursor: help;
+}
+table.data thead abbr[title] {
+  border-bottom: 1px dotted var(--text-faint);
+}
+
 /* ================= FINDINGS LIST ================= */
 .findings { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
 .findings li {
@@ -425,6 +458,10 @@ a:focus-visible, button:focus-visible {
     <button data-tab="acerca"     role="tab" aria-selected="false">Acerca de</button>
   </nav>
   <div class="nav-tools">
+    <button id="glossary-btn" class="icon-btn" type="button"
+            title="Ir al glosario técnico (Acerca de)" aria-label="Glosario">
+      <i class="bi bi-book"></i>
+    </button>
     <a class="icon-btn" href="https://github.com/linaq11/proyecto-cgsm-curso"
        target="_blank" rel="noopener" title="Repositorio en GitHub" aria-label="GitHub">
       <i class="bi bi-github"></i>
@@ -444,19 +481,23 @@ a:focus-visible, button:focus-visible {
   <div class="purpose">
     <i class="bi bi-shield-check"></i>
     <div>Herramienta de consulta operativa para gestores ambientales del
-    <strong>Plan de Manejo Ambiental del sitio Ramsar CGSM</strong>.
+    <strong>Plan de Manejo Ambiental del sitio <abbr title="Convención sobre humedales de importancia internacional. La CGSM es sitio Ramsar Nº 562 desde 1998">Ramsar</abbr> CGSM</strong>.
     Productos derivados de satélites públicos (Sentinel-2, Sentinel-1, Landsat 8/9)
-    validados contra cartografía INVEMAR 1:25.000.</div>
+    validados contra cartografía <abbr title="Instituto de Investigaciones Marinas y Costeras 'José Benito Vives de Andréis' — autoridad colombiana en cartografía marino-costera">INVEMAR</abbr> 1:25.000.
+    <a href="#glosario" id="purpose-glossary-link">Glosario técnico ↗</a></div>
   </div>
 
   <div class="row">
     <div class="card lead">
       <div class="card-head"><h2 class="card-title">Estado del manglar al cierre de 2025</h2></div>
       <div class="card-body">
-        <p>Indicadores sintéticos sobre el AOI acotado (SFF CGSM + Vía Parque Isla de
-        Salamanca, 835 km²) y su acoplamiento con el régimen climático regional.
-        El índice NDVI mide el vigor del dosel en una escala de 0 a 1 a partir de la
-        reflectancia satelital. Las gráficas y el mapa interactivo desarrollan cada KPI.</p>
+        <p>Indicadores sintéticos sobre el <abbr title="Área de Interés: aquí, el AOI acotado = SFF CGSM + Vía Parque Isla de Salamanca, 835 km²">AOI acotado</abbr>
+        (<abbr title="Santuario de Fauna y Flora">SFF</abbr> CGSM + Vía Parque Isla de Salamanca,
+        835 km²) y su acoplamiento con el régimen climático regional.
+        El índice <abbr title="Normalized Difference Vegetation Index — mide el vigor del dosel en escala 0-1 a partir de la reflectancia roja e infrarroja cercana del satélite">NDVI</abbr>
+        mide el vigor del dosel en una escala de 0 a 1 a partir de la reflectancia satelital.
+        Las gráficas y el mapa interactivo desarrollan cada
+        <abbr title="Key Performance Indicator — indicador clave de desempeño">KPI</abbr>.</p>
       </div>
     </div>
   </div>
@@ -511,7 +552,7 @@ a:focus-visible, button:focus-visible {
           <li><span class="finding-tag yr warning">2023–24</span><span class="finding-txt">Tercer bloque de quiebres coincidente con El Niño 2023-2024 visible en el índice ONI.</span></li>
           <li><span class="finding-tag yr info">2001–17</span><span class="finding-txt">14 inundaciones documentadas (Global Flood Database). Máximo histórico: DFO_2625 (feb 2005), 299 km² afectados.</span></li>
         </ul>
-        <p style="margin-top:12px; font-size:12.5px; color:var(--text-muted);">Serie combinada Landsat 8 + Sentinel-2: 929 registros mensuales en 12 años, 18 anomalías significativas (z &lt; −2). Quiebres detectados con el método bfast (Verbesselt et al., 2010) sobre la serie z-score por estación.</p>
+        <p style="margin-top:12px; font-size:12.5px; color:var(--text-muted);">Serie combinada <abbr title="Misión Landsat 8 (NASA/USGS), operativa desde 2013, ofrece imágenes ópticas de 30 m de resolución cada 16 días">Landsat 8</abbr> + <abbr title="Constelación Sentinel-2 de la ESA (Copernicus), imágenes ópticas de 10 m cada 5 días">Sentinel-2</abbr>: 929 registros mensuales en 12 años, 18 anomalías significativas (<abbr title="z-score: desviación estandarizada respecto a la media histórica. z<-2 = anomalía significativa">z</abbr> &lt; −2). Quiebres detectados con el método <abbr title="Breaks For Additive Season and Trend (Verbesselt et al., 2010): método estadístico que detecta cambios estructurales en series temporales descomponiéndolas en tendencia + estacionalidad + ruido">bfast</abbr> sobre la serie z-score por estación.</p>
       </div>
     </div>
 
@@ -533,8 +574,9 @@ a:focus-visible, button:focus-visible {
       <div class="card-body">
         <p>Entre 2020 y 2025 el manglar redujo su área clasificada de
         <strong>12.426 a 4.037 ha</strong> y pasó de <strong>79 a 15 parches</strong>,
-        mientras el área media de parche creció de 157 a 269 ha. El NDVI mediano del
-        dosel recuperó valores de 0,80 desde 2022 (vs. 0,60 en mid-2020), lo que
+        mientras el área media de parche creció de 157 a 269 ha. El
+        <abbr title="Normalized Difference Vegetation Index — índice de vigor del dosel, escala 0-1">NDVI</abbr>
+        mediano del dosel recuperó valores de 0,80 desde 2022 (vs. 0,60 en mid-2020), lo que
         indica consolidación funcional del manglar sobreviviente.</p>
       </div>
     </div>
@@ -591,7 +633,9 @@ a:focus-visible, button:focus-visible {
       <div class="card-head"><h2 class="card-title">Inundación SAR · evento septiembre-octubre 2020</h2></div>
       <div class="card-body">
         <p style="font-size:13.5px; line-height:1.6; color:var(--text); margin-bottom:14px;">
-          Detección de inundación por diferencia de retrodispersión Sentinel-1 SAR-VH
+          Detección de inundación por diferencia de retrodispersión
+          <abbr title="Sentinel-1 (ESA): satélite de radar de apertura sintética que opera de día y de noche, atravesando nubes">Sentinel-1</abbr>
+          <abbr title="SAR = Synthetic Aperture Radar; VH = polarización vertical-horizontal, sensible a estructura de vegetación e inundación">SAR-VH</abbr>
           entre periodo seco (ene-mar 2020, 49 imágenes) y periodo inundado
           (sep-oct 2020, 36 imágenes). Umbral de +3 dB para agua abierta; valores
           negativos para inundación bajo dosel (scattering de doble rebote agua-tronco).
@@ -659,7 +703,16 @@ a:focus-visible, button:focus-visible {
             </tbody>
           </table>
         </div>
-        <p style="margin-top:14px; font-size:13px; line-height:1.6;">El acuerdo directo INVEMAR ↔ WorldCover es <strong>F1 = 0,833</strong>, lo que define un techo metodológico realista. El clasificador por umbrales alcanza ~70 % de ese techo; <strong>Random Forest lo supera</strong> con mejoras del 42 % (vs INVEMAR) y 62 % (vs WorldCover) sobre el método determinístico. Recall sostenida en 0,43–0,45 con umbrales confirma una subestimación atribuible al criterio conservador NDVI &gt; 0,70.</p>
+        <p style="margin-top:14px; font-size:13px; line-height:1.6;">El acuerdo directo
+        <abbr title="Instituto de Investigaciones Marinas y Costeras 'José Benito Vives de Andréis' — autoridad colombiana en cartografía marino-costera">INVEMAR</abbr>
+        ↔ WorldCover es <strong>F1 = 0,833</strong>, lo que define un techo metodológico realista.
+        El clasificador por umbrales alcanza ~70 % de ese techo;
+        <strong><abbr title="Random Forest: clasificador supervisado de ensamble basado en árboles de decisión que combina predicciones de cientos de árboles para mejorar precisión">Random Forest</abbr></strong>
+        lo supera con mejoras del 42 % (vs INVEMAR) y 62 % (vs WorldCover) sobre el método
+        determinístico.
+        <abbr title="Recall = Verdaderos Positivos / (Verdaderos Positivos + Falsos Negativos). Mide qué proporción del manglar real es correctamente identificada">Recall</abbr>
+        sostenida en 0,43–0,45 con umbrales confirma una subestimación atribuible al criterio
+        conservador NDVI &gt; 0,70.</p>
       </div>
     </div>
   </div>
@@ -674,9 +727,12 @@ a:focus-visible, button:focus-visible {
         <p>El manglar de la CGSM depende del aporte de agua dulce del río Magdalena
         y del Aracataca para mantener el balance osmótico que evita la hipersalinización.
         La matriz mide la correlación de Pearson entre seis forzantes climáticos
-        (precipitación local ERA5, índices ENSO globales, caudales IDEAM, precipitación
-        regional CHIRPS) y la anomalía NDVI z-score del manglar, evaluada en rezagos
-        de 0 a 3 meses. Verde: correlación positiva (el forzante favorece al dosel).
+        (precipitación local <abbr title="ERA5-Land: reanálisis climático de alta resolución de ECMWF/Copernicus, estima temperatura, viento, presión y precipitación globales">ERA5</abbr>,
+        índices <abbr title="El Niño-Southern Oscillation: ciclo climático del Pacífico ecuatorial que alterna entre fases cálidas (El Niño) y frías (La Niña), con teleconexiones a Colombia">ENSO</abbr> globales,
+        caudales <abbr title="Instituto de Hidrología, Meteorología y Estudios Ambientales de Colombia — opera la red hidrométrica nacional">IDEAM</abbr>,
+        precipitación regional <abbr title="Climate Hazards Group InfraRed Precipitation with Station data (Funk et al., 2015): producto satelital de precipitación cuasi-global desde 1981">CHIRPS</abbr>)
+        y la anomalía NDVI z-score del manglar, evaluada en rezagos de 0 a 3 meses.
+        Verde: correlación positiva (el forzante favorece al dosel).
         Rojo: correlación negativa. Cerca de cero: acoplamiento débil.</p>
       </div>
     </div>
@@ -796,8 +852,11 @@ a:focus-visible, button:focus-visible {
     <div class="card lead">
       <div class="card-head"><h2 class="card-title">Distribución de roles y verificación cruzada</h2></div>
       <div class="card-body">
-        <p>Reparto por fortalezas: <strong>Python</strong> opera la nube (Google Earth Engine,
-        SamGeo), <strong>R</strong> ejecuta los quiebres bfast y las series ecohidrológicas,
+        <p>Reparto por fortalezas: <strong>Python</strong> opera la nube
+        (<abbr title="Google Earth Engine: plataforma gratuita de Google para procesar imágenes satelitales en la nube, con acceso a petabytes de datos públicos">Google Earth Engine</abbr>,
+        <abbr title="Segment Anything for Geospatial: integración del modelo Segment Anything Model de Meta AI para segmentación automática de imágenes satelitales">SamGeo</abbr>),
+        <strong>R</strong> ejecuta los quiebres <abbr title="Breaks For Additive Season and Trend (Verbesselt et al., 2010): detecta cambios estructurales en series temporales">bfast</abbr>
+        y las series ecohidrológicas,
         <strong>Julia</strong> resuelve la geometría rápida sobre miles de polígonos.
         La interoperabilidad se valida mediante cuatro pruebas cruzadas independientes que
         confirman convergencia numérica entre las implementaciones.</p>
@@ -868,13 +927,15 @@ a:focus-visible, button:focus-visible {
         <h3>Sobre este monitor</h3>
         <h2>Pipeline multilenguaje (Python, R, Julia) para el monitoreo de manglar en la CGSM · 2013–2025</h2>
         <p>Síntesis de un proyecto académico que articula tres lenguajes para monitorear la
-        dinámica espaciotemporal del manglar de la Ciénaga Grande de Santa Marta, sitio Ramsar
+        dinámica espaciotemporal del manglar de la Ciénaga Grande de Santa Marta, sitio
+        <abbr title="Convención Ramsar sobre humedales de importancia internacional. La CGSM es sitio Ramsar Nº 562 desde 1998">Ramsar</abbr>
         y Reserva de la Biosfera ubicado al norte del departamento del Magdalena, Colombia.
         Los productos provienen de satélites públicos (Sentinel-2, Sentinel-1, Landsat 8/9),
         reanálisis climáticos (ERA5-Land, CHIRPS) y registros hidrométricos (IDEAM/DHIME).
         Toda la cadena de procesamiento es reproducible desde el repositorio GitHub mediante
         un contenedor Docker preconfigurado, y se valida cuantitativamente contra cartografía
-        oficial INVEMAR 1:25.000 (2020) y ESA WorldCover v200 (2022).</p>
+        oficial INVEMAR 1:25.000 (2020) y ESA WorldCover v200 (2022).
+        Consultá el <a href="#glosario" onclick="document.getElementById('glossary-btn').click(); return false;">glosario técnico</a> abajo para definiciones detalladas.</p>
 
         <h3 style="margin-top:24px">Pregunta de investigación</h3>
         <p class="question">¿Cómo ha variado la cobertura, la fragmentación y el vigor del
@@ -968,7 +1029,7 @@ a:focus-visible, button:focus-visible {
       </div>
     </div>
 
-    <div class="card about-data">
+    <div class="card about-data" id="glosario">
       <div class="card-body">
         <h3>Glosario técnico</h3>
         <dl class="glossary">
@@ -1027,6 +1088,24 @@ a:focus-visible, button:focus-visible {
   tabs.forEach(b => b.addEventListener('click', () => activate(b.dataset.tab, true)));
   const initial = (location.hash || '#resumen').replace('#', '');
   if (document.getElementById('panel-' + initial)) activate(initial, false);
+})();
+
+/* ============== GLOSSARY SHORTCUT ============== */
+(function () {
+  function jumpToGlossary() {
+    const tab = document.querySelector('.tabs button[data-tab="acerca"]');
+    if (tab) tab.click();
+    setTimeout(() => {
+      const target = document.getElementById('glosario');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 250);
+  }
+  const btn = document.getElementById('glossary-btn');
+  if (btn) btn.addEventListener('click', jumpToGlossary);
+  // Cualquier link con href="#glosario" en el dashboard usa el mismo flujo
+  document.querySelectorAll('a[href="#glosario"]').forEach(a => {
+    a.addEventListener('click', (e) => { e.preventDefault(); jumpToGlossary(); });
+  });
 })();
 
 /* ============== THEME TOGGLE ============== */
