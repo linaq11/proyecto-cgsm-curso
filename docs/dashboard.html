@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CGSM Monitor · 2013–2025</title>
+<meta name="description" content="Monitoreo del manglar de la Ciénaga Grande de Santa Marta 2013-2025 — pipeline multilenguaje Python/R/Julia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+/* ========================================================
+   CGSM MONITOR — Open Design (vanilla, no framework)
+   ======================================================== */
+:root {
+  --bg:#f5f6f8; --surface:#ffffff; --surface-2:#fafbfc;
+  --border:#e6e8ec; --border-soft:#eef0f3;
+  --text:#0f172a; --text-muted:#5b6472; --text-faint:#8a93a1;
+
+  --primary:#1f7a52; --primary-2:#2da874; --primary-soft:#e6f5ec;
+  --info:#0ea5e9;    --info-soft:#e3f4fd;
+  --success:#16a34a; --success-soft:#e3f5e9;
+  --warning:#d97706; --warning-soft:#fbeed3;
+  --danger:#dc2626;  --danger-soft:#fbe3e3;
+  --secondary:#475569; --secondary-soft:#e7eaef;
+
+  --radius:14px; --radius-sm:10px;
+  --shadow-1:0 1px 2px rgba(15,23,42,.04),0 1px 1px rgba(15,23,42,.03);
+  --shadow-2:0 8px 24px rgba(15,23,42,.08),0 2px 6px rgba(15,23,42,.04);
+  --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --trans:180ms cubic-bezier(.2,.7,.3,1);
+
+  --nav-h:56px;
+}
+html[data-theme="dark"] {
+  --bg:#0b1220; --surface:#111827; --surface-2:#161f2f;
+  --border:#1f2937; --border-soft:#182030;
+  --text:#e5e7eb; --text-muted:#9aa4b2; --text-faint:#6b7587;
+  --primary:#34d399; --primary-2:#2da874; --primary-soft:#0f2a23;
+  --info-soft:#0e2a3b; --success-soft:#11321f;
+  --warning-soft:#3a2611; --danger-soft:#3a1414;
+  --secondary-soft:#1f2937;
+  --shadow-1:0 1px 2px rgba(0,0,0,.4);
+  --shadow-2:0 8px 24px rgba(0,0,0,.5),0 2px 4px rgba(0,0,0,.3);
+  color-scheme:dark;
+}
+
+* { box-sizing:border-box; }
+html, body { height:100%; margin:0; }
+body {
+  font-family:var(--font); background:var(--bg); color:var(--text);
+  font-feature-settings:"cv11","ss01","tnum";
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  letter-spacing:-0.005em;
+}
+
+/* ================= NAVBAR ================= */
+.nav {
+  position:sticky; top:0; z-index:100;
+  display:flex; align-items:center; gap:8px;
+  height:var(--nav-h); padding:0 18px;
+  background:rgba(255,255,255,.85); backdrop-filter:saturate(180%) blur(10px);
+  -webkit-backdrop-filter:saturate(180%) blur(10px);
+  border-bottom:1px solid var(--border);
+}
+html[data-theme="dark"] .nav { background:rgba(17,24,39,.85); }
+.brand {
+  display:inline-flex; align-items:center; gap:10px;
+  font-weight:700; font-size:14px; color:var(--text); text-decoration:none;
+  white-space:nowrap; padding-right:8px;
+}
+.brand-chip {
+  width:12px; height:12px; border-radius:4px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  box-shadow:0 0 0 3px var(--primary-soft);
+}
+.brand-sub { color:var(--text-faint); font-weight:500; font-size:12.5px; margin-left:4px; }
+
+.tabs {
+  display:flex; gap:2px; flex:1; overflow-x:auto;
+  margin-left:8px; scrollbar-width:none;
+}
+.tabs::-webkit-scrollbar { display:none; }
+.tabs button {
+  appearance:none; background:none; border:0; cursor:pointer;
+  font:inherit; font-size:13.5px; font-weight:500;
+  color:var(--text-muted);
+  padding:18px 14px; position:relative;
+  white-space:nowrap;
+  transition:color var(--trans);
+}
+.tabs button:hover { color:var(--text); }
+.tabs button.active { color:var(--primary); font-weight:600; }
+.tabs button.active::after {
+  content:""; position:absolute; left:12px; right:12px; bottom:-1px; height:2px;
+  background:var(--primary); border-radius:2px 2px 0 0;
+}
+
+.nav-tools { display:flex; align-items:center; gap:4px; }
+.icon-btn {
+  width:34px; height:34px; border-radius:var(--radius-sm);
+  display:inline-flex; align-items:center; justify-content:center;
+  color:var(--text-muted); background:transparent;
+  border:1px solid transparent; cursor:pointer;
+  transition:all var(--trans); text-decoration:none;
+  font-size:16px;
+}
+.icon-btn:hover { background:var(--border-soft); color:var(--text); }
+#theme-toggle { border-color:var(--border); }
+#theme-toggle .ti-sun { display:none; }
+html[data-theme="dark"] #theme-toggle .ti-sun { display:inline; }
+html[data-theme="dark"] #theme-toggle .ti-moon { display:none; }
+
+/* ================= LAYOUT ================= */
+main { padding:18px; max-width:1600px; margin:0 auto; }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; animation:fade 220ms ease both; }
+@keyframes fade { from {opacity:0; transform:translateY(2px);} to {opacity:1; transform:none;} }
+
+.row { display:grid; gap:16px; margin-bottom:16px; }
+.row:last-child { margin-bottom:0; }
+.cols-5 { grid-template-columns:repeat(5,minmax(0,1fr)); }
+.cols-4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.cols-2-3-7 { grid-template-columns:3fr 7fr; }
+.cols-1-1 { grid-template-columns:1fr 1fr; }
+.cols-55-45 { grid-template-columns:55fr 45fr; }
+.cols-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+
+@media (max-width:1100px) {
+  .cols-5 { grid-template-columns:repeat(3,1fr); }
+  .cols-4 { grid-template-columns:repeat(2,1fr); }
+  .cols-2-3-7, .cols-55-45 { grid-template-columns:1fr; }
+}
+@media (max-width:640px) {
+  main { padding:12px; }
+  .cols-5, .cols-4, .cols-3, .cols-1-1 { grid-template-columns:1fr; }
+  .brand-sub { display:none; }
+  .tabs button { padding:16px 10px; font-size:12.5px; }
+}
+
+/* ================= CARD ================= */
+.card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); box-shadow:var(--shadow-1);
+  overflow:hidden;
+  transition:box-shadow var(--trans), border-color var(--trans);
+}
+.card:hover { box-shadow:var(--shadow-2); }
+.card-head {
+  padding:14px 18px; border-bottom:1px solid var(--border-soft);
+  display:flex; align-items:center; gap:8px;
+}
+.card-title { font-size:14px; font-weight:600; margin:0; color:var(--text); letter-spacing:-0.005em; }
+.card-body { padding:18px; }
+.card-body p { margin:0 0 10px; font-size:14px; line-height:1.6; color:var(--text); text-wrap:pretty; }
+.card-body p:last-child { margin-bottom:0; }
+.card-body strong { font-weight:600; color:var(--text); }
+
+/* Lead/intro card */
+.card.lead { border-top:3px solid var(--primary); }
+.card.lead .card-head {
+  border-bottom:none; padding-bottom:4px;
+  background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);
+}
+.card.lead .card-title {
+  font-size:12px; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.1em; color:var(--primary);
+}
+.card.lead .card-body { padding-top:8px; }
+.card.lead .card-body p {
+  font-size:15px; line-height:1.65; color:var(--text);
+  max-width:95ch;
+}
+.card.lead .card-body strong {
+  color:var(--primary); font-weight:600;
+}
+html[data-theme="dark"] .card.lead .card-body strong { color:var(--primary); }
+
+/* ================= PURPOSE BANNER ================= */
+.purpose {
+  display:flex; align-items:center; gap:12px;
+  padding:10px 16px; margin-bottom:16px;
+  background:linear-gradient(90deg, var(--primary-soft) 0%, transparent 100%);
+  border-left:3px solid var(--primary);
+  border-radius:var(--radius-sm);
+  font-size:13px; line-height:1.45; color:var(--text);
+}
+.purpose i { color:var(--primary); font-size:18px; }
+.purpose strong { color:var(--primary); font-weight:600; }
+
+/* ================= GLOSSARY ================= */
+.glossary {
+  display:grid; grid-template-columns:repeat(2, minmax(0,1fr));
+  gap:8px 24px; margin:0;
+}
+@media (max-width:760px) { .glossary { grid-template-columns:1fr; } }
+.glossary dt {
+  font-weight:600; font-family:var(--mono); font-size:12px;
+  color:var(--primary); margin-top:6px;
+}
+.glossary dd {
+  margin:0 0 6px 0; font-size:13px; line-height:1.5;
+  color:var(--text-muted);
+}
+
+/* ================= KPI / VALUE BOX ================= */
+.kpi {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius); box-shadow:var(--shadow-1);
+  padding:16px 18px 16px 22px;
+  display:flex; align-items:center; gap:14px;
+  position:relative; overflow:hidden;
+  transition:box-shadow var(--trans), transform var(--trans);
+}
+.kpi:hover { box-shadow:var(--shadow-2); }
+.kpi::before {
+  content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:var(--accent,var(--primary));
+}
+.kpi-icon {
+  flex:0 0 52px; width:52px; height:52px;
+  border-radius:13px;
+  display:inline-flex; align-items:center; justify-content:center;
+  background:var(--accent-soft,var(--primary-soft));
+  color:var(--accent,var(--primary));
+  font-size:24px;
+}
+.kpi-body { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.kpi-title {
+  font-size:11px; font-weight:600; text-transform:uppercase;
+  letter-spacing:0.06em; color:var(--text-muted);
+  margin:0; line-height:1.3;
+}
+.kpi-value {
+  font-size:24px; font-weight:700; color:var(--text);
+  font-variant-numeric:tabular-nums; letter-spacing:-0.02em;
+  margin:0; line-height:1.2;
+}
+.kpi.success   { --accent:var(--success);   --accent-soft:var(--success-soft); }
+.kpi.primary   { --accent:var(--primary);   --accent-soft:var(--primary-soft); }
+.kpi.info      { --accent:var(--info);      --accent-soft:var(--info-soft); }
+.kpi.warning   { --accent:var(--warning);   --accent-soft:var(--warning-soft); }
+.kpi.danger    { --accent:var(--danger);    --accent-soft:var(--danger-soft); }
+.kpi.secondary { --accent:var(--secondary); --accent-soft:var(--secondary-soft); }
+.kpi-value.huge { font-size:34px; color:var(--accent,var(--success)); }
+
+/* ================= FIGURE ================= */
+.figure-card .card-body { padding:14px; }
+.figure { display:flex; flex-direction:column; gap:10px; }
+.figure img {
+  width:100%; height:auto; max-height:520px;
+  object-fit:contain; display:block;
+  border-radius:var(--radius-sm); background:var(--surface-2);
+}
+html[data-theme="dark"] .figure img {
+  background:#fff; padding:6px; filter:brightness(.92) contrast(1.05);
+}
+.caption {
+  font-size:12.5px; line-height:1.55; color:var(--text-muted);
+  padding:10px 12px; background:var(--surface-2);
+  border-left:3px solid var(--primary); border-radius:0 8px 8px 0;
+}
+
+/* ================= MAP ================= */
+.map-card { padding:0; }
+.map-card .card-body { padding:0; }
+.map-card iframe {
+  width:100%; height:100%; min-height:640px;
+  border:0; display:block; background:var(--surface-2);
+}
+/* Hero variant: full-width, taller, with visible header */
+.map-card--hero .card-body { padding:0; }
+.map-card--hero iframe { min-height:820px; }
+@media (max-width:900px) {
+  .map-card--hero iframe { min-height:720px; }
+}
+
+/* ================= TABLE ================= */
+.table-wrap {
+  overflow:auto; border-radius:var(--radius-sm);
+  border:1px solid var(--border-soft);
+  background:var(--surface);
+}
+table.data {
+  width:100%; border-collapse:separate; border-spacing:0;
+  font-size:13px; font-variant-numeric:tabular-nums;
+}
+table.data thead th {
+  position:sticky; top:0; z-index:2;
+  background:var(--surface-2); color:var(--text-muted);
+  font-weight:600; font-size:11px;
+  text-transform:uppercase; letter-spacing:0.05em;
+  padding:11px 14px; text-align:left;
+  border-bottom:1px solid var(--border);
+  box-shadow:0 1px 0 var(--border);
+  white-space:nowrap;
+}
+table.data thead th.num,
+table.data tbody td.num { text-align:right; }
+table.data tbody td {
+  padding:11px 14px; color:var(--text);
+  border-bottom:1px solid var(--border-soft);
+}
+table.data tbody tr:last-child td { border-bottom:none; }
+table.data tbody tr:hover td { background:var(--surface-2); }
+table.data .pill {
+  display:inline-block; padding:2px 10px; border-radius:999px;
+  font-size:11px; font-weight:600; letter-spacing:0.02em;
+  background:var(--surface-2); color:var(--text-muted);
+}
+table.data .pill.deg { background:var(--danger-soft);  color:var(--danger); }
+table.data .pill.rec { background:var(--warning-soft); color:var(--warning); }
+table.data .pill.act { background:var(--success-soft); color:var(--success); }
+table.data .mono { font-family:var(--mono); font-size:12px; }
+
+/* Heatmap-style numeric cells (correlation table) */
+.corr-cell { font-family:var(--mono); font-size:12.5px; padding:6px 10px; border-radius:6px; display:inline-block; min-width:54px; text-align:right; }
+.corr-pos-1 { background:rgba(34,197,94,.08); color:var(--success); }
+.corr-pos-2 { background:rgba(34,197,94,.16); color:var(--success); font-weight:600; }
+.corr-pos-3 { background:rgba(34,197,94,.28); color:#0d5e2a; font-weight:600; }
+.corr-neg-1 { background:rgba(239,68,68,.08); color:var(--danger); }
+.corr-neg-2 { background:rgba(239,68,68,.18); color:var(--danger); font-weight:600; }
+.corr-zero  { color:var(--text-faint); }
+
+/* ================= ABOUT (Acerca de) ================= */
+.about-grid { display:grid; gap:16px; grid-template-columns:repeat(12,1fr); }
+.about-grid .card { grid-column:span 12; }
+.about-grid .card.about-main { grid-column:span 7; }
+.about-grid .card.about-meta { grid-column:span 5; }
+.about-grid .card.about-data { grid-column:span 12; }
+.about-grid .card.about-stack { grid-column:span 12; }
+@media (max-width:1100px) {
+  .about-grid .card.about-main, .about-grid .card.about-meta { grid-column:span 12; }
+}
+.about .card-body { padding:24px 28px; }
+.about .card-body p { font-size:15px; line-height:1.7; color:var(--text); max-width:75ch; }
+.about h3 {
+  font-size:11px; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.08em; color:var(--primary);
+  margin:0 0 10px;
+}
+.about h2 {
+  font-size:17px; font-weight:700; color:var(--text);
+  margin:18px 0 8px; letter-spacing:-0.01em;
+}
+.about ul { margin:6px 0 0; padding-left:18px; }
+.about li { margin:6px 0; line-height:1.55; font-size:14px; color:var(--text); }
+.about li strong { color:var(--text); font-weight:600; }
+.about a {
+  color:var(--primary); text-decoration:none;
+  border-bottom:1px solid transparent; transition:border-color var(--trans);
+  font-weight:500;
+}
+.about a:hover { border-bottom-color:var(--primary); }
+.about .question {
+  font-size:16px; line-height:1.6; color:var(--text);
+  padding:16px 18px; background:var(--primary-soft);
+  border-left:3px solid var(--primary); border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  font-weight:500; max-width:none;
+}
+html[data-theme="dark"] .about .question { background:rgba(52,211,153,.08); }
+.stack-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.chip {
+  font-size:12px; font-family:var(--mono); font-weight:500;
+  padding:4px 10px; border-radius:6px;
+  background:var(--surface-2); color:var(--text);
+  border:1px solid var(--border-soft);
+}
+
+/* ================= FINDINGS LIST ================= */
+.findings { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+.findings li {
+  display:flex; gap:12px; align-items:flex-start;
+  padding:10px 12px; border-radius:var(--radius-sm);
+  background:var(--surface-2); border:1px solid var(--border-soft);
+}
+.finding-tag {
+  flex:0 0 78px; font-family:var(--mono); font-size:11px; font-weight:700;
+  padding:4px 8px; border-radius:6px; text-align:center;
+  background:var(--primary-soft); color:var(--primary);
+  letter-spacing:0.02em; white-space:nowrap;
+  margin-top:1px;
+}
+.finding-tag.danger  { background:var(--danger-soft);  color:var(--danger); }
+.finding-tag.warning { background:var(--warning-soft); color:var(--warning); }
+.finding-tag.info    { background:var(--info-soft);    color:var(--info); }
+.finding-txt { flex:1 1 auto; font-size:13.5px; line-height:1.55; color:var(--text); }
+.finding-txt strong { font-weight:600; }
+
+/* Scrollbar */
+*::-webkit-scrollbar { width:10px; height:10px; }
+*::-webkit-scrollbar-track { background:transparent; }
+*::-webkit-scrollbar-thumb { background:var(--border); border-radius:10px; border:2px solid var(--bg); }
+*::-webkit-scrollbar-thumb:hover { background:var(--text-faint); }
+
+/* Focus */
+a:focus-visible, button:focus-visible {
+  outline:2px solid var(--primary); outline-offset:2px;
+  border-radius:var(--radius-sm);
+}
+
+@media print {
+  .nav { display:none; }
+  .tab-panel { display:block !important; page-break-after:always; }
+  .card { box-shadow:none !important; border:1px solid #ccc !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="nav">
+  <a class="brand" href="#resumen">
+    <span class="brand-chip"></span>
+    <span>CGSM Monitor</span>
+    <span class="brand-sub">· 2013–2025</span>
+  </a>
+  <nav class="tabs" role="tablist" aria-label="Secciones">
+    <button data-tab="resumen"    class="active" role="tab" aria-selected="true">Resumen</button>
+    <button data-tab="cobertura"  role="tab" aria-selected="false">Cobertura</button>
+    <button data-tab="clima"      role="tab" aria-selected="false">Clima e hidrología</button>
+    <button data-tab="validacion" role="tab" aria-selected="false">Validación multilenguaje</button>
+    <button data-tab="acerca"     role="tab" aria-selected="false">Acerca de</button>
+  </nav>
+  <div class="nav-tools">
+    <a class="icon-btn" href="https://github.com/linaq11/proyecto-cgsm-curso"
+       target="_blank" rel="noopener" title="Repositorio en GitHub" aria-label="GitHub">
+      <i class="bi bi-github"></i>
+    </a>
+    <button id="theme-toggle" class="icon-btn" type="button"
+            title="Cambiar tema" aria-label="Cambiar tema claro/oscuro">
+      <i class="bi bi-moon-stars ti-moon"></i>
+      <i class="bi bi-sun ti-sun"></i>
+    </button>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= RESUMEN ================= -->
+<section id="panel-resumen" class="tab-panel active" role="tabpanel">
+  <div class="purpose">
+    <i class="bi bi-shield-check"></i>
+    <div>Herramienta de consulta operativa para gestores ambientales del
+    <strong>Plan de Manejo Ambiental del sitio Ramsar CGSM</strong>.
+    Productos derivados de satélites públicos (Sentinel-2, Sentinel-1, Landsat 8/9)
+    validados contra cartografía INVEMAR 1:25.000.</div>
+  </div>
+
+  <div class="row">
+    <div class="card lead">
+      <div class="card-head"><h2 class="card-title">Estado del manglar al cierre de 2025</h2></div>
+      <div class="card-body">
+        <p>Indicadores sintéticos sobre el AOI acotado (SFF CGSM + Vía Parque Isla de
+        Salamanca, 835 km²) y su acoplamiento con el régimen climático regional.
+        El índice NDVI mide el vigor del dosel en una escala de 0 a 1 a partir de la
+        reflectancia satelital. Las gráficas y el mapa interactivo desarrollan cada KPI.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row cols-5">
+    <div class="kpi success"><span class="kpi-icon"><i class="bi bi-tree-fill"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Manglar protegido hoy</p><p class="kpi-value">4.037 ha</p></div></div>
+    <div class="kpi primary"><span class="kpi-icon"><i class="bi bi-bounding-box"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Área protegida total</p><p class="kpi-value">835 km²</p></div></div>
+    <div class="kpi info"><span class="kpi-icon"><i class="bi bi-droplet-fill"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Inundado durante La Niña 2020</p><p class="kpi-value">59 km²</p></div></div>
+    <div class="kpi warning"><span class="kpi-icon"><i class="bi bi-graph-up-arrow"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Vínculo caudal río – manglar</p><p class="kpi-value">+0,26</p></div></div>
+    <div class="kpi secondary"><span class="kpi-icon"><i class="bi bi-calendar3"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Años de monitoreo continuo</p><p class="kpi-value">13</p></div></div>
+  </div>
+
+  <div class="row cols-1-1">
+    <div class="card figure-card">
+      <div class="card-head"><h2 class="card-title">NDVI mediano del manglar denso · 2018–2025</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/ndvi_mediano_manglar_acotado.png" alt="Serie NDVI mediano del manglar 2018-2025">
+        <p class="caption">NDVI mensual sobre las cuatro estaciones de manglar denso. Caída a 0,60 en mid-2020 (La Niña) y recuperación sostenida hasta 0,80 desde 2022. Las bandas marcan los tres periodos de referencia: degradación, recuperación y actual.</p>
+      </div>
+    </div>
+    <div class="card figure-card">
+      <div class="card-head"><h2 class="card-title">Diferencia NDVI · 2020 vs. 2024-2025</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/ndvi_cambio_cubo.png" alt="Cambio NDVI 2020-2024/25">
+        <p class="caption">Azul: ganancia de vigor. Rojo: pérdida. Predominio del azul, consistente con la recuperación generalizada del dosel sobre el AOI acotado.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card map-card map-card--hero">
+      <div class="card-head"><h2 class="card-title">Mapa interactivo · navega y compara periodos</h2></div>
+      <div class="card-body">
+        <iframe src="../outputs/maps/dashboard_CGSM_final.html" title="Mapa interactivo CGSM" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="row cols-55-45">
+    <div class="card">
+      <div class="card-head"><h2 class="card-title">Cronología de quiebres bfast · 2013–2025</h2></div>
+      <div class="card-body">
+        <ul class="findings">
+          <li><span class="finding-tag yr">2016</span><span class="finding-txt">Quiebre estructural generalizado en 7 de 8 estaciones, asociado al evento El Niño 2015-2016.</span></li>
+          <li><span class="finding-tag yr danger">sep 2020</span><span class="finding-txt">Segunda perturbación mayor (anomalía NDVI z &lt; −3 en 2 de 8 estaciones) bajo La Niña 2020-2021. Quiebres en Caño Palos (jun) y Caño Clarín (feb, dic).</span></li>
+          <li><span class="finding-tag yr">2022</span><span class="finding-txt">Quiebres adicionales en CP Aguas Negras (abr) y CP Luna (ene) por excedente hídrico post-Niña.</span></li>
+          <li><span class="finding-tag yr warning">2023–24</span><span class="finding-txt">Tercer bloque de quiebres coincidente con El Niño 2023-2024 visible en el índice ONI.</span></li>
+          <li><span class="finding-tag yr info">2001–17</span><span class="finding-txt">14 inundaciones documentadas (Global Flood Database). Máximo histórico: DFO_2625 (feb 2005), 299 km² afectados.</span></li>
+        </ul>
+        <p style="margin-top:12px; font-size:12.5px; color:var(--text-muted);">Serie combinada Landsat 8 + Sentinel-2: 929 registros mensuales en 12 años, 18 anomalías significativas (z &lt; −2). Quiebres detectados con el método bfast (Verbesselt et al., 2010) sobre la serie z-score por estación.</p>
+      </div>
+    </div>
+
+    <div class="card figure-card">
+      <div class="card-head"><h2 class="card-title">Estado operativo por estación</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/alertas_semaforo.png" alt="Semáforo de alertas por estación">
+        <p class="caption">Sistema de alertas tipo semáforo sobre las 8 estaciones INVEMAR. Verde: estable o en recuperación. Amarillo: en alerta (z &gt; −2). Rojo: anomalía crítica (z &lt; −2). Cierre 2025: 5 estables, 3 en alerta, 0 críticas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COBERTURA ================= -->
+<section id="panel-cobertura" class="tab-panel" role="tabpanel">
+  <div class="row">
+    <div class="card lead">
+      <div class="card-head"><h2 class="card-title">Contracción del área con consolidación estructural</h2></div>
+      <div class="card-body">
+        <p>Entre 2020 y 2025 el manglar redujo su área clasificada de
+        <strong>12.426 a 4.037 ha</strong> y pasó de <strong>79 a 15 parches</strong>,
+        mientras el área media de parche creció de 157 a 269 ha. El NDVI mediano del
+        dosel recuperó valores de 0,80 desde 2022 (vs. 0,60 en mid-2020), lo que
+        indica consolidación funcional del manglar sobreviviente.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row cols-5">
+    <div class="kpi danger"><span class="kpi-icon"><i class="bi bi-grid-3x3-gap"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Fragmentos en 2020</p><p class="kpi-value">79</p></div></div>
+    <div class="kpi warning"><span class="kpi-icon"><i class="bi bi-grid-3x3-gap"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Fragmentos en 2022</p><p class="kpi-value">38</p></div></div>
+    <div class="kpi success"><span class="kpi-icon"><i class="bi bi-grid-3x3-gap"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Fragmentos hoy (2024-25)</p><p class="kpi-value">15</p></div></div>
+    <div class="kpi primary"><span class="kpi-icon"><i class="bi bi-zoom-in"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Consolidación de los fragmentos</p><p class="kpi-value">+71 %</p></div></div>
+    <div class="kpi info"><span class="kpi-icon"><i class="bi bi-check2-square"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Validación con cartografía oficial</p><p class="kpi-value">&check;</p></div></div>
+  </div>
+
+  <div class="row cols-55-45">
+    <div class="card figure-card">
+      <div class="card-head"><h2 class="card-title">NDVI mediano por periodo · degradación / recuperación / actual</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/ndvi_3_periodos_cubo.png" alt="NDVI tres periodos">
+        <p class="caption">Mediana del NDVI por periodo sobre el AOI acotado. La zona central, ralea en 2020, muestra recuperación visible en 2024-2025.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2 class="card-title">Métricas de fragmentación del paisaje · por periodo</h2></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr>
+              <th>Periodo</th>
+              <th class="num">Parches</th>
+              <th class="num">Área (ha)</th>
+              <th class="num">Área media (ha)</th>
+              <th class="num"><abbr title="Mean Shape Index: razón perímetro/área normalizada. 1 = forma simple, &gt;1 = bordes irregulares.">MSI</abbr></th>
+              <th class="num"><abbr title="Nearest Neighbor Distance: distancia media entre parches.">NND (km)</abbr></th>
+            </tr></thead>
+            <tbody>
+              <tr><td><span class="pill deg">degradación (2020)</span></td><td class="num">79</td><td class="num">12.425,63</td><td class="num">157,29</td><td class="num">0,51</td><td class="num">1,10</td></tr>
+              <tr><td><span class="pill rec">recuperación (2022)</span></td><td class="num">38</td><td class="num">8.650,75</td><td class="num">227,65</td><td class="num">1,01</td><td class="num">1,99</td></tr>
+              <tr><td><span class="pill act">actual (2024-25)</span></td><td class="num">15</td><td class="num">4.037,02</td><td class="num">269,13</td><td class="num">1,46</td><td class="num">2,39</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="caption" style="margin-top:14px">Patrón de consolidación: menos parches, área media mayor, MSI creciente (bordes más recortados) y NND mayor (aislamiento progresivo del manglar sobreviviente). Calculado en Julia con LibGEOS sobre los polígonos clasificados.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row cols-1-1">
+    <div class="card">
+      <div class="card-head"><h2 class="card-title">Inundación SAR · evento septiembre-octubre 2020</h2></div>
+      <div class="card-body">
+        <p style="font-size:13.5px; line-height:1.6; color:var(--text); margin-bottom:14px;">
+          Detección de inundación por diferencia de retrodispersión Sentinel-1 SAR-VH
+          entre periodo seco (ene-mar 2020, 49 imágenes) y periodo inundado
+          (sep-oct 2020, 36 imágenes). Umbral de +3 dB para agua abierta; valores
+          negativos para inundación bajo dosel (scattering de doble rebote agua-tronco).
+        </p>
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr>
+              <th>Mecanismo</th>
+              <th class="num">Área afectada</th>
+              <th class="num">% del AOI</th>
+            </tr></thead>
+            <tbody>
+              <tr><td><span class="pill" style="background:var(--info-soft); color:var(--info);">Agua abierta</span></td><td class="num">15,93 km²</td><td class="num">1,9 %</td></tr>
+              <tr><td><span class="pill" style="background:var(--warning-soft); color:var(--warning);">Bajo dosel</span></td><td class="num">43,08 km²</td><td class="num">5,2 %</td></tr>
+              <tr style="background:var(--surface-2); font-weight:600;"><td><strong>Total inundado</strong></td><td class="num"><strong>59,02 km²</strong></td><td class="num"><strong>7,1 %</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="caption" style="margin-top:14px">El radar Sentinel-1 distinguió por primera vez para el evento ambos mecanismos de afectación; la inundación bajo dosel triplica al agua abierta en superficie.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2 class="card-title">Dinámica hídrica de largo plazo · JRC 1984-2021</h2></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr>
+              <th>Transición de superficie</th>
+              <th class="num">Área</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>Pérdida de agua permanente</td><td class="num" style="color:var(--danger);">−18,55 km²</td></tr>
+              <tr><td>Ganancia de agua permanente</td><td class="num" style="color:var(--success);">+23,55 km²</td></tr>
+              <tr style="background:var(--surface-2);"><td><strong>Balance neto</strong></td><td class="num"><strong>+5,00 km²</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="caption" style="margin-top:14px">JRC Global Surface Water (Pekel et al., 2016): el sistema redistribuye su lámina de agua más que la pierde. Balance positivo modesto en 37 años, consistente con la dinámica deltaica activa del río Magdalena.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row cols-55-45">
+    <div class="card figure-card">
+      <div class="card-head"><h2 class="card-title">Random Forest · importancia relativa de variables</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/rf_feature_importance.png" alt="Importancia de variables Random Forest">
+        <p class="caption">SWIR (B11 y B12) y distancia al agua son las variables más discriminantes para el manglar de la CGSM, seguidas por los índices espectrales (NDVI, NDWI). La incorporación de SAR Sentinel-1 (banda VH) aporta robustez bajo nubosidad.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2 class="card-title">Validación cuantitativa contra cartografía oficial</h2></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr>
+              <th>Clasificador</th>
+              <th class="num"><abbr title="F1-score: media armónica entre Precision y Recall. 1 = clasificación perfecta.">F1</abbr> vs INVEMAR</th>
+              <th class="num">F1 vs WorldCover</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>Umbrales NDVI</td><td class="num">0,583</td><td class="num">0,548</td></tr>
+              <tr><td>Random Forest</td><td class="num" style="color:var(--success); font-weight:600;">0,826</td><td class="num" style="color:var(--success); font-weight:600;">0,889</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:14px; font-size:13px; line-height:1.6;">El acuerdo directo INVEMAR ↔ WorldCover es <strong>F1 = 0,833</strong>, lo que define un techo metodológico realista. El clasificador por umbrales alcanza ~70 % de ese techo; <strong>Random Forest lo supera</strong> con mejoras del 42 % (vs INVEMAR) y 62 % (vs WorldCover) sobre el método determinístico. Recall sostenida en 0,43–0,45 con umbrales confirma una subestimación atribuible al criterio conservador NDVI &gt; 0,70.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CLIMA E HIDROLOGÍA ================= -->
+<section id="panel-clima" class="tab-panel" role="tabpanel">
+  <div class="row">
+    <div class="card lead">
+      <div class="card-head"><h2 class="card-title">Acoplamiento climático-hidrológico del manglar</h2></div>
+      <div class="card-body">
+        <p>El manglar de la CGSM depende del aporte de agua dulce del río Magdalena
+        y del Aracataca para mantener el balance osmótico que evita la hipersalinización.
+        La matriz mide la correlación de Pearson entre seis forzantes climáticos
+        (precipitación local ERA5, índices ENSO globales, caudales IDEAM, precipitación
+        regional CHIRPS) y la anomalía NDVI z-score del manglar, evaluada en rezagos
+        de 0 a 3 meses. Verde: correlación positiva (el forzante favorece al dosel).
+        Rojo: correlación negativa. Cerca de cero: acoplamiento débil.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row cols-4">
+    <div class="kpi primary"><span class="kpi-icon"><i class="bi bi-droplet-fill"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Caudal típico río Magdalena</p><p class="kpi-value">3.750 m³/s</p></div></div>
+    <div class="kpi danger"><span class="kpi-icon"><i class="bi bi-exclamation-triangle-fill"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Pico extremo durante La Niña</p><p class="kpi-value">5.921 m³/s</p></div></div>
+    <div class="kpi info"><span class="kpi-icon"><i class="bi bi-globe"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Vínculo La Niña – manglar</p><p class="kpi-value">+0,20</p></div></div>
+    <div class="kpi warning"><span class="kpi-icon"><i class="bi bi-archive-fill"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Inundaciones históricas registradas</p><p class="kpi-value">16</p></div></div>
+  </div>
+
+  <div class="row cols-55-45">
+    <div class="card figure-card">
+      <div class="card-head"><h2 class="card-title">Caudal mensual · Magdalena (El Banco) y Aracataca (Ganadería Caribe)</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/caudal_ideam_series_2013_2025.png" alt="Series de caudal IDEAM">
+        <p class="caption">Series IDEAM/DHIME 2013-2025. Pico histórico en 2022 asociado al excedente hídrico post La Niña 2020-2021. Franjas sombreadas: eventos ENSO documentados.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2 class="card-title">Correlación de Pearson · forzante climático ↔ NDVI manglar</h2></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr>
+              <th>Forzante climático</th>
+              <th class="num"><abbr title="Correlación en el mismo mes">Lag 0</abbr></th>
+              <th class="num"><abbr title="Correlación con desfase de 1 mes">Lag 1</abbr></th>
+              <th class="num"><abbr title="Correlación con desfase de 2 meses">Lag 2</abbr></th>
+              <th class="num"><abbr title="Correlación con desfase de 3 meses">Lag 3</abbr></th>
+            </tr></thead>
+            <tbody>
+              <tr><td>ERA5 precipitación local</td>
+                <td class="num"><span class="corr-cell corr-neg-1">−0,081</span></td>
+                <td class="num"><span class="corr-cell corr-neg-1">−0,081</span></td>
+                <td class="num"><span class="corr-cell corr-neg-2">−0,123</span></td>
+                <td class="num"><span class="corr-cell corr-zero">−0,020</span></td></tr>
+              <tr><td>ENSO ONI</td>
+                <td class="num"><span class="corr-cell corr-zero">+0,027</span></td>
+                <td class="num"><span class="corr-cell corr-zero">−0,007</span></td>
+                <td class="num"><span class="corr-cell corr-zero">−0,039</span></td>
+                <td class="num"><span class="corr-cell corr-neg-1">−0,070</span></td></tr>
+              <tr><td>ENSO SOI</td>
+                <td class="num"><span class="corr-cell corr-pos-2">+0,143</span></td>
+                <td class="num"><span class="corr-cell corr-pos-2">+0,198</span></td>
+                <td class="num"><span class="corr-cell corr-pos-2">+0,146</span></td>
+                <td class="num"><span class="corr-cell corr-pos-1">+0,058</span></td></tr>
+              <tr><td>Caudal Magdalena (El Banco)</td>
+                <td class="num"><span class="corr-cell corr-pos-1">+0,064</span></td>
+                <td class="num"><span class="corr-cell corr-zero">+0,039</span></td>
+                <td class="num"><span class="corr-cell corr-pos-2">+0,108</span></td>
+                <td class="num"><span class="corr-cell corr-pos-3">+0,256</span></td></tr>
+              <tr><td>Caudal Aracataca (Ganadería Caribe)</td>
+                <td class="num"><span class="corr-cell corr-pos-2">+0,196</span></td>
+                <td class="num"><span class="corr-cell corr-pos-3">+0,224</span></td>
+                <td class="num"><span class="corr-cell corr-pos-2">+0,184</span></td>
+                <td class="num"><span class="corr-cell corr-pos-2">+0,180</span></td></tr>
+              <tr><td>CHIRPS precipitación regional</td>
+                <td class="num"><span class="corr-cell corr-pos-1">+0,075</span></td>
+                <td class="num"><span class="corr-cell corr-pos-2">+0,170</span></td>
+                <td class="num"><span class="corr-cell corr-pos-1">+0,097</span></td>
+                <td class="num"><span class="corr-cell corr-pos-3">+0,252</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="caption" style="margin-top:14px">Los caudales fluviales dominan el acoplamiento positivo en todos los rezagos. Máximo Caudal Magdalena en rezago 3 (+0,256) confirma efecto retardado del régimen fluvial sobre el dosel. Precipitación local ERA5 muestra correlación negativa débil en rezago 2, consistente con estrés por inundación bajo dosel.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card figure-card">
+      <div class="card-head"><h2 class="card-title">Forzantes y respuesta · vista integrada 2018-2025</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/clima_vs_ndvi_2018_2025.png" alt="Clima vs NDVI combinado 2018-2025">
+        <p class="caption">Panel multipista: anomalía NDVI del manglar superpuesta con caudal IDEAM, índice ONI y precipitación CHIRPS. Permite trazar la propagación de La Niña 2020-2021 y El Niño 2023-2024 desde el clima global hasta el dosel local.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row cols-1-1">
+    <div class="card figure-card">
+      <div class="card-head"><h2 class="card-title">Índices ENSO ONI y SOI · 2013-2025</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/enso_serie_2013_2025.png" alt="Series ENSO ONI y SOI">
+        <p class="caption">ONI &gt; 0,5: condición El Niño. ONI &lt; −0,5: La Niña. Tres eventos relevantes en el periodo: El Niño 2015-16, La Niña 2020-2022 (asociada a la mortandad), El Niño 2023-2024.</p>
+      </div>
+    </div>
+    <div class="card figure-card">
+      <div class="card-head"><h2 class="card-title">Precipitación CHIRPS · cuencas Magdalena y Aracataca</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/chirps_serie_cuencas_2013_2025.png" alt="Serie CHIRPS precipitación cuencas">
+        <p class="caption">CHIRPS v2.0 (Funk et al., 2015) sobre las cuencas aportantes. El máximo regional de 2022 precede en 1-3 meses la recuperación del NDVI del manglar, consistente con la cadena lluvia → caudal → dosel.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="card figure-card">
+      <div class="card-head"><h2 class="card-title">Sentinel-1 SAR-VH · serie temporal por estación 2018-2025</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/sar_vh_serie_temporal.png" alt="Serie temporal SAR-VH por estación 2018-2025">
+        <p class="caption">Retrodispersión SAR-VH mensual sobre las 8 estaciones INVEMAR. Aporta sensibilidad ante perturbaciones bajo dosel invisibles al sensor óptico. Correlaciones SAR-VH ↔ NDVI altamente significativas sobre el Complejo de Pajarales: CP Aguas Negras ρ = +0,807, CP Luna ρ = +0,731 (rezago 0, p &lt; 0,001), confirman independientemente la firma estructural del manglar denso.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VALIDACIÓN MULTILINGÜE ================= -->
+<section id="panel-validacion" class="tab-panel" role="tabpanel">
+  <div class="row">
+    <div class="card lead">
+      <div class="card-head"><h2 class="card-title">Distribución de roles y verificación cruzada</h2></div>
+      <div class="card-body">
+        <p>Reparto por fortalezas: <strong>Python</strong> opera la nube (Google Earth Engine,
+        SamGeo), <strong>R</strong> ejecuta los quiebres bfast y las series ecohidrológicas,
+        <strong>Julia</strong> resuelve la geometría rápida sobre miles de polígonos.
+        La interoperabilidad se valida mediante cuatro pruebas cruzadas independientes que
+        confirman convergencia numérica entre las implementaciones.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row cols-4">
+    <div class="kpi primary"><span class="kpi-icon"><i class="bi bi-filetype-py"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Cuadernos en Python</p><p class="kpi-value">15</p></div></div>
+    <div class="kpi info"><span class="kpi-icon"><i class="bi bi-filetype-r"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Cuadernos en R</p><p class="kpi-value">4</p></div></div>
+    <div class="kpi warning"><span class="kpi-icon"><i class="bi bi-filetype-jl"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Cuadernos en Julia</p><p class="kpi-value">3</p></div></div>
+    <div class="kpi success"><span class="kpi-icon"><i class="bi bi-check2-all"></i></span>
+      <div class="kpi-body"><p class="kpi-title">Pruebas cruzadas entre lenguajes</p><p class="kpi-value huge">4 / 4</p></div></div>
+  </div>
+
+  <div class="row cols-55-45">
+    <div class="card figure-card">
+      <div class="card-head"><h2 class="card-title">Convergencia Python = R = Julia · correlación caudal-NDVI por rezago</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/validacion_trilingual_correlacion.png" alt="Validación trilingüe de la correlación">
+        <p class="caption">Tres barras por rezago (una por lenguaje) visualmente indistinguibles. Los valores coinciden hasta el tercer decimal, demostrando que el resultado es independiente de la implementación.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h2 class="card-title">Pruebas cruzadas · convergencia numérica entre implementaciones</h2></div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr>
+              <th class="num">#</th>
+              <th>Análisis</th>
+              <th>Lenguajes</th>
+              <th>Resultado</th>
+            </tr></thead>
+            <tbody>
+              <tr><td class="num mono">1</td><td>ENSO ONI/SOI vs NDVI</td><td class="mono">Python ↔ R</td><td><span class="pill act">8 filas idénticas</span></td></tr>
+              <tr><td class="num mono">2</td><td>Caudal IDEAM vs NDVI</td><td class="mono">Python ↔ R</td><td><span class="pill act">16 filas idénticas</span></td></tr>
+              <tr><td class="num mono">3</td><td>Correlación caudal-NDVI por rezago</td><td class="mono">Python = R = Julia</td><td><span class="pill act">4 rezagos idénticos</span></td></tr>
+              <tr><td class="num mono">4</td><td>Conteo de parches DE-9IM <span title="Anexo C del informe">*</span></td><td class="mono">Python ↔ Julia</td><td><span class="pill rec">17 / 17 / 15</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:14px; font-size:12.5px; color:var(--text-muted); line-height:1.55;">
+          <strong>* Sobre la prueba 4:</strong> Python y Julia coinciden en el conteo de parches por
+          predicados DE-9IM (17 cada uno) sobre el mismo conjunto de polígonos; el valor 15
+          proviene del clasificador final tras aplicar el filtro de área mínima (documentado en
+          Anexo C del informe). No es divergencia entre lenguajes sino diferencia entre etapas
+          del pipeline.
+        </p>
+        <p style="margin-top:8px; font-size:12.5px; color:var(--text-muted); line-height:1.55;">
+          Las pruebas se ejecutan automáticamente dentro del contenedor Docker reproducible;
+          cualquier divergencia bloquea el build de integración continua.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ACERCA DE ================= -->
+<section id="panel-acerca" class="tab-panel about" role="tabpanel">
+  <div class="about-grid">
+
+    <div class="card about-main">
+      <div class="card-body">
+        <h3>Sobre este monitor</h3>
+        <h2>Pipeline multilenguaje (Python, R, Julia) para el monitoreo de manglar en la CGSM · 2013–2025</h2>
+        <p>Síntesis de un proyecto académico que articula tres lenguajes para monitorear la
+        dinámica espaciotemporal del manglar de la Ciénaga Grande de Santa Marta, sitio Ramsar
+        y Reserva de la Biosfera ubicado al norte del departamento del Magdalena, Colombia.
+        Los productos provienen de satélites públicos (Sentinel-2, Sentinel-1, Landsat 8/9),
+        reanálisis climáticos (ERA5-Land, CHIRPS) y registros hidrométricos (IDEAM/DHIME).
+        Toda la cadena de procesamiento es reproducible desde el repositorio GitHub mediante
+        un contenedor Docker preconfigurado, y se valida cuantitativamente contra cartografía
+        oficial INVEMAR 1:25.000 (2020) y ESA WorldCover v200 (2022).</p>
+
+        <h3 style="margin-top:24px">Pregunta de investigación</h3>
+        <p class="question">¿Cómo ha variado la cobertura, la fragmentación y el vigor del
+        manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025, y qué evidencia
+        cuantitativa permite atribuir las perturbaciones detectadas a forzantes climáticos
+        asociados al evento La Niña 2020–2021?</p>
+      </div>
+    </div>
+
+    <div class="card about-meta">
+      <div class="card-body">
+        <h3>Créditos y enlaces</h3>
+        <ul>
+          <li><strong>Autora:</strong> Lina María Quintero Fonseca</li>
+          <li><strong>Docente:</strong> Alexys H. Rodríguez-Avellaneda Ph.D.</li>
+          <li><strong>Asignatura:</strong> Programación en SIG · Maestría en Geomática, Universidad Nacional de Colombia · 2026-I</li>
+          <li><strong>Repositorio:</strong>
+            <a href="https://github.com/linaq11/proyecto-cgsm-curso" target="_blank" rel="noopener">
+              <i class="bi bi-github"></i> github.com/linaq11/proyecto-cgsm-curso
+            </a>
+          </li>
+          <li><strong>Informe completo:</strong>
+            <a href="informe_final.html">HTML</a> ·
+            <a href="informe_final.pdf">PDF</a>
+          </li>
+          <li><strong>Artículo journal:</strong>
+            <a href="articulo_cgsm_journal.html">HTML</a> ·
+            <a href="articulo_cgsm_journal.pdf">PDF</a>
+          </li>
+          <li><strong>Mapas interactivos extra:</strong>
+            <a href="../outputs/maps/comparacion_aoi.html">comparación AOI</a> ·
+            <a href="../outputs/maps/dashboard_CGSM.html">dashboard previo</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card about-data">
+      <div class="card-body">
+        <h3>Fuentes de datos</h3>
+        <ul style="columns:2; column-gap:32px; padding-left:18px;">
+          <li><strong>Sentinel-2 SR Harmonized</strong> (ESA): 789 imágenes 2018–2025</li>
+          <li><strong>Landsat 8/9 Collection 2</strong> (USGS-NASA): 345 registros 2013–2017</li>
+          <li><strong>Sentinel-1 SAR</strong> (ESA): inundación bajo dosel septiembre 2020</li>
+          <li><strong>SRTM v3</strong> (NASA): restricción geofísica</li>
+          <li><strong>Global Flood Database</strong> (Dartmouth Flood Observatory): 16 eventos históricos</li>
+          <li><strong>JRC Global Surface Water</strong>: dinámica hídrica 1984–2021</li>
+          <li><strong>ESA WorldCover v200</strong> (Zanaga et al., 2022): validación cartográfica</li>
+          <li><strong>INVEMAR 1:25.000</strong> (2020): cartografía oficial colombiana</li>
+          <li><strong>IDEAM / DHIME</strong>: caudal río Magdalena (El Banco) y río Aracataca (Ganadería Caribe)</li>
+          <li><strong>CHIRPS v2.0</strong> (Funk et al., 2015): precipitación regional</li>
+          <li><strong>NOAA CPC</strong>: índices ENSO ONI y SOI</li>
+          <li><strong>ERA5-Land</strong> (Hersbach et al., 2020): forzamiento climático local</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card about-stack">
+      <div class="card-body">
+        <h3>Stack técnico</h3>
+        <div class="stack-chips">
+          <span class="chip">Python 3.12</span>
+          <span class="chip">R 4.3.3</span>
+          <span class="chip">Julia 1.11.3</span>
+          <span class="chip">Quarto 1.4</span>
+          <span class="chip">Docker</span>
+          <span class="chip">GEE</span>
+          <span class="chip">SamGeo</span>
+          <span class="chip">bfast</span>
+          <span class="chip">LibGEOS</span>
+          <span class="chip">tidyverse</span>
+          <span class="chip">DataFrames.jl</span>
+          <span class="chip">folium</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card about-data figure-card">
+      <div class="card-head"><h2 class="card-title">Área de estudio · Ciénaga Grande de Santa Marta</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/mapa_area_estudio.png" alt="Mapa de área de estudio CGSM">
+        <p class="caption">(a) Colombia con el departamento del Magdalena. (b) Departamento con ciudades de referencia y bbox del AOI en rojo. (c) Composite Sentinel-2 RGB del periodo actual (2024-2025): polígono rojo del AOI acotado (835 km², SFF CGSM + VPI Salamanca), triángulos rojos de las 5 estaciones INVEMAR-GBIF, cobertura de manglar segmentada por SamGeo en verde traslúcido.</p>
+      </div>
+    </div>
+
+    <div class="card about-data figure-card">
+      <div class="card-head"><h2 class="card-title">Flujo de la metodología · de la imagen al indicador</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/flujo_metodologia.png" alt="Flujo de metodología">
+        <p class="caption">Flujo metodológico en seis fases secuenciales: ingesta GEE, construcción del datacube, análisis de series bfast, segmentación SamGeo + Random Forest, métricas de fragmentación Julia, validación cruzada SAR + INVEMAR. Validación entre Python, R y Julia en cada fase. Toda la cadena se ejecuta dentro de un contenedor Docker que garantiza reproducibilidad bit a bit.</p>
+      </div>
+    </div>
+
+    <div class="card about-data">
+      <div class="card-body">
+        <h3>Glosario técnico</h3>
+        <dl class="glossary">
+          <dt>AOI</dt><dd>Área de interés. Aquí: AOI acotado = SFF CGSM + Vía Parque Isla de Salamanca (835 km²).</dd>
+          <dt>NDVI</dt><dd>Índice diferencial de vegetación normalizado. Escala 0-1, valores altos indican dosel denso y sano.</dd>
+          <dt>NDWI</dt><dd>Índice diferencial de agua normalizado. Discrimina cuerpos de agua y suelo húmedo.</dd>
+          <dt>SAR / VH</dt><dd>Radar de apertura sintética (Sentinel-1), polarización vertical-horizontal. Independiente de nubosidad.</dd>
+          <dt>SWIR</dt><dd>Infrarrojo de onda corta (bandas B11, B12 de Sentinel-2). Sensible al contenido de agua del dosel.</dd>
+          <dt>MSI</dt><dd>Mean Shape Index. Razón perímetro/área de los parches. 1 = forma simple, &gt;1 = bordes irregulares.</dd>
+          <dt>NND</dt><dd>Nearest Neighbor Distance. Distancia media al parche más cercano.</dd>
+          <dt>F1 / Recall / Precision</dt><dd>Métricas de exactitud de clasificación. F1 es la media armónica entre Precision y Recall.</dd>
+          <dt>bfast</dt><dd>Breaks For Additive Season and Trend (Verbesselt et al., 2010). Detecta quiebres estructurales en series temporales.</dd>
+          <dt>Random Forest</dt><dd>Clasificador supervisado de ensamble basado en árboles de decisión.</dd>
+          <dt>z-score</dt><dd>Anomalía estandarizada respecto a la media histórica. z &lt; −2 = anomalía significativa.</dd>
+          <dt>ENSO / ONI / SOI</dt><dd>El Niño-Southern Oscillation. Índices Oceanic Niño Index (NOAA, temperatura) y Southern Oscillation Index (presión atmosférica).</dd>
+          <dt>SFF / VPI</dt><dd>Santuario de Fauna y Flora CGSM / Vía Parque Isla de Salamanca. Áreas protegidas que conforman el AOI acotado.</dd>
+          <dt>INVEMAR</dt><dd>Instituto de Investigaciones Marinas y Costeras "José Benito Vives de Andréis". Cartografía oficial colombiana del manglar 1:25.000 (2020).</dd>
+          <dt>IDEAM / DHIME</dt><dd>Instituto de Hidrología, Meteorología y Estudios Ambientales. Plataforma DHIME para descarga de caudales.</dd>
+          <dt>CHIRPS</dt><dd>Climate Hazards Group InfraRed Precipitation with Station data v2.0 (Funk et al., 2015).</dd>
+          <dt>ERA5-Land</dt><dd>Reanálisis climático de alta resolución de ECMWF (Copernicus).</dd>
+          <dt>GEE / SamGeo</dt><dd>Google Earth Engine (procesamiento satelital en la nube) y Segment Anything for Geospatial (segmentación automática).</dd>
+          <dt>JRC GSW</dt><dd>JRC Global Surface Water (Pekel et al., 2016). Dinámica histórica de agua superficial 1984-2021.</dd>
+          <dt>Ramsar</dt><dd>Convención sobre humedales de importancia internacional. La CGSM es sitio Ramsar Nº 562 desde 1998.</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="card about-data figure-card">
+      <div class="card-head"><h2 class="card-title">Arquitectura de datos · qué hace cada lenguaje</h2></div>
+      <div class="card-body figure">
+        <img src="../outputs/figures/arquitectura_datos.png" alt="Arquitectura de datos multilenguaje">
+        <p class="caption">Distribución de responsabilidades técnicas: Python (GEE, SamGeo, integración folium); R (bfast, series ecohidrológicas IDEAM-CHIRPS); Julia (geometría DE-9IM sobre miles de polígonos vía LibGEOS). Intercambio en formatos abiertos (GeoPackage, NetCDF, Parquet) dentro de un único contenedor Docker.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ============== TABS ============== */
+(function () {
+  const tabs = document.querySelectorAll('.tabs button');
+  const panels = document.querySelectorAll('.tab-panel');
+  function activate(name, push) {
+    tabs.forEach(b => {
+      const on = b.dataset.tab === name;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    panels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+    if (push) history.replaceState(null, '', '#' + name);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
+  tabs.forEach(b => b.addEventListener('click', () => activate(b.dataset.tab, true)));
+  const initial = (location.hash || '#resumen').replace('#', '');
+  if (document.getElementById('panel-' + initial)) activate(initial, false);
+})();
+
+/* ============== THEME TOGGLE ============== */
+(function () {
+  const KEY = 'cgsm-theme';
+  const root = document.documentElement;
+  const apply = t => root.setAttribute('data-theme', t);
+  let stored = null;
+  try { stored = localStorage.getItem(KEY); } catch (e) {}
+  if (stored === 'dark' || stored === 'light') apply(stored);
+  else if (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) apply('dark');
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    apply(next);
+    try { localStorage.setItem(KEY, next); } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>
