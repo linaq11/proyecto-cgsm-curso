@@ -173,49 +173,121 @@ def buscar_coords(nombre):
 colores = {'critica': '#d32f2f', 'alerta': '#fbc02d',
            'estable': '#43a047', 'sin_datos': '#9e9e9e'}
 
-fig, ax = plt.subplots(figsize=(10, 8))
-ax.set_facecolor('#e8f4f8')
-
-# Dibujar bbox del AOI
+# ---- Estilo y figura ----
 from matplotlib.patches import Rectangle
-ax.add_patch(Rectangle((-74.65, 10.55), 0.45, 0.55,
-                       fill=False, edgecolor='#1f5a4b', lw=2,
-                       label='AOI acotado CGSM'))
+from matplotlib.lines import Line2D
 
-# Plotear estaciones
+plt.rcParams['font.family'] = 'sans-serif'
+plt.rcParams['axes.edgecolor'] = '#b0b8c0'
+plt.rcParams['axes.linewidth'] = 0.8
+
+fig, ax = plt.subplots(figsize=(11, 7.5))
+fig.patch.set_facecolor('white')
+ax.set_facecolor('#f6f8fa')
+
+# ---- Referencias geográficas mínimas (costa Caribe colombiana) ----
+# Costa aproximada como sombreado azul muy suave al norte
+ax.axhspan(11.00, 11.10, alpha=0.4, color='#dcecf5', zorder=0)
+ax.text(-74.20, 11.05, 'Mar Caribe', fontsize=8.5, color='#5b7a8c',
+        style='italic', ha='right', va='center', zorder=1)
+
+# Ciudades de referencia
+cities = {
+    'Barranquilla': (-74.78, 10.96),
+    'Santa Marta':  (-74.21, 11.24),  # fuera de plot pero la dejamos para flecha
+    'Ciénaga':      (-74.25, 11.01),
+}
+for name, (lon, lat) in cities.items():
+    if -74.70 < lon < -74.15 and 10.50 < lat < 11.10:
+        ax.plot(lon, lat, marker='s', color='#9aa4b2', markersize=5,
+                markeredgecolor='white', markeredgewidth=0.8, zorder=2)
+        ax.annotate(name, xy=(lon, lat), xytext=(7, -2),
+                    textcoords='offset points', fontsize=8.5,
+                    color='#5b6472', style='italic')
+
+# ---- Bbox del AOI: línea punteada sutil, sin label ----
+ax.add_patch(Rectangle((-74.65, 10.55), 0.45, 0.55,
+                       fill=False, edgecolor='#1f7a52', lw=1.2,
+                       linestyle=(0, (6, 4)), alpha=0.65, zorder=2))
+ax.text(-74.65, 10.55 - 0.018, 'AOI acotado CGSM',
+        fontsize=8.5, color='#1f7a52', style='italic', alpha=0.85)
+
+# ---- Offsets de label por estación para evitar solapamientos ----
+# Punta_Cerro (norte) ↔ Isla_Boqueron (justo al lado, sur-oeste) → separar
+# Punta_Chino ↔ Rio_Sevilla → separar verticalmente
+LABEL_OFFSET = {
+    'Punta_Cerro':     (10,  10),   # arriba-derecha
+    'Isla_Boqueron':   (10, -18),   # abajo-derecha (más alejado)
+    'Punta_Chino':     (10,  10),   # arriba-derecha
+    'Rio_Sevilla':     (10, -16),   # abajo-derecha
+    'Cano_Palos':      (10,   6),
+    'CP_Luna':         (-12,  10),  # a la izquierda
+    'CP_Aguas_Negras': (-12, -14),  # a la izquierda-abajo
+    'Cano_Clarin':     (10,   6),
+}
+
+# ---- Plotear estaciones ----
 for _, row in df_alertas.iterrows():
     coords = buscar_coords(row['estacion'])
     if coords is None:
         continue
     lon, lat = coords
     color = colores.get(row['estado'], '#9e9e9e')
-    ax.scatter(lon, lat, s=400, c=color, edgecolor='black', lw=2,
-               zorder=3, alpha=0.92)
-    ax.annotate(row['estacion'], xy=(lon, lat), xytext=(8, 8),
-                textcoords='offset points', fontsize=10, fontweight='bold',
-                bbox=dict(facecolor='white', alpha=0.9, edgecolor='gray',
-                          boxstyle='round,pad=0.3'))
+    ax.scatter(lon, lat, s=320, c=color, edgecolor='white', lw=2.2,
+               zorder=4, alpha=0.95)
+    # Punto interior pequeño para "anclar" el círculo grande
+    ax.scatter(lon, lat, s=18, c='white', zorder=5)
 
-# Leyenda
-legend_patches = [
-    mpatches.Patch(color=colores['critica'], label='🔴 Crítica'),
-    mpatches.Patch(color=colores['alerta'], label='🟡 Alerta'),
-    mpatches.Patch(color=colores['estable'], label='🟢 Estable'),
+    label = row['estacion'].replace('_', ' ')
+    dx, dy = LABEL_OFFSET.get(row['estacion'], (10, 8))
+    ha = 'right' if dx < 0 else 'left'
+    ax.annotate(label, xy=(lon, lat), xytext=(dx, dy),
+                textcoords='offset points', fontsize=9.5, fontweight=600,
+                ha=ha, color='#0f172a', zorder=6,
+                bbox=dict(facecolor='white', alpha=0.92,
+                          edgecolor='#d4dae0', boxstyle='round,pad=0.32',
+                          linewidth=0.8))
+
+# ---- Leyenda con círculos reales (sin emojis) ----
+estado_orden = [('estable',  'Estable'),
+                ('alerta',   'En alerta'),
+                ('critica',  'Crítica')]
+legend_handles = [
+    Line2D([0], [0], marker='o', color='w', markerfacecolor=colores[k],
+           markeredgecolor='white', markeredgewidth=1.5,
+           markersize=12, label=lbl)
+    for k, lbl in estado_orden
 ]
-ax.legend(handles=legend_patches, loc='upper right', fontsize=11,
-          framealpha=0.95, title='Estado actual del manglar')
+leg = ax.legend(handles=legend_handles, loc='upper right',
+                fontsize=10, framealpha=0.97,
+                title='Estado al cierre 2025',
+                title_fontsize=10.5, borderpad=0.8,
+                edgecolor='#d4dae0', facecolor='white')
+leg.get_title().set_fontweight('600')
 
+# ---- Ejes y título ----
 ax.set_xlim(-74.70, -74.15)
 ax.set_ylim(10.50, 11.10)
-ax.set_xlabel('Longitud')
-ax.set_ylabel('Latitud')
-ax.set_title('Semáforo de alertas CGSM · Estado actual por estación de monitoreo\n'
-             f'(generado el {datetime.now().strftime("%Y-%m-%d")})',
-             fontsize=12, fontweight='bold', pad=15)
-ax.grid(True, alpha=0.3)
+ax.set_xlabel('Longitud (°)', fontsize=10, color='#5b6472')
+ax.set_ylabel('Latitud (°)', fontsize=10, color='#5b6472')
+ax.tick_params(colors='#5b6472', labelsize=9)
+for spine in ax.spines.values():
+    spine.set_color('#d4dae0')
+
+ax.set_title('Estado operativo del manglar · CGSM',
+             fontsize=14, fontweight=700, color='#0f172a',
+             loc='left', pad=18)
+# Subtítulo a la izquierda del título
+ax.text(0, 1.025, f'Sistema de alertas tempranas · actualizado {datetime.now().strftime("%d %b %Y")}',
+        transform=ax.transAxes, fontsize=9.5, color='#5b6472',
+        ha='left', va='bottom', style='italic')
+
+ax.grid(True, alpha=0.35, linestyle='-', linewidth=0.5, color='#c8d0d8')
+ax.set_axisbelow(True)
 
 plt.tight_layout()
-plt.savefig(FIGURES / 'alertas_semaforo.png', dpi=180, bbox_inches='tight')
+plt.savefig(FIGURES / 'alertas_semaforo.png', dpi=180,
+            bbox_inches='tight', facecolor='white')
 plt.close()
 print(f'✓ {FIGURES / "alertas_semaforo.png"}')
 
