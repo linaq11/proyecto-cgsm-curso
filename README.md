@@ -8,7 +8,7 @@
 
 > 🌿 **Dashboard interactivo**: <https://linaq11.github.io/proyecto-cgsm-curso/dashboard.html>
 
-Caracterización espaciotemporal de la cobertura, fragmentación y vigor del manglar en la Ciénaga Grande de Santa Marta entre 2013 y 2025, mediante una pipeline multilenguaje (Python, R, Julia) que integra detección de cambios bfast, segmentación automática con SamGeo y validación contra cartografía oficial INVEMAR 1:25.000 y global ESA WorldCover v200.
+Monitoreo espaciotemporal de la cobertura, fragmentación y vigor del manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025, mediante un pipeline multilenguaje (Python, R, Julia) que integra series ópticas Landsat 8 + Sentinel-2, radar Sentinel-1 SAR y forzantes climáticos (ENSO, IDEAM, ERA5-Land, CHIRPS); detección de quiebres bfast; segmentación con SamGeo y clasificación Random Forest (F1 = 0,83); y validación contra cartografía colombiana INVEMAR 1:25.000 y global ESA WorldCover v200.
 
 **Curso:** Programación en SIG, Maestría en Geomática, Universidad Nacional de Colombia &nbsp;&nbsp; **Autora:** Lina María Quintero Fonseca &nbsp;&nbsp; **Docente:** Alexys H. Rodríguez-Avellaneda Ph.D. &nbsp;&nbsp; **Fecha de entrega:** 20 de mayo de 2026
 
