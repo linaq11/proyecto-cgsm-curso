@@ -65,26 +65,26 @@ format:
       - \usepackage{array}
       - \usepackage{makecell}
       - \usepackage{colortbl}
+      - \usepackage{tabularray}
+      - \UseTblrLibrary{booktabs}
+      - \UseTblrLibrary{varwidth}
+      - \DefTblrTemplate{contfoot-text}{normal}{}
+      - \DefTblrTemplate{conthead-text}{normal}{}
       - \renewcommand{\arraystretch}{1.3}
       - \setlength{\tabcolsep}{6pt}
       - \arrayrulecolor{black!60}
       - \setlength{\arrayrulewidth}{0.4pt}
       - \AtBeginDocument{\hypersetup{pdfborderstyle={/S/U/W 0}, allbordercolors={0 0 0}}}
       - \AtBeginDocument{\justifying}
-      - |
-        % Convertir booktabs (\toprule, \midrule, \bottomrule) en \hline
-        % para que las tablas tengan líneas horizontales entre TODAS las filas
-        \AtBeginDocument{
-          \let\toprule\hline
-          \let\midrule\hline
-          \let\bottomrule\hline
-        }
   docx:
     toc: false
     number-sections: true
     reference-doc: reference_unal.docx
     fig-width: 6.5
     fig-height: 4
+
+filters:
+  - _filters/grid_tables.lua
 ---
 
 ::: {.content-visible unless-format="pdf"}
@@ -94,6 +94,16 @@ Programación en SIG --- Proyecto Final\
 Repositorio: <https://github.com/linaq11/proyecto-cgsm-curso>
 
 ---
+:::
+
+::: {.callout-note appearance="simple" icon=false}
+## Puntos destacados
+
+- Cadena de procesamiento multilenguaje (Python + R + Julia) sobre la CGSM acotada al sitio Ramsar oficial (SFF + VPI Salamanca, 835,3 km²) en el periodo 2013-2025.
+- El clasificador supervisado Random Forest alcanza F1 = 0,826 frente a INVEMAR 1:25.000, una mejora del 42 % sobre la clasificación por umbrales NDVI/CMRI.
+- La serie continua Sentinel-1 SAR-VH correlaciona con NDVI a ρ = +0,807 sobre el manglar denso del Complejo de Pajarales (p < 0,001), comportamiento ausente sobre las estaciones limnológicas.
+- El algoritmo bfast detecta quiebres estructurales en 2016, 2020 y 2023-2024 sobre las series mensuales combinadas Landsat 8 + Sentinel-2, asociables a los eventos ENSO documentados.
+- El módulo de alertas tempranas Digital Twin Nivel 2 reporta sobre el corte 2024-12 a 2025-12: cinco estaciones estables, tres en alerta y ninguna en estado crítico.
 :::
 
 # Introducción y Justificación
