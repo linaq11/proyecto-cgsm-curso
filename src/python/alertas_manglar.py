@@ -274,18 +274,21 @@ ax.tick_params(colors='#5b6472', labelsize=9)
 for spine in ax.spines.values():
     spine.set_color('#d4dae0')
 
-ax.set_title('Estado operativo del manglar · CGSM',
-             fontsize=14, fontweight=700, color='#0f172a',
-             loc='left', pad=18)
-# Subtítulo a la izquierda del título
-ax.text(0, 1.025, f'Sistema de alertas tempranas · actualizado {datetime.now().strftime("%d %b %Y")}',
-        transform=ax.transAxes, fontsize=9.5, color='#5b6472',
-        ha='left', va='bottom', style='italic')
+# Título + subtítulo posicionados con fig.text para evitar superposición
+# con el área del plot (ax.text con ax.transAxes podía caer dentro del axes).
+fig.text(0.02, 0.965, 'Estado operativo del manglar · CGSM',
+         fontsize=15, fontweight=700, color='#0f172a',
+         ha='left', va='top')
+fig.text(0.02, 0.935,
+         f'Sistema de alertas tempranas · actualizado {datetime.now().strftime("%d %b %Y")}',
+         fontsize=10, color='#5b6472', ha='left', va='top', style='italic')
+# Reservar espacio arriba para el título
+plt.subplots_adjust(top=0.88)
 
 ax.grid(True, alpha=0.35, linestyle='-', linewidth=0.5, color='#c8d0d8')
 ax.set_axisbelow(True)
 
-plt.tight_layout()
+# NOTA: no usar tight_layout aquí porque pisa el subplots_adjust del título.
 plt.savefig(FIGURES / 'alertas_semaforo.png', dpi=180,
             bbox_inches='tight', facecolor='white')
 plt.close()

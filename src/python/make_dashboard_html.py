@@ -37,12 +37,16 @@ except Exception:
 def add_ee_layer(self, ee_object, vis_params, name, shown=True, opacity=1.0):
     """Agrega una capa EE como TileLayer de folium y la devuelve para agruparla después.
 
-    NOTA: usa el patrón .visualize(**vis).getMapId() en lugar de .getMapId(vis)
+    NOTA 1: usa el patrón .visualize(**vis).getMapId() en lugar de .getMapId(vis)
     porque la combinación clip(aoi)+getMapId(visParams) tiene un bug conocido
     en GEE Python API que devuelve tiles PNG completamente transparentes
-    (334 B exactos) cuando la imagen está clippeada. Al "hornear" la
-    visualización con .visualize() la imagen se convierte en RGB de 3 bandas
-    y el render de tiles funciona correctamente.
+    (334 B exactos) cuando la imagen está clippeada.
+
+    NOTA 2: las capas raster EE se asignan al pane 'eeRasterPane' (z-index 450)
+    para que se rendericen ENCIMA de los polígonos vectoriales (overlayPane
+    z=400) y debajo de los markers (markerPane z=600). Sin esto, los polígonos
+    de manglar estable/gain/loss tapaban completamente las capas NDVI raster.
+    Requiere add_ee_pane(map) al inicio.
     """
     try:
         img = ee.Image(ee_object)
@@ -59,12 +63,32 @@ def add_ee_layer(self, ee_object, vis_params, name, shown=True, opacity=1.0):
         control=True,
         show=shown,
         opacity=opacity,
+        pane='eeRasterPane',
     )
     tl.add_to(self)
     return tl
 
 
 folium.Map.add_ee_layer = add_ee_layer
+
+
+# Helper que inyecta el createPane('eeRasterPane') en el HTML del mapa.
+# DEBE llamarse DESPUÉS de crear el mapa y ANTES de la primera add_ee_layer.
+from jinja2 import Template
+import folium as _folium_mod
+
+class _EERasterPane(_folium_mod.MacroElement):
+    _template = Template("""
+        {% macro script(this, kwargs) %}
+            {{this._parent.get_name()}}.createPane('eeRasterPane');
+            {{this._parent.get_name()}}.getPane('eeRasterPane').style.zIndex = 450;
+            {{this._parent.get_name()}}.getPane('eeRasterPane').style.pointerEvents = 'none';
+        {% endmacro %}
+    """)
+
+def add_ee_raster_pane(m):
+    """Crea el pane eeRasterPane (z=450) en el mapa. Llamar UNA VEZ después de folium.Map()."""
+    m.add_child(_EERasterPane())
 
 # --- AOI acotado oficial: SFF CGSM + Vía Parque Isla de Salamanca (RUNAP) ---
 AOI_PATH = ROOT / 'data' / 'raw' / 'cgsm_aoi_acotado_4326.geojson'
@@ -223,6 +247,12 @@ styled_aoi = ee.FeatureCollection([ee.Feature(aoi)]).style(
 # --- Construir mapa folium ---
 m = folium.Map(location=MAP_CENTER, zoom_start=10, tiles=None,
                control_scale=True)
+
+# Crear pane dedicado eeRasterPane (z=450) ANTES de cualquier add_ee_layer.
+# Esto es lo que hace visibles las capas raster NDVI por encima de los polígonos
+# vectoriales (overlayPane z=400). Sin esto, el clasificador / NDVI estáticos
+# quedan tapados por los polígonos verdes/azules de manglar y nunca se ven.
+add_ee_raster_pane(m)
 
 # Basemap Esri Topo
 folium.TileLayer(
@@ -403,12 +433,12 @@ folium.LayerControl(collapsed=False, position='topright').add_to(m)
 # GroupedLayerControl encima, con grupos temáticos colapsables
 GroupedLayerControl(
     groups={
-        '🌿 Estado del manglar (NDVI)': [ly_ndvi_act, ly_ndvi_deg, ly_ndvi_rec, ly_ndvi_chg],
-        '🗺️ Clasificación por periodo': [ly_md, ly_mr, ly_ma, ly_rf],
-        '🔄 Dinámica de cambio 2020→2024': [ly_perdida, ly_estable, ly_ganancia],
-        '💧 Inundación SAR sept-2020': [ly_sar_open, ly_sar_dose],
-        '📍 Estaciones y AOI': [ly_aoi, grupo_etiquetas, ly_inv_buf, ly_com_buf],
-        '📚 Referencias cartográficas': [
+        'Estado del manglar (NDVI)': [ly_ndvi_act, ly_ndvi_deg, ly_ndvi_rec, ly_ndvi_chg],
+        'Clasificación por periodo': [ly_md, ly_mr, ly_ma, ly_rf],
+        'Dinámica de cambio 2020→2024': [ly_perdida, ly_estable, ly_ganancia],
+        'Inundación SAR sept-2020': [ly_sar_open, ly_sar_dose],
+        'Estaciones y AOI': [ly_aoi, grupo_etiquetas, ly_inv_buf, ly_com_buf],
+        'Referencias cartográficas': [
             x for x in [invemar_layer, ly_gfd] if x is not None
         ],
     },
@@ -489,13 +519,67 @@ setTimeout(function () {
     }
   });
 
-  // Ensanchar el panel para que los símbolos no truncen el texto
-  var ctrls = document.querySelectorAll('.leaflet-control-layers');
-  ctrls.forEach(function(c) {
-    c.style.maxWidth = '320px';
-    c.style.fontSize = '12px';
-    c.style.lineHeight = '1.5';
-  });
+  // Inyectar CSS de leyenda redesignada (Inter, grupos destacados, espaciado)
+  if (!document.getElementById('cgsm-legend-style')) {
+    var st = document.createElement('style');
+    st.id = 'cgsm-legend-style';
+    st.textContent = `
+      .leaflet-control-layers {
+        font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif !important;
+        font-size: 12px !important; line-height: 1.5 !important;
+        max-width: 340px !important; padding: 0 !important;
+        border-radius: 10px !important;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important;
+        border: 1px solid #e6e8ec !important;
+        background: rgba(255,255,255,0.97) !important;
+      }
+      .leaflet-control-layers form { padding: 10px 12px 12px !important; }
+      .leaflet-control-layers-overlays { margin: 0 !important; }
+      .leaflet-control-layers-overlays label {
+        display: flex !important; align-items: center;
+        padding: 4px 2px !important; margin: 0 !important;
+        cursor: pointer; border-radius: 4px;
+        transition: background 120ms ease;
+      }
+      .leaflet-control-layers-overlays label:hover {
+        background: #f6f8fa;
+      }
+      .leaflet-control-layers-overlays label > input[type=checkbox] {
+        margin: 0 8px 0 0 !important; flex: 0 0 auto;
+        accent-color: #1f7a52; transform: scale(1.05);
+      }
+      .leaflet-control-layers-overlays label > span {
+        flex: 1; font-size: 12px; color: #0f172a;
+        white-space: normal; line-height: 1.45;
+      }
+      /* Encabezados de grupo del GroupedLayerControl */
+      .leaflet-control-layers-group-name {
+        font-size: 10px !important; font-weight: 700 !important;
+        text-transform: uppercase; letter-spacing: 0.06em;
+        color: #1f7a52 !important;
+        padding: 10px 4px 6px 4px !important;
+        border-top: 1px solid #eef0f3;
+        margin: 6px 0 2px !important;
+      }
+      .leaflet-control-layers-group:first-child .leaflet-control-layers-group-name {
+        border-top: none; padding-top: 4px !important;
+      }
+      .leaflet-control-layers-separator { display: none; }
+      /* Toggle button (cuando esta colapsado) */
+      .leaflet-control-layers-toggle {
+        border-radius: 10px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+      }
+      /* Subrayado de los abbr.cgsm-term dentro de la leyenda - mas sutil */
+      .leaflet-control-layers abbr.cgsm-term {
+        text-decoration: underline dotted #1f7a52;
+        text-underline-offset: 2px;
+        text-decoration-thickness: 1px;
+        cursor: help; border: 0;
+      }
+    `;
+    document.head.appendChild(st);
+  }
 }, 600);
 
 // Re-aplicar si el control se reabre
@@ -569,21 +653,20 @@ setTimeout(function() {
   var cgsmMap = {{this._parent.get_name()}};
   var cgsmActiveLayer = null;
 
-  // Crear pane dedicado con z-index alto para que el raster NDVI año
-  // se dibuje POR ENCIMA de los polígonos vectoriales (manglar estable,
-  // ganancia, pérdida, AOI, etc.), que viven en overlayPane (z-index 400).
-  // markerPane (600) y tooltipPane (650) quedan por encima.
-  if (!cgsmMap.getPane('ndviYearPane')) {
-    cgsmMap.createPane('ndviYearPane');
-    cgsmMap.getPane('ndviYearPane').style.zIndex = 450;
-    cgsmMap.getPane('ndviYearPane').style.pointerEvents = 'none';
+  // Usa el pane 'eeRasterPane' (z=450) creado por add_ee_raster_pane(m) en
+  // el setup del mapa, mismo que las capas NDVI/RF/SAR estáticas. Defensivo:
+  // crearlo aquí también si por algún motivo no existiera.
+  if (!cgsmMap.getPane('eeRasterPane')) {
+    cgsmMap.createPane('eeRasterPane');
+    cgsmMap.getPane('eeRasterPane').style.zIndex = 450;
+    cgsmMap.getPane('eeRasterPane').style.pointerEvents = 'none';
   }
 
   function cgsmShowYear(year) {
     if (cgsmActiveLayer) { cgsmMap.removeLayer(cgsmActiveLayer); }
     cgsmActiveLayer = L.tileLayer(cgsmYears[year], {
       opacity: 0.75,
-      pane: 'ndviYearPane',
+      pane: 'eeRasterPane',
       attribution: 'Google Earth Engine · Sentinel-2 NDVI'
     });
     cgsmActiveLayer.addTo(cgsmMap);
@@ -1268,8 +1351,23 @@ setTimeout(function() {
     'GFD':          'Global Flood Database — registro histórico de inundaciones detectadas por satélite (2001-2017).'
   };
 
+  // Procesa cada textNode usando DOM API en vez de manipulación de string,
+  // así NUNCA toca attributes (title="...") y no se corrompen tooltips
+  // anidados. Wrappea TODAS las ocurrencias de cualquier término en cada
+  // textNode (no usa wrappedInDoc, que perdía términos repetidos).
   function cgsmAddTooltips(root) {
     if (!root) return;
+    var sortedTerms = Object.keys(cgsmTerms).sort(function(a, b) {
+      return b.length - a.length;
+    });
+    // Construir un único regex que matchea cualquier término largo primero
+    var escaped = sortedTerms.map(function(t) {
+      return t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    });
+    var bigPat = new RegExp(
+      '(^|[\\s(>])(' + escaped.join('|') + ')(?=$|[\\s.,;:!?)\\u2014\\-/])', 'g'
+    );
+
     var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
     var nodes = [];
     var n;
@@ -1277,36 +1375,41 @@ setTimeout(function() {
       var p = n.parentNode;
       if (!p) continue;
       var tag = p.tagName;
-      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'OPTION') continue;
+      if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'OPTION' ||
+          tag === 'ABBR' || tag === 'TEXTAREA') continue;
       if (p.closest && p.closest('abbr.cgsm-term')) continue;
       nodes.push(n);
     }
-    var sortedTerms = Object.keys(cgsmTerms).sort(function(a, b) {
-      return b.length - a.length;
-    });
-    var wrappedInDoc = new Set();
+
     nodes.forEach(function(textNode) {
       var text = textNode.nodeValue;
-      var html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      var changed = false;
-      sortedTerms.forEach(function(term) {
-        if (wrappedInDoc.has(term)) return;
-        var esc = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        var pat = new RegExp('(^|\\s|\\(|>)(' + esc + ')(?=$|\\s|[.,;:!?)\\u2014\\-/])', '');
-        var m = html.match(pat);
-        if (m) {
-          var def = cgsmTerms[term].replace(/"/g, '&quot;');
-          html = html.replace(pat,
-            m[1] + '<abbr class="cgsm-term" title="' + def + '">' + m[2] + '</abbr>');
-          wrappedInDoc.add(term);
-          changed = true;
+      bigPat.lastIndex = 0;
+      if (!bigPat.test(text)) return;
+      bigPat.lastIndex = 0;
+      // Reconstruir el contenido como secuencia de Text + Abbr nodes
+      var frag = document.createDocumentFragment();
+      var lastIdx = 0;
+      var m;
+      while ((m = bigPat.exec(text)) !== null) {
+        var prefix = m[1];
+        var term = m[2];
+        var startTerm = m.index + prefix.length;
+        // Texto antes del término (incluido el prefix de separación)
+        if (startTerm > lastIdx) {
+          frag.appendChild(document.createTextNode(text.slice(lastIdx, startTerm)));
         }
-      });
-      if (changed) {
-        var span = document.createElement('span');
-        span.innerHTML = html;
-        textNode.parentNode.replaceChild(span, textNode);
+        // El abbr — setAttribute escapa correctamente sin importar lo que tenga
+        var abbr = document.createElement('abbr');
+        abbr.className = 'cgsm-term';
+        abbr.setAttribute('title', cgsmTerms[term]);
+        abbr.textContent = term;
+        frag.appendChild(abbr);
+        lastIdx = startTerm + term.length;
       }
+      if (lastIdx < text.length) {
+        frag.appendChild(document.createTextNode(text.slice(lastIdx)));
+      }
+      textNode.parentNode.replaceChild(frag, textNode);
     });
   }
 
