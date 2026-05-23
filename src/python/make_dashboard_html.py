@@ -325,6 +325,20 @@ fg_sindat.add_to(m)
 # Capa 2: etiquetas con nombres (sin fondo, opcional/prendible-apagable)
 grupo_etiquetas = FeatureGroup(name='Etiquetas de estaciones', show=False)
 
+# Offsets de label personalizados para estaciones muy cercanas entre sí.
+# DivIcon icon_anchor=(x, y): el pixel (x,y) del icon queda EN la coord
+# geográfica. Por defecto (70, -10) centra y desplaza arriba.
+#   Isla Boqueron y Punta Cerro están a ~1.2 km → uno arriba, otro abajo
+#   CP Luna y CP Aguas Negras están a ~7.7 km → mismo tratamiento por
+#   precaución a zoom medio
+LABEL_ANCHOR_DEFAULT = (70, -10)
+label_anchors = {
+    'Isla Boqueron':   (70, -22),   # label más arriba
+    'Punta Cerro':     (70,  22),   # label más abajo
+    'CP Luna':         (70, -22),
+    'CP Aguas Negras': (70,  22),
+}
+
 for nombre, (lon, lat, tipo) in stations.items():
     naturaleza = 'manglar' if nombre in manglar_set else 'limnológica'
     color_texto = '#1B5E20' if naturaleza == 'manglar' else '#01579B'
@@ -334,7 +348,7 @@ for nombre, (lon, lat, tipo) in stations.items():
         location=[lat, lon],
         icon=DivIcon(
             icon_size=(140, 18),
-            icon_anchor=(70, -10),
+            icon_anchor=label_anchors.get(nombre, LABEL_ANCHOR_DEFAULT),
             html=(f'<div style="font-size:10px; font-weight:600; '
                   f'color:{color_texto}; text-align:center; white-space:nowrap; '
                   f'text-shadow: -1px -1px 0 white, 1px -1px 0 white, '
