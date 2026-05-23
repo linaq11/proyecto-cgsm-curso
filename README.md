@@ -2,8 +2,11 @@
 
 ![License](https://img.shields.io/badge/License-MIT-black)
 ![Stack](https://img.shields.io/badge/Stack-Python%20%C2%B7%20R%20%C2%B7%20Julia-blue)
-[![Dashboard](https://img.shields.io/badge/Ver-Dashboard-success)](https://linaq11.github.io/proyecto-cgsm-curso/docs/dashboard_cgsm.html)
+[![Dashboard en vivo](https://img.shields.io/badge/Dashboard-en%20vivo-success?logo=github)](https://linaq11.github.io/proyecto-cgsm-curso/dashboard.html)
 [![Informe PDF](https://img.shields.io/badge/Descargar-Informe%20PDF-red)](https://github.com/linaq11/proyecto-cgsm-curso/raw/main/docs/informe_final.pdf)
+[![Artículo journal](https://img.shields.io/badge/Art%C3%ADculo-PDF-orange)](https://github.com/linaq11/proyecto-cgsm-curso/raw/main/docs/articulo_cgsm_journal.pdf)
+
+> 🌿 **Dashboard interactivo**: <https://linaq11.github.io/proyecto-cgsm-curso/dashboard.html>
 
 Caracterización espaciotemporal de la cobertura, fragmentación y vigor del manglar en la Ciénaga Grande de Santa Marta entre 2013 y 2025, mediante una pipeline multilenguaje (Python, R, Julia) que integra detección de cambios bfast, segmentación automática con SamGeo y validación contra cartografía oficial INVEMAR 1:25.000 y global ESA WorldCover v200.
 
@@ -27,12 +30,25 @@ La Ciénaga Grande de Santa Marta —CGSM— es el sistema lagunar costero más 
 
 ## Productos
 
-- **Dashboard interactivo** con 17 capas temáticas, slider temporal NDVI 2018–2025, leyenda con simbología y mapa folium con GroupedLayerControl
-- **Informe final** en PDF, HTML y DOCX (~46 páginas, 19 referencias APA, 5 figuras propias)
+- **Dashboard ejecutivo** (`docs/dashboard.html`) con 5 pestañas (Resumen, Cobertura, Clima e hidrología, Validación multilenguaje, Acerca de), 18 KPI, 14 figuras, 6 tablas, glosario técnico y mapa folium con 17 capas temáticas y slider temporal NDVI 2018–2025
+- **Informe final** en PDF y HTML (~46 páginas, 19 referencias APA)
+- **Artículo journal** en PDF y HTML (versión condensada para publicación)
 - **3 datacubes NetCDF CF-1.8** (períodos 40 MB, trimestral 275 MB, anual Landsat 119 MB)
 - **35 figuras PNG** (mapas, series temporales, correlaciones, validación)
 - **47 tablas CSV** con resultados numéricos completos
 - **29 notebooks numerados y reproducibles** dentro de contenedor Docker `sig_unal v1.11`
+
+### Nota sobre el mapa interactivo
+
+El mapa folium embebido en el dashboard sirve las capas NDVI raster como tiles de Google Earth Engine (`mapId`). **Estos tokens tienen vigencia limitada (algunas horas)**; cuando expiran, el slider funciona pero las capas raster no se renderizan. Para regenerarlos:
+
+```bash
+python src/python/make_dashboard_html.py
+cp outputs/maps/dashboard_CGSM_final.html docs/outputs/maps/
+git add docs/outputs/maps/dashboard_CGSM_final.html && git commit -m "Refresh GEE mapIds" && git push
+```
+
+Requiere autenticación activa con Google Earth Engine.
 
 ## Reproducibilidad
 
@@ -57,7 +73,11 @@ docker run -p 8889:8888 -p 8788:8787 \
 ```
 proyecto-cgsm-curso/
 ├── data/                Datos crudos (AOI, admin, INVEMAR) y procesados (cubos, RGB)
-├── docs/                Informe Quarto (.qmd, .pdf, .html, .docx) y dashboard
+├── docs/                Informe Quarto + dashboard ejecutivo servido por GitHub Pages
+│   ├── dashboard.html               Dashboard principal (open-design, self-contained)
+│   ├── informe_final.{pdf,html,qmd} Informe técnico completo
+│   ├── articulo_cgsm_journal.*      Artículo journal condensado
+│   └── outputs/                     Figuras y mapa copiados para Pages
 ├── notebooks/           29 notebooks numerados (Python + R) en orden de ejecución
 ├── outputs/             Figuras PNG, tablas CSV, mapas HTML, métricas
 └── src/
