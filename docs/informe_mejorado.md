@@ -449,14 +449,16 @@ El análisis de series temporales de NDVI para las 8 estaciones de monitoreo rev
 El algoritmo bfast (Verbesselt et al., 2010) aplicado con parámetros h = 0,10 y h = 0,15 sobre las series mensuales detectó tres bloques de quiebres estructurales coincidentes con los principales eventos ENSO: **El Niño 2015–2016**, **La Niña 2020–2021** y **El Niño 2023–2024**. La re-ejecución de bfast restringida a las cuatro estaciones que efectivamente miden cobertura de manglar denso —Caño Palos, Caño Clarín, CP Aguas Negras y CP Luna— permitió aislar los quiebres específicos del dosel.
 
 **Tabla 3.** Quiebres bfast en las cuatro estaciones de manglar denso (h = 0,15).
+Fuente: `outputs/tables/bfast_manglar_unificado.csv`.
 
-| Estación | Fecha quiebre | Bloque ENSO asociado |
-|---|---|---|
-| Caño Palos | 2020-06 | La Niña 2020–2021 |
-| Caño Clarín | 2020-02 | La Niña 2020–2021 |
-| Caño Clarín | 2020-12 | La Niña 2020–2021 |
-| CP Aguas Negras | 2022-04 | Excedente hídrico post-Niña |
-| CP Luna | 2022-01 | Excedente hídrico post-Niña |
+| Estación | Fecha quiebre 1 | Fecha quiebre 2 | Bloque ENSO asociado |
+|---|---|---|---|
+| Caño Palos | 2020-07 | 2024-07 | La Niña 2020–2021 / El Niño 2023–2024 |
+| Caño Clarín | 2020-02 | 2021-04 | La Niña 2020–2021 |
+| CP Aguas Negras | 2022-04 | 2023-10 | Excedente hídrico post-Niña / El Niño 2023–2024 |
+| CP Luna | 2022-01 | 2024-07 | Excedente hídrico post-Niña / El Niño 2023–2024 |
+
+Cuando se ejecuta bfast con parámetro h = 0,10 (más sensible), Caño Clarín revela 6 quiebres adicionales (2018-12, 2020-12, 2023-08, 2024-06, 2025-03) y Caño Palos uno más en 2024-02, lo que sugiere una actividad de cambios estructurales más frecuente en estas dos estaciones del Complejo de Pajarales.
 
 Adicionalmente, bfast aplicado sobre la serie combinada Landsat 8 + Sentinel-2 (929 registros mensuales) detectó un **quiebre estructural generalizado en 2016** sobre 7 de las 8 estaciones, asociado a la sequía de El Niño 2015–2016. La recuperación posterior del NDVI mediano del manglar denso es notable: pasó de 0,60 hacia mediados de 2020 a valores estables alrededor de 0,80 desde 2022.
 
