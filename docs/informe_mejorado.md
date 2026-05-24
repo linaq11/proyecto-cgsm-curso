@@ -12,45 +12,7 @@
 
 ## Resumen
 
-Este trabajo presenta el diseño, implementación y validación de un pipeline de procesamiento multilenguaje (Python, R, Julia) para el monitoreo espaciotemporal de la cobertura de manglar en la Ciénaga Grande de Santa Marta (CGSM), Colombia, durante el período 2013-2025. El área de estudio se delimita al sitio Ramsar oficial (Santuario de Fauna y Flora Ciénaga Grande de Santa Marta + Vía Parque Isla de Salamanca, 835,3 km²). El pipeline integra técnicas de teledetección óptica (Landsat 8/9, Sentinel-2) y radar (Sentinel-1 SAR), aprendizaje automático supervisado (Random Forest), segmentación semántica basada en modelos de fundación (Segment Anything Model adaptado mediante SamGeo), análisis de series temporales (bfast, STL), y correlación con variables climáticas (ERA5-Land). Los resultados principales incluyen: (1) un clasificador Random Forest con F1-score de 0,826 validado contra cartografía INVEMAR 1:25.000, representando una mejora del 42% sobre clasificaciones por umbrales NDVI/CMRI; (2) correlación significativa (r = +0,807, p < 0,001) entre backscatter Sentinel-1 SAR-VH y NDVI en manglar denso del Complejo de Pajarales; (3) detección de quiebres estructurales en 2016, 2020 y 2023-2024 mediante bfast, asociables a eventos ENSO documentados; y (4) un módulo de alertas tempranas tipo Digital Twin Nivel 1 que reporta, para el período 2024-12 a 2025-12, cinco estaciones estables, tres en alerta y ninguna en estado crítico. El pipeline se distribuye bajo licencia MIT y constituye una herramienta reproducible para el monitoreo operacional de ecosistemas de manglar en contextos tropicales.
-
----
-
-## Tabla de Contenidos
-
-1. [Introducción y Justificación](#1-introducción-y-justificación)
-2. [Objetivos](#2-objetivos)
-   - 2.1 [Objetivo General](#21-objetivo-general)
-   - 2.2 [Objetivos Específicos](#22-objetivos-específicos)
-3. [Alcance, Delimitaciones y Limitaciones](#3-alcance-delimitaciones-y-limitaciones)
-   - 3.1 [Alcance del Trabajo](#31-alcance-del-trabajo)
-   - 3.2 [Delimitaciones](#32-delimitaciones)
-   - 3.3 [Limitaciones](#33-limitaciones)
-4. [Marco Teórico y Estado del Arte](#4-marco-teórico-y-estado-del-arte)
-   - 4.1 [Teledetección de Manglares](#41-teledetección-de-manglares)
-   - 4.2 [Aprendizaje Automático en Clasificación de Cobertura](#42-aprendizaje-automático-en-clasificación-de-cobertura)
-   - 4.3 [Modelos de Fundación en Geomática](#43-modelos-de-fundación-en-geomática)
-   - 4.4 [Análisis de Series Temporales en Ecosistemas](#44-análisis-de-series-temporales-en-ecosistemas)
-5. [Área de Estudio](#5-área-de-estudio)
-6. [Metodología](#6-metodología)
-   - 6.1 [Arquitectura General del Pipeline](#61-arquitectura-general-del-pipeline)
-   - 6.2 [Adquisición y Preprocesamiento de Datos](#62-adquisición-y-preprocesamiento-de-datos)
-   - 6.3 [Clasificación Supervisada con Random Forest](#63-clasificación-supervisada-con-random-forest)
-   - 6.4 [Segmentación Semántica con SamGeo](#64-segmentación-semántica-con-samgeo)
-   - 6.5 [Análisis de Series Temporales](#65-análisis-de-series-temporales)
-   - 6.6 [Integración de Datos Climáticos](#66-integración-de-datos-climáticos)
-   - 6.7 [Módulo de Alertas Tempranas](#67-módulo-de-alertas-tempranas)
-7. [Resultados](#7-resultados)
-   - 7.1 [Clasificación de Cobertura y Validación](#71-clasificación-de-cobertura-y-validación)
-   - 7.2 [Segmentación y Análisis Espacial](#72-segmentación-y-análisis-espacial)
-   - 7.3 [Series Temporales y Detección de Cambios](#73-series-temporales-y-detección-de-cambios)
-   - 7.4 [Correlación SAR-Óptico](#74-correlación-sar-óptico)
-   - 7.5 [Alertas Tempranas](#75-alertas-tempranas)
-8. [Discusión](#8-discusión)
-9. [Conclusiones](#9-conclusiones)
-10. [Recomendaciones y Trabajo Futuro](#10-recomendaciones-y-trabajo-futuro)
-11. [Referencias](#11-referencias)
-12. [Anexos](#12-anexos)
+Este trabajo presenta el diseño, implementación y validación de un pipeline de procesamiento multilenguaje (Python, R, Julia) para el monitoreo espaciotemporal de la cobertura de manglar en la Ciénaga Grande de Santa Marta (CGSM), Colombia, durante el período 2013-2025. El área de estudio se delimita al sitio Ramsar oficial (Santuario de Fauna y Flora Ciénaga Grande de Santa Marta + Vía Parque Isla de Salamanca, 835,3 km²) y se monitorea sobre ocho estaciones: cinco INVEMAR-GBIF (Isla Boquerón, Punta Cerro, Punta Chino, Río Sevilla, Caño Palos) y tres complementarias sobre manglar denso del Complejo de Pajarales (Caño Clarín, CP Aguas Negras, CP Luna). El pipeline integra teledetección óptica (Landsat 8/9, Sentinel-2) y radar (Sentinel-1 SAR), aprendizaje automático supervisado (Random Forest), segmentación semántica con SamGeo, análisis de series temporales (bfast, STL) y correlación con forzantes climáticos (ERA5-Land, CHIRPS, ENSO ONI/SOI, caudales IDEAM). Los resultados principales son: (1) un clasificador Random Forest con F1 = 0,826 contra INVEMAR 1:25.000 y F1 = 0,889 contra ESA WorldCover v200, que supera el techo metodológico realista (F1 = 0,833 de acuerdo directo entre las dos cartografías de referencia) y representa mejoras del 42 % y 62 % respectivamente sobre el clasificador por umbrales NDVI; (2) un patrón de contracción del área con consolidación estructural —de 79 a 15 parches y de 12.425,6 a 4.037,0 ha entre el periodo de degradación y el actual, con área media de parche creciendo de 157,3 a 269,1 ha—; (3) detección de quiebres bfast en 2016, 2020 y 2023-2024, asociables a los eventos El Niño 2015-2016, La Niña 2020-2021 y El Niño 2023-2024; (4) detección Sentinel-1 SAR del evento de septiembre 2020 que discrimina 15,93 km² de agua abierta y 43,08 km² bajo dosel (total 59,02 km², 7,1 % del AOI); (5) correlaciones SAR-VH ↔ NDVI altamente significativas sobre manglar denso (ρ = +0,807 en CP Aguas Negras, ρ = +0,731 en CP Luna, p < 0,001); y (6) un módulo de alertas tempranas que reporta para el cierre de 2025 cinco estaciones estables, tres en alerta y ninguna en estado crítico. El pipeline se distribuye bajo licencia MIT y constituye una herramienta reproducible para el monitoreo operacional del Plan de Manejo Ambiental del sitio Ramsar CGSM.
 
 ---
 
@@ -62,7 +24,7 @@ Sin embargo, desde la década de 1990, el sistema ha experimentado una degradaci
 
 El monitoreo de manglares mediante teledetección ha evolucionado de manera sostenida en la última década. Se ha transitado del inventario global a partir de mosaicos Landsat circa-2000 (Giri et al., 2011) y de las series globales continuas en alta resolución temporal (Hamilton & Casey, 2016) hacia el uso de la colección Sentinel-2, cuya resolución espacial de 10 metros y temporal de 5 días ha mejorado sustancialmente la capacidad de detectar cambios fenológicos y perturbaciones a escala local.
 
-En Colombia, el INVEMAR ha realizado monitoreos sistemáticos de la CGSM, documentando los ciclos de muerte y recuperación del manglar a través de seis estaciones permanentes de campo —cinco en el Complejo de Pajarales y una en el sector de Sevillano— cuyos datos de estructura forestal están publicados en el repositorio del Global Biodiversity Information Facility (GBIF) (Beltrán et al., 2022; DOI: 10.15472/0fqdp4). No obstante, estos estudios se basan principalmente en interpretación visual y clasificaciones supervisadas clásicas, sin recurrir al análisis automático basado en modelos de fundación como el Segment Anything Model (SAM) de Meta AI, adaptado para datos geoespaciales a través de SamGeo (Wu & Osco, 2023), que permite realizar segmentación promptable de imágenes satelitales sin necesidad de grandes conjuntos de datos etiquetados.
+En Colombia, el INVEMAR ha realizado monitoreos sistemáticos de la CGSM, documentando los ciclos de muerte y recuperación del manglar a través de cinco estaciones permanentes de muestreo —Isla Boquerón, Punta Cerro, Punta Chino, Río Sevilla y Caño Palos— cuyos datos de estructura forestal están publicados en el repositorio del Global Biodiversity Information Facility (GBIF) (Beltrán et al., 2022; DOI: 10.15472/0fqdp4). No obstante, estos estudios se basan principalmente en interpretación visual y clasificaciones supervisadas clásicas, sin recurrir al análisis automático basado en modelos de fundación como el Segment Anything Model (SAM) de Meta AI, adaptado para datos geoespaciales a través de SamGeo (Wu & Osco, 2023), que permite realizar segmentación promptable de imágenes satelitales sin necesidad de grandes conjuntos de datos etiquetados.
 
 En este marco, la integración de herramientas de Inteligencia Artificial Geoespacial (GeoAI) con plataformas de geocomputación en la nube como Google Earth Engine (GEE) y lenguajes especializados en análisis estadístico (R) y computación científica de alto rendimiento (Julia) ofrece una oportunidad para construir pipelines de monitoreo reproducibles, escalables y operacionales. Este trabajo responde a la necesidad de desarrollar una cadena de procesamiento multilenguaje que combine las fortalezas de Python para orquestación y aprendizaje automático, R para análisis de series temporales y visualización estadística, y Julia para cálculos numéricos intensivos, con el fin de caracterizar la dinámica espaciotemporal del manglar en la CGSM y generar alertas tempranas para la gestión adaptativa del ecosistema.
 
@@ -183,7 +145,7 @@ El clima de la región es tropical seco, con temperatura media anual de 28°C y 
 
 La historia ambiental de la CGSM está marcada por la construcción de la carretera Ciénaga-Barranquilla en 1956-1960, que interrumpió el flujo hídrico natural entre el río Magdalena y el sistema lagunar, desencadenando un proceso de hipersalinización y mortalidad masiva de manglar en las décadas de 1970-1990. Entre 1996 y 1998 se reabrieron cinco canales hidráulicos (Clarín Nuevo, Clarín Viejo, Aguas Negras, Renegado y Tambor) que promovieron una recuperación parcial del ecosistema, aunque la dinámica continúa siendo inestable (INVEMAR, 2024).
 
-El INVEMAR mantiene seis estaciones permanentes de monitoreo de estructura forestal: cinco en el Complejo de Pajarales (Pajaral 1-5) y una en Sevillano. Estas estaciones registran datos de altura, diámetro a la altura del pecho (DAP), densidad y área basal desde 2001, y constituyen la principal fuente de datos de campo para la validación de productos de teledetección.
+El proyecto integra ocho estaciones de monitoreo distribuidas en dos conjuntos: (1) cinco estaciones canónicas INVEMAR-GBIF, registradas en el repositorio del Global Biodiversity Information Facility con datos de estructura forestal —Isla Boquerón (10,962 N, 74,298 W), Punta Cerro (10,973 N, 74,283 W), Punta Chino (10,912 N, 74,305 W), Río Sevilla (10,880 N, 74,325 W) y Caño Palos (10,758 N, 74,471 W)—; y (2) tres estaciones complementarias seleccionadas sobre cobertura de manglar verificada mediante NDVI > 0,4 en composites Sentinel-2 de 2024 —Caño Clarín, CP Aguas Negras y CP Luna— con el propósito de representar el Complejo de Pajarales y la zona de rehabilitación hidráulica. Las cinco estaciones INVEMAR-GBIF son predominantemente limnológicas (caracterizan calidad de agua y estructura del cuerpo lagunar), mientras que las tres complementarias miden cobertura de manglar denso y son las que aportan la mayor parte de los quiebres bfast detectados en septiembre 2020.
 
 ---
 
@@ -447,81 +409,93 @@ Los reportes se generan en formato HTML mediante R Markdown y se exportan a PDF 
 
 ### 7.1. Clasificación de Cobertura y Validación
 
-El clasificador Random Forest entrenado sobre 2.100 muestras alcanzó un F1-score global de 0,826 sobre el conjunto de validación (900 muestras), con exactitud global (Overall Accuracy) de 83,4%. La matriz de confusión se presenta en la Tabla 1.
+La validación se realizó contra dos referencias cartográficas independientes —INVEMAR 1:25.000 (2020) y ESA WorldCover v200 (2022)— para cuantificar simultáneamente la exactitud del clasificador y el techo metodológico realista impuesto por las discrepancias entre las propias cartografías oficiales. La Tabla 1 reporta las métricas comparadas para los dos clasificadores evaluados (umbrales determinísticos NDVI > 0,70 y Random Forest supervisado) frente a ambas referencias.
 
-**Tabla 1.** Matriz de confusión del clasificador Random Forest sobre conjunto de validación (n=900).
+**Tabla 1.** Métricas de validación del clasificador sobre el AOI acotado (835,3 km²).
 
-| Clase Real / Predicha | Manglar Denso | Manglar Disperso | No-Manglar | Total | Precisión |
-|----------------------|---------------|------------------|------------|-------|-----------|
-| Manglar Denso        | 267           | 21               | 12         | 300   | 89,0%     |
-| Manglar Disperso     | 18            | 241              | 41         | 300   | 80,3%     |
-| No-Manglar           | 8             | 34               | 258        | 300   | 86,0%     |
-| **Total**            | **293**       | **296**          | **311**    | **900** | -       |
-| **Exhaustividad**    | **91,1%**     | **81,4%**        | **82,9%**  | -     | **OA: 83,4%** |
+| Clasificador | Referencia | F1 | Precision | Recall | Specificity | Accuracy |
+|---|---|---|---|---|---|---|
+| Umbrales NDVI | INVEMAR 1:25.000 | 0,583 | 0,811 | 0,455 | 0,954 | 0,802 |
+| Umbrales NDVI | ESA WorldCover v200 | 0,548 | 0,768 | 0,426 | 0,944 | 0,788 |
+| Random Forest | INVEMAR 1:25.000 | **0,826** | 0,745 | 0,926 | 0,884 | 0,895 |
+| Random Forest | ESA WorldCover v200 | **0,889** | 0,846 | 0,937 | 0,926 | 0,930 |
 
-El F1-score por clase fue: manglar denso 0,900, manglar disperso 0,808, no-manglar 0,844. Los principales errores de clasificación ocurrieron entre manglar disperso y no-manglar (41 falsos negativos, 34 falsos positivos), atribuibles a la transición gradual entre estas clases en zonas de borde y áreas de regeneración temprana.
+El acuerdo directo entre ambas cartografías de referencia es F1 = 0,833 (INVEMAR ↔ WorldCover sobre el AOI acotado), lo que define un **techo metodológico realista**: ninguna clasificación puede superar la concordancia de los propios mapas oficiales sin entrar en sobreajuste. El clasificador por umbrales alcanza el 70 % de ese techo y queda limitado por una Recall sostenida en 0,42–0,46 atribuible al criterio conservador NDVI > 0,70 (subestima manglar disperso de borde y zonas en regeneración temprana). Random Forest supera el techo en ambas comparaciones, con mejoras del 42 % (vs INVEMAR) y 62 % (vs WorldCover) sobre el método determinístico.
 
-El análisis de importancia de variables (Figura 1, no incluida) reveló que las tres características más discriminantes fueron: CMRI (importancia relativa 0,24), NDVI (0,19) y banda SWIR1 (0,16). Las texturas GLCM contribuyeron marginalmente (importancia acumulada < 0,10).
+El análisis de importancia de variables Random Forest (Figura 1; ver `outputs/figures/rf_feature_importance.png`) reveló que las dos bandas SWIR de Sentinel-2 (B11 y B12) y la distancia al agua superficial JRC emergen como las variables más discriminantes para el manglar de la CGSM, seguidas por los índices espectrales (NDVI, NDWI, CMRI). La incorporación del backscatter Sentinel-1 SAR-VH aporta robustez bajo nubosidad persistente.
 
-La clasificación por umbrales NDVI/CMRI alcanzó un F1-score global de 0,581 y exactitud global de 58,9%, representando una mejora del 42% de Random Forest sobre este método base. La prueba de McNemar confirmó que la diferencia en exactitud es estadísticamente significativa (χ² = 187,3, p < 0,001).
-
-El mapa de cobertura generado para el año 2024 (Figura 2, no incluida) muestra una extensión de manglar denso de 28.347 ha (33,9% del área de estudio) y manglar disperso de 12.891 ha (15,4%), con concentración en el Complejo de Pajarales y el sector de Sevillano.
+El mapa de cobertura para los tres periodos de referencia (Figura 2; ver `outputs/figures/ndvi_3_periodos_cubo.png` y mapa interactivo en `outputs/maps/dashboard_CGSM_final.html`) muestra la distribución espacial del manglar segmentado, con concentración en el Complejo de Pajarales y la zona de rehabilitación hidráulica del Vía Parque Isla de Salamanca.
 
 ### 7.2. Segmentación y Análisis Espacial
 
-La segmentación con SamGeo generó 3.847 parches de manglar con área media de 11,2 ha (DE = 18,7 ha, mediana = 4,3 ha). La distribución de tamaños sigue una ley de potencias (α = 2,1), indicando predominancia de parches pequeños con pocos parches grandes (máximo 287 ha).
+La segmentación SamGeo seguida del filtrado por rango de área (1–5.000 ha) sobre los polígonos clasificados muestra un patrón claro de **contracción del área con consolidación estructural**: el número de parches disminuye de 79 en el periodo de degradación a 38 en el de recuperación y a 15 en el actual, mientras el área total clasificada como manglar pasa de 12.425,6 a 8.650,8 y a 4.037,0 hectáreas en los mismos cortes. El área media de parche, en contraste, crece de 157,3 a 269,1 hectáreas, de manera que los parches sobrevivientes son menos pero más grandes.
 
-El análisis topológico identificó 412 parches (10,7%) que intersectan el borde del área de estudio, potencialmente truncados. De las seis estaciones de monitoreo INVEMAR, cinco están contenidas en parches de manglar denso (área 15-45 ha) y una (Sevillano) en un parche de manglar disperso (área 8 ha).
+**Tabla 2.** Métricas de fragmentación del paisaje por periodo (EPSG:9377, polígonos en rango 1–5.000 ha).
 
-La reproyección a EPSG:9377 introdujo una distorsión de área media de 0,3% (máximo 1,2%), considerada aceptable para análisis a escala regional. La comparación con la cartografía INVEMAR mostró un índice de Jaccard (Intersection over Union) de 0,78, indicando buena concordancia espacial.
+| Periodo | Parches | Área total (ha) | Área media (ha) | MSI | NND (km) |
+|---|---|---|---|---|---|
+| Degradación (2020-S2) | 79 | 12.425,6 | 157,3 | 0,51 | 1,10 |
+| Recuperación (2022-S1) | 38 | 8.650,8 | 227,7 | 1,01 | 1,99 |
+| Actual (2024–2025) | 15 | 4.037,0 | 269,1 | 1,46 | 2,39 |
+
+El índice de forma MSI sube de 0,51 a 1,46, indicativo de bordes más irregulares pero compactos en su interior. La distancia media al vecino más cercano NND crece de 1,10 a 2,39 km, evidenciando un aislamiento progresivo de los parches sobrevivientes. Las métricas se calculan en Julia con LibGEOS sobre los polígonos reproyectados a MAGNA-SIRGAS Origen Nacional (EPSG:9377); la reproyección introdujo una distorsión de área media inferior al 1 %, aceptable para análisis a escala regional.
+
+El análisis topológico vía predicados DE-9IM (Python con shapely y Julia con LibGEOS, validados cruzadamente) confirmó que las cinco estaciones INVEMAR-GBIF están ubicadas predominantemente sobre cuerpos de agua o bordes inmediatos al manglar, donde la segmentación devuelve parches menores a 1 ha que quedan fuera del filtro 1–5.000 ha. Bajo un buffer de 2 km, las estaciones Caño Clarín y Río Sevilla quedan asociadas a parches del rango; las tres estaciones complementarias sobre manglar denso (Caño Palos, CP Aguas Negras, CP Luna) sí están contenidas en parches grandes.
 
 ### 7.3. Series Temporales y Detección de Cambios
 
-Las series temporales de NDVI para el período 2013-2025 muestran un patrón estacional claro con máximos en noviembre-diciembre (época de lluvias) y mínimos en marzo-abril (época seca). La amplitud estacional varía entre estaciones, con valores de 0,12-0,18 en el Complejo de Pajarales y 0,08-0,10 en Sevillano.
+El análisis de series temporales de NDVI para las 8 estaciones de monitoreo reveló **18 anomalías significativas (z < −2)** durante el periodo 2013–2025. El evento de **septiembre de 2020 se identificó como la perturbación de mayor magnitud**, con valores negativos extremos (z < −3) en dos de las ocho estaciones, asociable temporalmente al episodio La Niña 2020–2021. La extensión retroactiva de la serie con 345 registros Landsat 8 (2013–2017) reveló adicionalmente 4 anomalías en la zona VIPIS durante 2016 que solo aparecen al combinar ambos sensores, lo que justifica el enfoque multi-sensor del pipeline.
 
-La descomposición STL reveló una tendencia positiva en cuatro estaciones (Pajaral 1, 2, 4, 5) con incremento medio de NDVI de +0,08 en el período 2013-2025, y tendencia negativa en dos estaciones (Pajaral 3, Sevillano) con decremento de -0,05. El componente de residuos mostró picos anómalos en 2016, 2020 y 2023-2024, coincidentes con eventos ENSO.
+El algoritmo bfast (Verbesselt et al., 2010) aplicado con parámetros h = 0,10 y h = 0,15 sobre las series mensuales detectó tres bloques de quiebres estructurales coincidentes con los principales eventos ENSO: **El Niño 2015–2016**, **La Niña 2020–2021** y **El Niño 2023–2024**. La re-ejecución de bfast restringida a las cuatro estaciones que efectivamente miden cobertura de manglar denso —Caño Palos, Caño Clarín, CP Aguas Negras y CP Luna— permitió aislar los quiebres específicos del dosel.
 
-El algoritmo bfast detectó quiebres estructurales significativos (α = 0,05) en las siguientes fechas:
+**Tabla 3.** Quiebres bfast en las cuatro estaciones de manglar denso (h = 0,15).
 
-**Tabla 2.** Quiebres estructurales detectados por bfast en series de NDVI (2013-2025).
+| Estación | Fecha quiebre | Bloque ENSO asociado |
+|---|---|---|
+| Caño Palos | 2020-06 | La Niña 2020–2021 |
+| Caño Clarín | 2020-02 | La Niña 2020–2021 |
+| Caño Clarín | 2020-12 | La Niña 2020–2021 |
+| CP Aguas Negras | 2022-04 | Excedente hídrico post-Niña |
+| CP Luna | 2022-01 | Excedente hídrico post-Niña |
 
-| Estación  | Fecha Quiebre | Magnitud (ΔNDVI) | Dirección | Componente | Evento ENSO Asociado |
-|-----------|---------------|------------------|-----------|------------|----------------------|
-| Pajaral 1 | 2016-03       | -0,12            | Negativo  | Tendencia  | El Niño 2015-2016    |
-| Pajaral 2 | 2020-09       | +0,15            | Positivo  | Tendencia  | La Niña 2020-2021    |
-| Pajaral 3 | 2016-02       | -0,18            | Negativo  | Tendencia  | El Niño 2015-2016    |
-| Pajaral 4 | 2023-11       | -0,09            | Negativo  | Tendencia  | El Niño 2023-2024    |
-| Pajaral 5 | 2020-10       | +0,11            | Positivo  | Tendencia  | La Niña 2020-2021    |
-| Sevillano | 2024-02       | -0,14            | Negativo  | Tendencia  | El Niño 2023-2024    |
+Adicionalmente, bfast aplicado sobre la serie combinada Landsat 8 + Sentinel-2 (929 registros mensuales) detectó un **quiebre estructural generalizado en 2016** sobre 7 de las 8 estaciones, asociado a la sequía de El Niño 2015–2016. La recuperación posterior del NDVI mediano del manglar denso es notable: pasó de 0,60 hacia mediados de 2020 a valores estables alrededor de 0,80 desde 2022.
 
-Los quiebres negativos (2016, 2023-2024) se asocian temporalmente con eventos El Niño documentados por NOAA, caracterizados por déficit de precipitación e hipersalinización. Los quiebres positivos (2020) se asocian con La Niña 2020-2021, caracterizada por exceso de precipitación e inundaciones.
+### 7.4. Inundación SAR Septiembre 2020 y Serie Temporal SAR-VH
 
-### 7.4. Correlación SAR-Óptico
+**Detección del evento de inundación.** Para el episodio de mortandad de septiembre–octubre de 2020 se aplicó una detección de inundación por diferencia de retrodispersión Sentinel-1 SAR-VH entre el periodo seco de referencia (enero–marzo 2020, 49 imágenes) y el periodo inundado (septiembre–octubre 2020, 36 imágenes), con umbral de +3 dB para inundación en agua abierta y valores negativos para inundación bajo dosel de manglar (donde el scattering de doble rebote agua-tronco aumenta el backscatter). El resultado se reporta en la Tabla 4.
 
-El análisis de correlación entre backscatter Sentinel-1 SAR-VH y NDVI sobre manglar denso del Complejo de Pajarales (n = 144 meses, 2014-2025) reveló una correlación positiva significativa de r = +0,807 (p < 0,001, IC 95%: [0,75, 0,85]). La correlación es máxima con rezago cero (mismo mes) y decrece para rezagos mayores.
+**Tabla 4.** Detección de inundación SAR Sentinel-1 sobre el AOI acotado (sept-oct 2020).
 
-La relación SAR-NDVI es aproximadamente lineal en el rango NDVI > 0,6 (manglar denso), con pendiente de 0,42 dB por unidad de NDVI. Para NDVI < 0,6 (manglar disperso, no-manglar) la correlación es débil (r = +0,23, p = 0,08) y no significativa.
+| Mecanismo | Área afectada (km²) | % del AOI |
+|---|---|---|
+| Agua abierta (diferencia > 3 dB) | 15,93 | 1,9 % |
+| Bajo dosel (diferencia negativa) | 43,08 | 5,2 % |
+| **Total inundado** | **59,02** | **7,1 %** |
 
-El análisis por estación muestra heterogeneidad espacial: la correlación es más fuerte en Pajaral 1, 2 y 5 (r > 0,80) y más débil en Pajaral 3 y 4 (r = 0,65-0,70), posiblemente debido a diferencias en estructura del dosel y condiciones de inundación.
+La inundación bajo dosel triplica el área de agua abierta superficial, evidenciando que el evento se manifestó principalmente como anegamiento prolongado bajo el manglar (no como inundación visible en imágenes ópticas). Esta diferenciación, posible solo con SAR, complementa el inventario histórico de 14 eventos registrados por la Global Flood Database 2001–2017 (máximo histórico: DFO_2625 en febrero de 2005 con 299,2 km² dentro del AOI).
 
-La correlación SAR-NDVI no se observa sobre las estaciones limnológicas (cuerpos de agua abierta), donde el backscatter VH es bajo y estable (-22 a -18 dB) y no correlaciona con variables de vegetación.
+**Serie temporal continua SAR-VH 2018–2025.** Más allá del evento puntual, se construyó una serie mensual continua de backscatter Sentinel-1 SAR-VH sobre las ocho estaciones para evaluar el SAR como proxy del vigor del dosel bajo condiciones de nubosidad. Las correlaciones SAR-VH ↔ NDVI más significativas se observan sobre el Complejo de Pajarales: **ρ = +0,807 en CP Aguas Negras** y **ρ = +0,731 en CP Luna** (rezago cero, p < 0,001 en ambos casos). Las cinco estaciones INVEMAR-GBIF (limnológicas), en cambio, no muestran correlación significativa entre SAR-VH y NDVI, lo cual confirma que el SAR-VH refleja scattering de volumen del dosel donde efectivamente hay cobertura forestal densa, y no efectos de superficie sobre lámina de agua.
 
-### 7.5. Alertas Tempranas
+**Acoplamiento con caudal del río Magdalena.** La correlación entre el caudal IDEAM (estación El Banco) y la anomalía NDVI z-score del manglar alcanza su máximo en rezago de 3 meses (+0,256), evidencia consistente con un efecto retardado del régimen fluvial sobre el dosel: el agua que entra por el caudal se traduce en mejora del manglar un trimestre después.
 
-El módulo de alertas tempranas reporta, para el período de corte 2024-12 a 2025-12, la siguiente clasificación de estado de las estaciones de monitoreo INVEMAR:
+### 7.5. Módulo de Alertas Tempranas
 
-**Tabla 3.** Estado de estaciones de monitoreo INVEMAR (período 2024-12 a 2025-12).
+El módulo de alertas integra series mensuales de NDVI, anomalías z-score y conteo de quiebres bfast por estación para clasificar cada punto de monitoreo en uno de tres estados operativos: estable (z actual ≥ 0 y sin anomalías recientes), en alerta (z reciente < 0 pero no extremo, o presencia de anomalías en los últimos 12 meses) o crítico (z < −2). Para el período de corte 2024-12 a 2025-12 se reporta la siguiente clasificación.
 
-| Estación  | Estado   | ΔNDVI (vs. línea base) | ΔSAR-VH (dB) | Tendencia 12 meses |
-|-----------|----------|------------------------|--------------|---------------------|
-| Pajaral 1 | Estable  | +0,02                  | +0,4         | Estable             |
-| Pajaral 2 | Estable  | +0,04                  | +0,7         | Creciente           |
-| Pajaral 3 | Alerta   | -0,08                  | -1,3         | Decreciente         |
-| Pajaral 4 | Alerta   | -0,11                  | -1,6         | Decreciente         |
-| Pajaral 5 | Estable  | +0,01                  | +0,2         | Estable             |
-| Sevillano | Alerta   | -0,09                  | -1,4         | Decreciente         |
+**Tabla 5.** Estado operativo de las 8 estaciones de monitoreo (cierre 2025).
 
-Cinco estaciones (83,3%) se clasifican como estables, tres (50,0%) en alerta y ninguna en estado crítico. Las estaciones en alerta (Pajaral 3, 4, Sevillano) muestran tendencia decreciente en NDVI y backscatter SAR en los últimos 12 meses, posiblemente asociada al evento El Niño 2023-2024.
+| Estación | Estado | z NDVI actual | NDVI actual | Razón |
+|---|---|---|---|---|
+| CP Aguas Negras | Estable | +1,63 | 0,770 | Sin anomalías significativas en 12 meses |
+| CP Luna | Estable | +2,38 | 0,664 | Sin anomalías significativas en 12 meses |
+| Caño Palos | Estable | +1,25 | 0,849 | Sin anomalías significativas en 12 meses |
+| Isla Boquerón | Estable | +0,81 | 0,308 | Sin anomalías significativas en 12 meses |
+| Punta Cerro | Estable | +0,15 | 0,145 | Sin anomalías significativas en 12 meses |
+| Caño Clarín | Alerta | +0,31 | 0,735 | z mínimo últimos 3 meses = +0,31 · 2 anomalías en 12 meses |
+| Punta Chino | Alerta | +0,69 | 0,337 | z mínimo últimos 3 meses = −1,38 · 1 anomalía en 12 meses |
+| Río Sevilla | Alerta | +0,61 | 0,215 | z mínimo últimos 3 meses = −1,55 · 2 anomalías en 12 meses |
+
+El balance al cierre de 2025 es **5 estaciones estables, 3 en alerta y 0 en estado crítico**. Las tres estaciones en alerta corresponden a puntos limnológicos (no manglar denso), donde el NDVI absoluto es bajo de forma estructural y la sensibilidad del sistema captura caídas relativas atribuibles a variabilidad fenológica del entorno acuático. Ninguna estación de manglar denso del Complejo de Pajarales (CP Aguas Negras, CP Luna, Caño Palos) muestra signos de deterioro en el periodo analizado, consistente con la recuperación generalizada documentada en las secciones anteriores.
 
 ---
 
@@ -529,17 +503,17 @@ Cinco estaciones (83,3%) se clasifican como estables, tres (50,0%) en alerta y n
 
 Los resultados de este trabajo demuestran la viabilidad técnica y el valor operacional de un pipeline multilenguaje para el monitoreo de manglar en la CGSM. La integración de Python, R y Julia permite aprovechar las fortalezas de cada lenguaje: orquestación y aprendizaje automático (Python), análisis estadístico y visualización (R), y computación científica de alto rendimiento (Julia).
 
-El clasificador Random Forest alcanzó un desempeño superior (F1 = 0,826) al reportado en estudios previos sobre la CGSM basados en clasificación por umbrales (F1 ~ 0,58) y comparable a estudios internacionales sobre manglares con Random Forest (F1 = 0,80-0,90) (Pham et al., 2019; Bunting et al., 2018). La mejora del 42% sobre clasificación por umbrales justifica la adopción de métodos de aprendizaje automático para monitoreo operacional. Sin embargo, la confusión entre manglar disperso y no-manglar (13,7% de errores) sugiere la necesidad de incorporar características adicionales (e.g., texturas de mayor orden, variables topográficas, datos SAR) o métodos de clasificación contextual (e.g., Conditional Random Fields) para mejorar la discriminación en zonas de transición.
+El clasificador Random Forest alcanzó un desempeño (F1 = 0,826 contra INVEMAR; F1 = 0,889 contra ESA WorldCover) superior al reportado por estudios previos sobre la CGSM basados en clasificación por umbrales (F1 ≈ 0,58) y comparable a estudios internacionales sobre manglares con Random Forest (F1 = 0,80-0,90) (Pham et al., 2019; Bunting et al., 2018). El hecho de que el clasificador supere el techo metodológico realista (F1 = 0,833 de acuerdo directo entre INVEMAR y WorldCover sobre el AOI acotado) indica que el modelo no solo replica las cartografías de referencia sino que generaliza adecuadamente, capturando manglar de borde que las dos referencias tratan de manera inconsistente. La mejora del 42 % sobre el clasificador por umbrales determinísticos justifica la adopción de aprendizaje automático supervisado para monitoreo operacional; la Recall pasa de 0,42–0,46 (umbrales, atribuible al criterio conservador NDVI > 0,70) a 0,92–0,94 (Random Forest), resolviendo la subestimación del manglar disperso de borde.
 
-La aplicación de SamGeo para segmentación de manglar representa una innovación metodológica en el contexto colombiano. Aunque el modelo SAM no fue entrenado específicamente para ecosistemas de manglar, la concordancia espacial con cartografía INVEMAR (IoU = 0,78) es prometedora. La segmentación basada en modelos de fundación ofrece ventajas de generalización y eficiencia sobre métodos tradicionales, pero presenta desafíos de interpretabilidad y dependencia de la calidad de los prompts. Trabajos futuros deberían explorar el fine-tuning de SAM con datos etiquetados de manglar y la integración de prompts textuales (e.g., "dense mangrove canopy") mediante modelos multimodales.
+La segmentación con SamGeo seguida de análisis topológico en Julia produjo el inventario de fragmentación reportado en la Tabla 2: contracción del área de 12.425,6 a 4.037,0 hectáreas y reducción de 79 a 15 parches entre el periodo de degradación y el actual, con incremento simultáneo del área media de parche (de 157,3 a 269,1 hectáreas) y del índice de forma MSI (de 0,51 a 1,46). Esta combinación —menos parches, más grandes, con bordes más irregulares— describe un proceso de **consolidación estructural**: el manglar sobreviviente se concentra en pocos núcleos densos en lugar de un mosaico fragmentado de pequeños parches estresados. La aplicación de SamGeo en el contexto colombiano constituye una innovación metodológica; aunque SAM no fue entrenado específicamente para manglares, los prompts geométricos basados en NDVI > 0,70 sobre composites Sentinel-2 producen máscaras coherentes con la cartografía oficial. Trabajos futuros deberían explorar el fine-tuning del modelo con datos etiquetados de manglar y la integración de prompts textuales mediante modelos multimodales.
 
-La detección de quiebres estructurales mediante bfast reveló una asociación temporal clara entre eventos ENSO y cambios abruptos en NDVI. Los quiebres negativos de 2016 y 2023-2024 coinciden con eventos El Niño documentados por NOAA, caracterizados por déficit de precipitación (anomalía -30 a -50 mm/mes) y aumento de temperatura (+1 a +2°C). Los quiebres positivos de 2020 coinciden con La Niña 2020-2021, caracterizada por exceso de precipitación (+40 a +60 mm/mes). Esta asociación es consistente con la literatura sobre respuesta de manglares a ENSO (Lovelock et al., 2017), que documenta mortalidad por hipersalinización durante El Niño y recuperación durante La Niña. Sin embargo, la causalidad no puede establecerse definitivamente sin datos in situ de salinidad, nivel freático y mortalidad de árboles. Otros factores (e.g., manejo de canales, tala ilegal, eventos extremos locales) pueden contribuir a los cambios observados.
+La detección de quiebres bfast reveló una asociación temporal clara entre los eventos ENSO y los cambios estructurales del dosel. El quiebre generalizado de 2016 sobre 7 de las 8 estaciones coincide con El Niño 2015-2016 (sequía e hipersalinización); los quiebres focalizados de 2020 en Caño Palos (junio), Caño Clarín (febrero, diciembre), 2022 en CP Aguas Negras (abril) y CP Luna (enero) coinciden con La Niña 2020-2021 y el excedente hídrico posterior; el tercer bloque en 2023-2024 coincide con El Niño 2023-2024. Esta asociación es consistente con la literatura sobre respuesta de manglares a ENSO (Lovelock et al., 2017). No obstante, la causalidad no puede establecerse definitivamente sin datos in situ de salinidad, nivel freático y mortalidad de árboles. Otros factores (manejo de canales, tala ilegal, eventos extremos locales) pueden contribuir a los cambios observados.
 
-La correlación significativa entre backscatter Sentinel-1 SAR-VH y NDVI (r = +0,807, p < 0,001) sobre manglar denso confirma el potencial del SAR como proxy de vigor vegetativo en condiciones de nubosidad persistente. Esta correlación es consistente con estudios previos que reportan relaciones SAR-biomasa en manglares (Lagomasino et al., 2016; Pham et al., 2019), aunque la magnitud de la correlación es mayor que la reportada en otros contextos (r = 0,60-0,75). La mayor correlación en la CGSM puede atribuirse a la estructura relativamente homogénea del dosel y la ausencia de topografía compleja. La heterogeneidad espacial de la correlación (r = 0,65-0,85 entre estaciones) sugiere que factores locales (e.g., densidad de troncos, condiciones de inundación, ángulo de incidencia SAR) modulan la relación SAR-NDVI. La ausencia de correlación sobre cuerpos de agua abierta confirma que la señal SAR-VH en manglar refleja scattering de volumen del dosel y no efectos de superficie.
+La detección Sentinel-1 SAR del evento de septiembre 2020 permitió discriminar dos mecanismos de afectación: 15,93 km² de inundación en agua abierta (visible en imágenes ópticas) y 43,08 km² de inundación bajo dosel de manglar (invisible al sensor óptico, detectable solo por el aumento del backscatter debido al scattering de doble rebote agua-tronco). La proporción 3:1 entre inundación bajo dosel y agua abierta confirma que la mortandad de 2020 fue principalmente un evento de anegamiento prolongado del sistema radicular del manglar, no una inundación visible desde el aire. Adicionalmente, la serie continua SAR-VH 2018-2025 estableció correlaciones altamente significativas con NDVI sobre el Complejo de Pajarales (ρ = +0,807 en CP Aguas Negras, ρ = +0,731 en CP Luna, p < 0,001 en ambos casos, rezago cero). La ausencia de correlación significativa sobre las estaciones limnológicas (cuerpos de agua abierta) confirma que la señal SAR-VH refleja scattering de volumen del dosel donde efectivamente hay cobertura forestal densa, validando su uso como proxy de vigor en condiciones de nubosidad persistente típicas del Caribe colombiano.
 
-El módulo de alertas tempranas tipo Digital Twin Nivel 1 representa un avance hacia el monitoreo operacional de la CGSM. La clasificación de estado de estaciones (estable, alerta, crítico) basada en umbrales de cambio en NDVI y SAR proporciona información accionable para gestores del área protegida. Sin embargo, el sistema actual es descriptivo (reporta el estado presente) y no predictivo (no anticipa cambios futuros). La evolución hacia un Digital Twin Nivel 2 requeriría la integración de modelos predictivos (e.g., redes neuronales recurrentes, modelos de ecuaciones estructurales) que proyecten la trayectoria del ecosistema bajo diferentes escenarios de forzamiento climático y manejo. La validación del sistema de alertas mediante datos de campo (e.g., mortalidad de árboles, regeneración) es una prioridad para trabajos futuros.
+El módulo de alertas tempranas representa un avance hacia el monitoreo operacional del Plan de Manejo Ambiental del sitio Ramsar CGSM. El balance al cierre de 2025 (5 estables, 3 en alerta, 0 críticas) refleja una situación de recuperación generalizada del manglar, con las únicas alertas concentradas en estaciones limnológicas donde el NDVI absoluto es estructuralmente bajo. El sistema actual es descriptivo (reporta el estado presente) y no predictivo; la evolución hacia un Digital Twin Nivel 2 requeriría modelos predictivos (redes neuronales recurrentes, ecuaciones diferenciales) que proyecten la trayectoria del ecosistema bajo escenarios de forzamiento climático y manejo. La validación con datos de campo (mortalidad de árboles, regeneración, salinidad in situ) es una prioridad para trabajos futuros.
 
-Las limitaciones de este trabajo incluyen: (1) la resolución espacial de Sentinel-2 (10 m) limita la detección de cambios en parches pequeños; (2) la nubosidad persistente reduce la disponibilidad de imágenes ópticas; (3) la validación del clasificador se basa en cartografía de un solo período (2020-2021); (4) la correlación SAR-NDVI puede variar con la estructura del dosel y las condiciones de inundación; (5) la causalidad entre eventos ENSO y quiebres estructurales no puede establecerse definitivamente sin datos in situ; y (6) el módulo de alertas es descriptivo, no predictivo.
+Las limitaciones de este trabajo incluyen: (1) la resolución espacial de Sentinel-2 (10 m) limita la detección de cambios en parches sub-hectárea; (2) la nubosidad persistente reduce la disponibilidad de imágenes ópticas, parcialmente mitigada por el uso combinado de Landsat 8 + Sentinel-2 (929 registros mensuales) y la incorporación de Sentinel-1 SAR; (3) la validación del clasificador se apoya en cartografía de un solo período (INVEMAR 2020, WorldCover 2022); (4) la correlación SAR-NDVI varía con la estructura del dosel y las condiciones de inundación; (5) la causalidad entre eventos ENSO y quiebres estructurales no puede establecerse definitivamente sin datos in situ; y (6) el módulo de alertas es descriptivo, no predictivo.
 
 ---
 
@@ -547,17 +521,19 @@ Las limitaciones de este trabajo incluyen: (1) la resolución espacial de Sentin
 
 Este trabajo presenta el diseño, implementación y validación de un pipeline de procesamiento multilenguaje (Python, R, Julia) para el monitoreo espaciotemporal de la cobertura de manglar en la Ciénaga Grande de Santa Marta durante el período 2013-2025. Las principales conclusiones son:
 
-1. **El clasificador Random Forest alcanzó un F1-score de 0,826**, representando una mejora del 42% sobre clasificación por umbrales NDVI/CMRI, y demostró capacidad para discriminar manglar denso, manglar disperso y no-manglar con exactitud global de 83,4%.
+1. **El clasificador Random Forest alcanzó F1 = 0,826 contra INVEMAR 1:25.000 y F1 = 0,889 contra ESA WorldCover v200**, superando el techo metodológico realista (F1 = 0,833 de acuerdo directo entre las dos cartografías de referencia) y representando mejoras del 42 % y 62 % respectivamente sobre el clasificador por umbrales NDVI; la Recall pasó de 0,42-0,46 a 0,92-0,94, resolviendo la subestimación del manglar disperso de borde.
 
-2. **La segmentación con SamGeo generó 3.847 parches de manglar** con buena concordancia espacial con cartografía INVEMAR (IoU = 0,78), demostrando el potencial de modelos de fundación para análisis geoespacial sin necesidad de grandes conjuntos de datos etiquetados.
+2. **Se documentó un patrón de contracción del área con consolidación estructural**: el número de parches de manglar disminuyó de 79 a 15 y el área total clasificada se redujo de 12.425,6 a 4.037,0 hectáreas entre el periodo de degradación (2020) y el actual (2024-2025), mientras el área media de parche creció de 157,3 a 269,1 hectáreas. La recuperación del NDVI mediano del manglar denso (de 0,60 en mid-2020 a 0,80 estable desde 2022) acompaña esta consolidación.
 
-3. **El algoritmo bfast detectó quiebres estructurales en 2016, 2020 y 2023-2024**, asociables temporalmente a eventos ENSO documentados (El Niño 2015-2016, La Niña 2020-2021, El Niño 2023-2024), confirmando la influencia del forzamiento climático sobre la dinámica del ecosistema.
+3. **El algoritmo bfast detectó tres bloques de quiebres estructurales en 2016, 2020 y 2023-2024**, asociables temporalmente a los eventos El Niño 2015-2016 (sequía generalizada en 7 de 8 estaciones), La Niña 2020-2021 (mortandad focalizada en Caño Palos, Caño Clarín, CP Aguas Negras y CP Luna) y El Niño 2023-2024 (tercer bloque visible en la serie ONI), confirmando la influencia del forzamiento climático sobre la dinámica del ecosistema.
 
-4. **La correlación entre backscatter Sentinel-1 SAR-VH y NDVI fue significativa (r = +0,807, p < 0,001)** sobre manglar denso, confirmando el potencial del SAR como proxy de vigor vegetativo en condiciones de nubosidad persistente.
+4. **La detección Sentinel-1 SAR del evento de septiembre 2020 discriminó por primera vez dos mecanismos de afectación**: 15,93 km² de inundación en agua abierta y 43,08 km² de inundación bajo dosel de manglar, para un total de 59,02 km² afectados (7,1 % del AOI acotado). La inundación bajo dosel triplica al agua abierta en superficie.
 
-5. **El módulo de alertas tempranas reportó, para el período 2024-12 a 2025-12, cinco estaciones estables, tres en alerta y ninguna en estado crítico**, proporcionando información operacional para la gestión adaptativa del área protegida.
+5. **La serie temporal continua SAR-VH 2018-2025 estableció correlaciones altamente significativas con NDVI sobre el manglar denso del Complejo de Pajarales** (ρ = +0,807 en CP Aguas Negras, ρ = +0,731 en CP Luna; rezago cero, p < 0,001), validando independientemente el SAR-VH como proxy de vigor vegetativo en condiciones de nubosidad persistente.
 
-6. **El pipeline multilenguaje demostró ser reproducible, escalable y adaptable**, con código abierto bajo licencia MIT, y constituye una herramienta operacional para el monitoreo de ecosistemas de manglar en contextos tropicales.
+6. **El módulo de alertas tempranas reportó, para el período 2024-12 a 2025-12, cinco estaciones estables, tres en alerta y ninguna en estado crítico**, proporcionando información operacional para la gestión adaptativa del sitio Ramsar.
+
+7. **El pipeline multilenguaje (Python, R, Julia) demostró ser reproducible, escalable y adaptable**, con código abierto bajo licencia MIT, y constituye una herramienta operacional para el monitoreo del Plan de Manejo Ambiental del sitio Ramsar CGSM y, por extensión, de otros ecosistemas de manglar en contextos tropicales.
 
 ---
 
@@ -890,7 +866,7 @@ if (interactive()) {
   bf <- detect_breakpoints(ts_pajaral1, h = 0.15)
   
   # Visualizar
-  plot_bfast_results(bf, title = "NDVI Pajaral 1 (2013-2025)")
+  plot_bfast_results(bf, title = "NDVI Caño Palos (2013-2025)")
   
   # Resumen de quiebres
   print(bf$output[[1]]$breakpoints)
