@@ -493,13 +493,15 @@ a:focus-visible, button:focus-visible {
     <div class="card lead">
       <div class="card-head"><h2 class="card-title">Estado del manglar al cierre de 2025</h2></div>
       <div class="card-body">
-        <p>Indicadores sintéticos sobre el <abbr title="Área de Interés: aquí, el AOI acotado = SFF CGSM + Vía Parque Isla de Salamanca, 835 km²">AOI acotado</abbr>
-        (<abbr title="Santuario de Fauna y Flora">SFF</abbr> CGSM + Vía Parque Isla de Salamanca,
-        835 km²) y su acoplamiento con el régimen climático regional.
-        El índice <abbr title="Normalized Difference Vegetation Index — mide el vigor del dosel en escala 0-1 a partir de la reflectancia roja e infrarroja cercana del satélite">NDVI</abbr>
-        mide el vigor del dosel en una escala de 0 a 1 a partir de la reflectancia satelital.
-        Las gráficas y el mapa interactivo desarrollan cada
-        <abbr title="Key Performance Indicator — indicador clave de desempeño">KPI</abbr>.</p>
+        <p>Los cinco indicadores que aparecen abajo resumen cómo está el manglar al cierre del
+        periodo de análisis sobre el área protegida oficial ---el
+        <abbr title="Santuario de Fauna y Flora">SFF</abbr> CGSM y la Vía Parque Isla de Salamanca,
+        que suman 835 km²---, junto con la magnitud del evento de inundación que dejó La Niña
+        en 2020 y la fuerza con que el caudal del río Magdalena se asocia al vigor del dosel.
+        El indicador <abbr title="Normalized Difference Vegetation Index — mide el vigor del dosel en escala 0-1 a partir de la reflectancia roja e infrarroja cercana del satélite">NDVI</abbr>,
+        que reaparece en las gráficas y el mapa, mide el vigor de la vegetación en una escala de
+        0 a 1 a partir de lo que el satélite ve en las bandas roja e infrarroja cercana.
+        Cada cifra se desarrolla más abajo, y el mapa interactivo permite navegar capa por capa.</p>
       </div>
     </div>
   </div>
@@ -554,7 +556,14 @@ a:focus-visible, button:focus-visible {
           <li><span class="finding-tag yr warning">2023–24</span><span class="finding-txt">Tercer bloque: <strong>CP Aguas Negras (oct-2023)</strong>, <strong>Caño Palos (jul-2024)</strong> y <strong>CP Luna (jul-2024)</strong>, coincidente con El Niño 2023-2024 visible en el índice ONI.</span></li>
           <li><span class="finding-tag yr info">2001–17</span><span class="finding-txt">14 inundaciones documentadas (Global Flood Database). Máximo histórico: DFO_2625 (feb 2005), 299 km² afectados.</span></li>
         </ul>
-        <p style="margin-top:12px; font-size:12.5px; color:var(--text-muted);">Serie combinada <abbr title="Misión Landsat 8 (NASA/USGS), operativa desde 2013, ofrece imágenes ópticas de 30 m de resolución cada 16 días">Landsat 8</abbr> + <abbr title="Constelación Sentinel-2 de la ESA (Copernicus), imágenes ópticas de 10 m cada 5 días">Sentinel-2</abbr>: 929 registros mensuales en 12 años, 18 anomalías significativas (<abbr title="z-score: desviación estandarizada respecto a la media histórica. z<-2 = anomalía significativa">z</abbr> &lt; −2). Quiebres detectados con el método <abbr title="Breaks For Additive Season and Trend (Verbesselt et al., 2010): método estadístico que detecta cambios estructurales en series temporales descomponiéndolas en tendencia + estacionalidad + ruido">bfast</abbr> sobre la serie z-score por estación.</p>
+        <p style="margin-top:12px; font-size:12.5px; color:var(--text-muted);">Los quiebres se calculan sobre una serie continua de 929 valores mensuales construida juntando
+        <abbr title="Misión Landsat 8 (NASA/USGS), operativa desde 2013, ofrece imágenes ópticas de 30 m de resolución cada 16 días">Landsat 8</abbr>
+        (2013--2017) y <abbr title="Constelación Sentinel-2 de la ESA (Copernicus), imágenes ópticas de 10 m cada 5 días">Sentinel-2</abbr>
+        (2018--2025), lo que cubre doce años de observación. Sobre esa serie se detectan 18 anomalías
+        relevantes ---definidas como un
+        <abbr title="z-score: desviación estandarizada respecto a la media histórica. z<-2 = anomalía significativa">z-score</abbr>
+        menor a −2 frente a la media histórica de la estación--- y los quiebres estructurales se identifican con el método
+        <abbr title="Breaks For Additive Season and Trend (Verbesselt et al., 2010): método estadístico que detecta cambios estructurales en series temporales descomponiéndolas en tendencia + estacionalidad + ruido">bfast</abbr>.</p>
       </div>
     </div>
 
@@ -562,7 +571,7 @@ a:focus-visible, button:focus-visible {
       <div class="card-head"><h2 class="card-title">Estado operativo por estación</h2></div>
       <div class="card-body figure">
         <img src="outputs/figures/alertas_semaforo.png" alt="Semáforo de alertas por estación">
-        <p class="caption">Sistema de alertas tipo semáforo sobre las 8 estaciones INVEMAR. Verde: estable o en recuperación. Amarillo: en alerta. Rojo: anomalía crítica (z &lt; −2). Cierre 2025: 5 estables, 3 en alerta, 0 críticas.</p>
+        <p class="caption">Cada una de las ocho estaciones queda clasificada en uno de tres estados según la severidad de las anomalías NDVI de los últimos doce meses: verde para estable o en recuperación, amarillo en alerta cuando hay anomalías sostenidas, y rojo crítica si se registra una anomalía con z &lt; −2. Al cierre de 2025 hay 5 estaciones estables, 3 en alerta y ninguna crítica.</p>
         <div class="table-wrap" style="margin-top:14px;">
           <table class="data">
             <thead><tr>
@@ -595,12 +604,15 @@ a:focus-visible, button:focus-visible {
     <div class="card lead">
       <div class="card-head"><h2 class="card-title">Contracción del área con consolidación estructural</h2></div>
       <div class="card-body">
-        <p>Entre 2020 y 2025 el manglar redujo su área clasificada de
-        <strong>12.426 a 4.037 ha</strong> y pasó de <strong>79 a 15 parches</strong>,
-        mientras el área media de parche creció de 157 a 269 ha. El
+        <p>Entre 2020 y 2025 el área clasificada como manglar pasó de <strong>12.426 a 4.037 ha</strong>
+        y el número de fragmentos cayó de <strong>79 a 15</strong>, mientras el tamaño medio de
+        fragmento creció de 157 a 269 ha. La paradoja es aparente: aunque el bosque ocupa menos
+        superficie cartografíada, los fragmentos sobrevivientes son más grandes y el vigor del
+        dosel ---medido por el
         <abbr title="Normalized Difference Vegetation Index — índice de vigor del dosel, escala 0-1">NDVI</abbr>
-        mediano del dosel recuperó valores de 0,80 desde 2022 (vs. 0,60 en mid-2020), lo que
-        indica consolidación funcional del manglar sobreviviente.</p>
+        mediano--- recuperó valores de 0,80 desde 2022, frente a los 0,60 de mid-2020. Esto
+        sugiere que el sistema se consolida alrededor de unidades de manglar más maduras en
+        lugar de fragmentarse aún más.</p>
       </div>
     </div>
   </div>
@@ -747,16 +759,19 @@ a:focus-visible, button:focus-visible {
     <div class="card lead">
       <div class="card-head"><h2 class="card-title">Acoplamiento climático-hidrológico del manglar</h2></div>
       <div class="card-body">
-        <p>El manglar de la CGSM depende del aporte de agua dulce del río Magdalena
-        y del Aracataca para mantener el balance osmótico que evita la hipersalinización.
-        La matriz mide la correlación de Pearson entre seis forzantes climáticos
-        (precipitación local <abbr title="ERA5-Land: reanálisis climático de alta resolución de ECMWF/Copernicus, estima temperatura, viento, presión y precipitación globales">ERA5</abbr>,
-        índices <abbr title="El Niño-Southern Oscillation: ciclo climático del Pacífico ecuatorial que alterna entre fases cálidas (El Niño) y frías (La Niña), con teleconexiones a Colombia">ENSO</abbr> globales,
-        caudales <abbr title="Instituto de Hidrología, Meteorología y Estudios Ambientales de Colombia — opera la red hidrométrica nacional">IDEAM</abbr>,
-        precipitación regional <abbr title="Climate Hazards Group InfraRed Precipitation with Station data (Funk et al., 2015): producto satelital de precipitación cuasi-global desde 1981">CHIRPS</abbr>)
-        y la anomalía NDVI z-score del manglar, evaluada en rezagos de 0 a 3 meses.
-        Verde: correlación positiva (el forzante favorece al dosel).
-        Rojo: correlación negativa. Cerca de cero: acoplamiento débil.</p>
+        <p>El manglar de la CGSM necesita un aporte continuo de agua dulce ---del río Magdalena
+        por el centro y del Aracataca desde la Sierra Nevada--- para evitar la hipersalinización
+        que constituye su principal estresor histórico. La matriz de abajo cruza seis fuentes
+        climáticas e hidrológicas con la anomalía NDVI del manglar en rezagos de 0 a 3 meses:
+        precipitación local <abbr title="ERA5-Land: reanálisis climático de alta resolución de ECMWF/Copernicus, estima temperatura, viento, presión y precipitación globales">ERA5</abbr>,
+        los índices globales <abbr title="El Niño-Southern Oscillation: ciclo climático del Pacífico ecuatorial que alterna entre fases cálidas (El Niño) y frías (La Niña), con teleconexiones a Colombia">ENSO</abbr>
+        (ONI y SOI de NOAA), los caudales <abbr title="Instituto de Hidrología, Meteorología y Estudios Ambientales de Colombia — opera la red hidrométrica nacional">IDEAM</abbr>
+        del Magdalena y el Aracataca, y la precipitación regional
+        <abbr title="Climate Hazards Group InfraRed Precipitation with Station data (Funk et al., 2015): producto satelital de precipitación cuasi-global desde 1981">CHIRPS</abbr>
+        sobre las dos cuencas aportantes. Así puede leerse, de un vistazo, qué forzante explica
+        mejor la respuesta del dosel y a qué velocidad: los tonos verdes marcan correlación
+        positiva ---el forzante favorece al manglar---, los rojos correlación negativa, y los
+        blancos un acoplamiento débil.</p>
       </div>
     </div>
   </div>
@@ -875,14 +890,18 @@ a:focus-visible, button:focus-visible {
     <div class="card lead">
       <div class="card-head"><h2 class="card-title">Distribución de roles y verificación cruzada</h2></div>
       <div class="card-body">
-        <p>Reparto por fortalezas: <strong>Python</strong> opera la nube
-        (<abbr title="Google Earth Engine: plataforma gratuita de Google para procesar imágenes satelitales en la nube, con acceso a petabytes de datos públicos">Google Earth Engine</abbr>,
-        <abbr title="Segment Anything for Geospatial: integración del modelo Segment Anything Model de Meta AI para segmentación automática de imágenes satelitales">SamGeo</abbr>),
-        <strong>R</strong> ejecuta los quiebres <abbr title="Breaks For Additive Season and Trend (Verbesselt et al., 2010): detecta cambios estructurales en series temporales">bfast</abbr>
-        y las series ecohidrológicas,
-        <strong>Julia</strong> resuelve la geometría rápida sobre miles de polígonos.
-        La interoperabilidad se valida mediante cuatro pruebas cruzadas independientes que
-        confirman convergencia numérica entre las implementaciones.</p>
+        <p>Cada lenguaje cubre la parte del flujo donde su ecosistema es más maduro:
+        <strong>Python</strong> se encarga del procesamiento en
+        <abbr title="Google Earth Engine: plataforma gratuita de Google para procesar imágenes satelitales en la nube, con acceso a petabytes de datos públicos">Google Earth Engine</abbr>
+        y de la segmentación con
+        <abbr title="Segment Anything for Geospatial: integración del modelo Segment Anything Model de Meta AI para segmentación automática de imágenes satelitales">SamGeo</abbr>;
+        <strong>R</strong> corre los quiebres
+        <abbr title="Breaks For Additive Season and Trend (Verbesselt et al., 2010): detecta cambios estructurales en series temporales">bfast</abbr>
+        y las series ecohidrológicas con <code>tidyverse</code> y <code>stars</code>;
+        <strong>Julia</strong> calcula las métricas de fragmentación y los predicados topológicos
+        sobre los polígonos vectoriales. Para confirmar que los tres entornos producen
+        resultados equivalentes, cuatro validaciones cruzadas comparan las salidas
+        de Python, R y Julia sobre las mismas series y los mismos parches.</p>
       </div>
     </div>
   </div>
@@ -926,15 +945,14 @@ a:focus-visible, button:focus-visible {
           </table>
         </div>
         <p style="margin-top:14px; font-size:12.5px; color:var(--text-muted); line-height:1.55;">
-          <strong>* Sobre la prueba 4:</strong> Python y Julia coinciden en el conteo de parches por
-          predicados DE-9IM (17 cada uno) sobre el mismo conjunto de polígonos; el valor 15
-          proviene del clasificador final tras aplicar el filtro de área mínima (documentado en
-          Anexo C del informe). No es divergencia entre lenguajes sino diferencia entre etapas
-          del pipeline.
+          <strong>* Sobre la prueba 4:</strong> Python y Julia cuentan exactamente los mismos 17 parches
+          al aplicar los predicados DE-9IM sobre el mismo conjunto de polígonos. El valor 15 que
+          aparece en la columna no es una divergencia entre lenguajes: corresponde al conteo final
+          después de filtrar por área mínima en el pipeline (detalle en el Anexo C del informe).
         </p>
         <p style="margin-top:8px; font-size:12.5px; color:var(--text-muted); line-height:1.55;">
-          Las pruebas se ejecutan automáticamente dentro del contenedor Docker reproducible;
-          cualquier divergencia bloquea el build de integración continua.
+          Las cuatro pruebas se ejecutan automáticamente dentro del contenedor Docker reproducible
+          y cualquier divergencia bloquea el build de integración continua.
         </p>
       </div>
     </div>
@@ -949,16 +967,18 @@ a:focus-visible, button:focus-visible {
       <div class="card-body">
         <h3>Sobre este monitor</h3>
         <h2>Pipeline multilenguaje (Python, R, Julia) para el monitoreo de manglar en la CGSM · 2013–2025</h2>
-        <p>Síntesis de un proyecto académico que articula tres lenguajes para monitorear la
-        dinámica espaciotemporal del manglar de la Ciénaga Grande de Santa Marta, sitio
+        <p>El manglar de la Ciénaga Grande de Santa Marta ---sitio
         <abbr title="Convención Ramsar sobre humedales de importancia internacional. La CGSM es sitio Ramsar Nº 562 desde 1998">Ramsar</abbr>
-        y Reserva de la Biosfera ubicado al norte del departamento del Magdalena, Colombia.
-        Los productos provienen de satélites públicos (Sentinel-2, Sentinel-1, Landsat 8/9),
-        reanálisis climáticos (ERA5-Land, CHIRPS) y registros hidrométricos (IDEAM/DHIME).
-        Toda la cadena de procesamiento es reproducible desde el repositorio GitHub mediante
-        un contenedor Docker preconfigurado, y se valida cuantitativamente contra cartografía
-        oficial INVEMAR 1:25.000 (2020) y ESA WorldCover v200 (2022).
-        Consultá el <a href="#glosario" onclick="document.getElementById('glossary-btn').click(); return false;">glosario técnico</a> abajo para definiciones detalladas.</p>
+        Nº 562 desde 1998 y Reserva de la Biosfera UNESCO desde 2000---
+        atravesó entre 2013 y 2025 dos eventos ENSO de signo opuesto:
+        El Niño 2015--2016 y La Niña 2020--2021. Este monitor documenta cómo respondió
+        la cobertura, la fragmentación y el vigor del bosque, combinando imágenes
+        Sentinel-2 y Landsat 8/9, radar Sentinel-1 y forzantes climáticos
+        e hidrológicos (ERA5-Land, CHIRPS, índices ENSO de NOAA y caudal IDEAM
+        de El Banco y Ganadería Caribe). Todo el procesamiento se ejecuta en un
+        contenedor Docker reproducible desde el repositorio GitHub y se valida contra
+        dos cartografías oficiales: INVEMAR 1:25.000 (2020) y ESA WorldCover v200 (2022).
+        Los términos técnicos están definidos en el <a href="#glosario" onclick="document.getElementById('glossary-btn').click(); return false;">glosario técnico</a> al final.</p>
 
         <h3 style="margin-top:24px">Pregunta de investigación</h3>
         <p class="question">¿Cómo ha variado la cobertura, la fragmentación y el vigor del

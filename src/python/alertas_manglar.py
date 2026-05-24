@@ -216,14 +216,14 @@ ax.text(-74.65, 10.55 - 0.018, 'AOI acotado CGSM',
 # Punta_Cerro (norte) ↔ Isla_Boqueron (justo al lado, sur-oeste) → separar
 # Punta_Chino ↔ Rio_Sevilla → separar verticalmente
 LABEL_OFFSET = {
-    'Punta_Cerro':     (10,  10),   # arriba-derecha
-    'Isla_Boqueron':   (10, -18),   # abajo-derecha (más alejado)
-    'Punta_Chino':     (10,  10),   # arriba-derecha
-    'Rio_Sevilla':     (10, -16),   # abajo-derecha
-    'Cano_Palos':      (10,   6),
-    'CP_Luna':         (-12,  10),  # a la izquierda
-    'CP_Aguas_Negras': (-12, -14),  # a la izquierda-abajo
-    'Cano_Clarin':     (10,   6),
+    'Punta_Cerro':     (12,  10),   # NE del marker
+    'Isla_Boqueron':   (-12, -2),   # W del marker (a la izquierda, alineado verticalmente)
+    'Punta_Chino':     (12,  -8),   # SE del marker (abajo-derecha)
+    'Rio_Sevilla':     (-12, -2),   # W del marker
+    'Cano_Palos':      (12,   6),
+    'CP_Luna':         (-12,  10),  # NW del marker
+    'CP_Aguas_Negras': (-12, -14),  # SW del marker
+    'Cano_Clarin':     (12,   6),
 }
 
 # Mapeo de IDs (sin tilde, joinable con CSVs) a labels visibles (con tilde).
@@ -269,7 +269,7 @@ legend_handles = [
            markersize=12, label=lbl)
     for k, lbl in estado_orden
 ]
-leg = ax.legend(handles=legend_handles, loc='upper right',
+leg = ax.legend(handles=legend_handles, loc='lower right',
                 fontsize=10, framealpha=0.97,
                 title='Estado al cierre 2025',
                 title_fontsize=10.5, borderpad=0.8,
