@@ -481,10 +481,12 @@ a:focus-visible, button:focus-visible {
   <div class="purpose">
     <i class="bi bi-shield-check"></i>
     <div>Herramienta de consulta operativa para gestores ambientales del
-    <strong>Plan de Manejo Ambiental del sitio <abbr title="Convención sobre humedales de importancia internacional. La CGSM es sitio Ramsar Nº 562 desde 1998">Ramsar</abbr> CGSM</strong>.
-    Productos derivados de satélites públicos (Sentinel-2, Sentinel-1, Landsat 8/9)
+    <strong>Plan de Manejo Ambiental del sitio <abbr title="Convención sobre humedales de importancia internacional. La CGSM es sitio Ramsar Nº 562 desde 1998">Ramsar</abbr> CGSM</strong>
+    y para las comunidades pesqueras de Tasajera, Pueblo Viejo y Buenavista.
+    Productos derivados de satélites públicos (Landsat 8/9 NASA-USGS, Sentinel-2/1 ESA)
     validados contra cartografía <abbr title="Instituto de Investigaciones Marinas y Costeras 'José Benito Vives de Andréis' — autoridad colombiana en cartografía marino-costera">INVEMAR</abbr> 1:25.000.
-    <a href="#glosario" id="purpose-glossary-link">Glosario técnico ↗</a></div>
+    <a href="#glosario" id="purpose-glossary-link">Glosario ↗</a>
+    <a href="#fuentes-nasa" id="purpose-nasa-link">Fuentes NASA ↗</a></div>
   </div>
 
   <div class="row">
@@ -1034,6 +1036,38 @@ a:focus-visible, button:focus-visible {
       </div>
     </div>
 
+    <div class="card about-data" id="fuentes-nasa">
+      <div class="card-body">
+        <h3>Fuentes NASA y observación terrestre</h3>
+        <p style="margin-bottom:12px;">El pipeline integra datos de observación terrestre de la NASA y de agencias colaboradoras (USGS, NOAA, ESA), junto con la biblioteca SamGeo del Prof. Qiusheng Wu (OpenGeos):</p>
+        <div class="table-wrap">
+          <table class="data">
+            <thead><tr>
+              <th>Fuente</th>
+              <th>Agencia</th>
+              <th>Uso en el pipeline</th>
+              <th>Cantidad</th>
+            </tr></thead>
+            <tbody>
+              <tr><td><strong>Landsat 8</strong></td><td>NASA-USGS</td><td>Serie histórica NDVI 2013-2017</td><td>345 registros</td></tr>
+              <tr><td><strong>Landsat 9</strong></td><td>NASA-USGS</td><td>Continuidad serie 2022-2025</td><td>89 registros</td></tr>
+              <tr><td><strong>SRTM v3</strong></td><td>NASA</td><td>Restricción geofísica (cota &lt; 10 m)</td><td>DEM 30 m</td></tr>
+              <tr><td><strong>NOAA CPC</strong></td><td>NOAA</td><td>Índices ENSO ONI/SOI (forzamiento climático)</td><td>2013-2025 mensual</td></tr>
+              <tr><td><strong>Global Flood Database</strong></td><td>Dartmouth Flood Obs. (deriva de MODIS NASA + S1 ESA)</td><td>Inventario histórico de inundaciones</td><td>14 eventos · 2001-2017</td></tr>
+              <tr><td><strong>SamGeo</strong></td><td>Prof. Qiusheng Wu (OpenGeos)</td><td>Segmentación promptable del manglar (SAM)</td><td>3 periodos de referencia</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:12px; font-size:13px; color:var(--text-muted); line-height:1.6;">
+          Este proyecto se alinea temáticamente con la línea
+          <strong><a href="https://nasalifelines.org/hfs-data-series/flood-early-warning-2/" target="_blank" rel="noopener" style="color:var(--primary); text-decoration:none; border-bottom:1px solid var(--primary);">Flood Early Warning de NASA Lifelines</a></strong>,
+          aportando un sistema operacional de alerta temprana basado en datos satelitales públicos
+          aplicado a la salud del ecosistema y a la subsistencia de las comunidades pesqueras de
+          Tasajera, Pueblo Viejo y Buenavista.
+        </p>
+      </div>
+    </div>
+
     <div class="card about-data figure-card">
       <div class="card-head"><h2 class="card-title">Área de estudio · Ciénaga Grande de Santa Marta</h2></div>
       <div class="card-body figure">
@@ -1111,21 +1145,31 @@ a:focus-visible, button:focus-visible {
   if (document.getElementById('panel-' + initial)) activate(initial, false);
 })();
 
-/* ============== GLOSSARY SHORTCUT ============== */
+/* ============== ANCHOR SHORTCUTS (Glosario, Fuentes NASA, etc.) ============== */
 (function () {
-  function jumpToGlossary() {
+  // Salta a la pestaña Acerca de y hace scroll a cualquier ancla dentro de ella
+  function jumpToAnchor(anchorId) {
     const tab = document.querySelector('.tabs button[data-tab="acerca"]');
     if (tab) tab.click();
     setTimeout(() => {
-      const target = document.getElementById('glosario');
+      const target = document.getElementById(anchorId);
       if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 250);
   }
+  // Botón Glosario del navbar
   const btn = document.getElementById('glossary-btn');
-  if (btn) btn.addEventListener('click', jumpToGlossary);
-  // Cualquier link con href="#glosario" en el dashboard usa el mismo flujo
-  document.querySelectorAll('a[href="#glosario"]').forEach(a => {
-    a.addEventListener('click', (e) => { e.preventDefault(); jumpToGlossary(); });
+  if (btn) btn.addEventListener('click', () => jumpToAnchor('glosario'));
+  // Cualquier link href="#glosario", "#fuentes-nasa", etc. en la página
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    const targetId = a.getAttribute('href').slice(1);
+    if (!targetId) return;
+    a.addEventListener('click', (e) => {
+      const target = document.getElementById(targetId);
+      if (target) {
+        e.preventDefault();
+        jumpToAnchor(targetId);
+      }
+    });
   });
 })();
 
