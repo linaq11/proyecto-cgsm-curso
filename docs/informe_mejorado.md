@@ -147,6 +147,8 @@ La historia ambiental de la CGSM está marcada por la construcción de la carret
 
 El proyecto integra ocho estaciones de monitoreo distribuidas en dos conjuntos: (1) cinco estaciones canónicas INVEMAR-GBIF, registradas en el repositorio del Global Biodiversity Information Facility con datos de estructura forestal —Isla Boquerón (10,962 N, 74,298 W), Punta Cerro (10,973 N, 74,283 W), Punta Chino (10,912 N, 74,305 W), Río Sevilla (10,880 N, 74,325 W) y Caño Palos (10,758 N, 74,471 W)—; y (2) tres estaciones complementarias seleccionadas sobre cobertura de manglar verificada mediante NDVI > 0,4 en composites Sentinel-2 de 2024 —Caño Clarín, CP Aguas Negras y CP Luna— con el propósito de representar el Complejo de Pajarales y la zona de rehabilitación hidráulica. Las cinco estaciones INVEMAR-GBIF son predominantemente limnológicas (caracterizan calidad de agua y estructura del cuerpo lagunar), mientras que las tres complementarias miden cobertura de manglar denso y son las que aportan la mayor parte de los quiebres bfast detectados en septiembre 2020.
 
+![**Figura 1.** Localización del área de estudio. (a) Colombia con el departamento del Magdalena resaltado. (b) Departamento con ciudades de referencia y bbox del AOI en rojo. (c) Composite Sentinel-2 RGB del periodo actual (2024-2025): polígono rojo del AOI acotado (835 km² del SFF CGSM + VPI Salamanca), triángulos rojos de las 5 estaciones INVEMAR-GBIF, cobertura de manglar segmentada por SamGeo en verde traslúcido.](../outputs/figures/mapa_area_estudio.png){width=100%}
+
 ---
 
 ## 6. Metodología
@@ -193,6 +195,8 @@ El pipeline de procesamiento se estructura en seis módulos principales, impleme
 - Visualización de mapas de alerta
 
 La orquestación del pipeline se realiza mediante scripts Python que invocan módulos R y Julia a través de interfaces de línea de comandos (subprocess) y archivos de intercambio. El control de versiones se gestiona con Git y el repositorio se aloja en GitHub bajo licencia MIT.
+
+![**Figura 2.** Flujo metodológico del proyecto: seis fases secuenciales con validación cruzada entre Python, R y Julia, todas ejecutadas dentro de un contenedor Docker que garantiza la reproducibilidad bit a bit de cada análisis.](../outputs/figures/flujo_metodologia.png){width=95%}
 
 ### 6.2. Adquisición y Preprocesamiento de Datos
 
@@ -422,9 +426,15 @@ La validación se realizó contra dos referencias cartográficas independientes 
 
 El acuerdo directo entre ambas cartografías de referencia es F1 = 0,833 (INVEMAR ↔ WorldCover sobre el AOI acotado), lo que define un **techo metodológico realista**: ninguna clasificación puede superar la concordancia de los propios mapas oficiales sin entrar en sobreajuste. El clasificador por umbrales alcanza el 70 % de ese techo y queda limitado por una Recall sostenida en 0,42–0,46 atribuible al criterio conservador NDVI > 0,70 (subestima manglar disperso de borde y zonas en regeneración temprana). Random Forest supera el techo en ambas comparaciones, con mejoras del 42 % (vs INVEMAR) y 62 % (vs WorldCover) sobre el método determinístico.
 
-El análisis de importancia de variables Random Forest (Figura 1; ver `outputs/figures/rf_feature_importance.png`) reveló que las dos bandas SWIR de Sentinel-2 (B11 y B12) y la distancia al agua superficial JRC emergen como las variables más discriminantes para el manglar de la CGSM, seguidas por los índices espectrales (NDVI, NDWI, CMRI). La incorporación del backscatter Sentinel-1 SAR-VH aporta robustez bajo nubosidad persistente.
+![**Figura 3.** Importancia de variables del clasificador Random Forest. SWIR (B11, B12) y distancia al agua superficial JRC dominan la discriminación de manglar; el SAR-VH aporta robustez bajo nubosidad.](../outputs/figures/rf_feature_importance.png){width=85%}
 
-El mapa de cobertura para los tres periodos de referencia (Figura 2; ver `outputs/figures/ndvi_3_periodos_cubo.png` y mapa interactivo en `outputs/maps/dashboard_CGSM_final.html`) muestra la distribución espacial del manglar segmentado, con concentración en el Complejo de Pajarales y la zona de rehabilitación hidráulica del Vía Parque Isla de Salamanca.
+El análisis de importancia de variables Random Forest (Figura 3) reveló que las dos bandas SWIR de Sentinel-2 (B11 y B12) y la distancia al agua superficial JRC emergen como las variables más discriminantes para el manglar de la CGSM, seguidas por los índices espectrales (NDVI, NDWI, CMRI). La incorporación del backscatter Sentinel-1 SAR-VH aporta robustez bajo nubosidad persistente.
+
+![**Figura 4.** NDVI mediano por periodo de referencia sobre el AOI acotado: degradación (2020), recuperación (2022) y estado actual (2024-2025). La zona central del Complejo de Pajarales muestra recuperación visible en 2024-2025.](../outputs/figures/ndvi_3_periodos_cubo.png){width=100%}
+
+El mapa de cobertura para los tres periodos de referencia (Figura 4 y mapa interactivo en `outputs/maps/dashboard_CGSM_final.html`) muestra la distribución espacial del manglar segmentado, con concentración en el Complejo de Pajarales y la zona de rehabilitación hidráulica del Vía Parque Isla de Salamanca.
+
+![**Figura 5.** Diferencia NDVI entre el periodo actual (2024-2025) y el periodo de degradación (2020). Azul: ganancia de vigor (recuperación). Rojo: pérdida. Predominio del azul, consistente con la recuperación generalizada documentada.](../outputs/figures/ndvi_cambio_cubo.png){width=95%}
 
 ### 7.2. Segmentación y Análisis Espacial
 
@@ -460,7 +470,9 @@ Fuente: `outputs/tables/bfast_manglar_unificado.csv`.
 
 Cuando se ejecuta bfast con parámetro h = 0,10 (más sensible), Caño Clarín revela 6 quiebres adicionales (2018-12, 2020-12, 2023-08, 2024-06, 2025-03) y Caño Palos uno más en 2024-02, lo que sugiere una actividad de cambios estructurales más frecuente en estas dos estaciones del Complejo de Pajarales.
 
-Adicionalmente, bfast aplicado sobre la serie combinada Landsat 8 + Sentinel-2 (929 registros mensuales) detectó un **quiebre estructural generalizado en 2016** sobre 7 de las 8 estaciones, asociado a la sequía de El Niño 2015–2016. La recuperación posterior del NDVI mediano del manglar denso es notable: pasó de 0,60 hacia mediados de 2020 a valores estables alrededor de 0,80 desde 2022.
+Adicionalmente, bfast aplicado sobre la serie combinada Landsat 8 + Sentinel-2 (929 registros mensuales) detectó un **quiebre estructural generalizado en 2016** sobre 7 de las 8 estaciones, asociado a la sequía de El Niño 2015–2016. La recuperación posterior del NDVI mediano del manglar denso es notable: pasó de 0,60 hacia mediados de 2020 a valores estables alrededor de 0,80 desde 2022 (Figura 6).
+
+![**Figura 6.** Serie temporal del NDVI mediano del manglar denso sobre el AOI acotado, 2018-2025. Caída a 0,60 en mid-2020 (La Niña) y recuperación sostenida hasta 0,80 desde 2022. Las bandas de fondo marcan los tres periodos de referencia.](../outputs/figures/ndvi_mediano_manglar_acotado.png){width=100%}
 
 ### 7.4. Inundación SAR Septiembre 2020 y Serie Temporal SAR-VH
 
@@ -480,6 +492,14 @@ La inundación bajo dosel triplica el área de agua abierta superficial, evidenc
 
 **Acoplamiento con caudal del río Magdalena.** La correlación entre el caudal IDEAM (estación El Banco) y la anomalía NDVI z-score del manglar alcanza su máximo en rezago de 3 meses (+0,256), evidencia consistente con un efecto retardado del régimen fluvial sobre el dosel: el agua que entra por el caudal se traduce en mejora del manglar un trimestre después.
 
+![**Figura 7.** Serie temporal Sentinel-1 SAR-VH 2018-2025 sobre las 8 estaciones de monitoreo. La retrodispersión radárica complementa al NDVI bajo condiciones de nubosidad persistente.](../outputs/figures/sar_vh_serie_temporal.png){width=100%}
+
+![**Figura 8.** Caudal mensual del río Magdalena (estación El Banco) y río Aracataca (Ganadería Caribe), 2013-2025. Pico histórico en 2022 asociado al excedente hídrico post La Niña 2020-2021.](../outputs/figures/caudal_ideam_series_2013_2025.png){width=100%}
+
+![**Figura 9.** Precipitación mensual CHIRPS v2.0 sobre las cuencas aportantes Magdalena y Aracataca, 2013-2025. El máximo regional de 2022 precede en 1-3 meses la recuperación del NDVI del manglar.](../outputs/figures/chirps_serie_cuencas_2013_2025.png){width=100%}
+
+![**Figura 10.** Índices ENSO ONI (rojo) y SOI (azul) del Pacífico ecuatorial, 2013-2025. ONI > 0,5 indica fase El Niño; ONI < −0,5 indica La Niña. Tres eventos relevantes: El Niño 2015-2016, La Niña 2020-2022 y El Niño 2023-2024.](../outputs/figures/enso_serie_2013_2025.png){width=100%}
+
 ### 7.5. Módulo de Alertas Tempranas
 
 El módulo de alertas integra series mensuales de NDVI, anomalías z-score y conteo de quiebres bfast por estación para clasificar cada punto de monitoreo en uno de tres estados operativos: estable (z actual ≥ 0 y sin anomalías recientes), en alerta (z reciente < 0 pero no extremo, o presencia de anomalías en los últimos 12 meses) o crítico (z < −2). Para el período de corte 2024-12 a 2025-12 se reporta la siguiente clasificación.
@@ -498,6 +518,10 @@ El módulo de alertas integra series mensuales de NDVI, anomalías z-score y con
 | Río Sevilla | Alerta | +0,61 | 0,215 | z mínimo últimos 3 meses = −1,55 · 2 anomalías en 12 meses |
 
 El balance al cierre de 2025 es **5 estaciones estables, 3 en alerta y 0 en estado crítico**. Las tres estaciones en alerta corresponden a puntos limnológicos (no manglar denso), donde el NDVI absoluto es bajo de forma estructural y la sensibilidad del sistema captura caídas relativas atribuibles a variabilidad fenológica del entorno acuático. Ninguna estación de manglar denso del Complejo de Pajarales (CP Aguas Negras, CP Luna, Caño Palos) muestra signos de deterioro en el periodo analizado, consistente con la recuperación generalizada documentada en las secciones anteriores.
+
+![**Figura 11.** Mapa de semáforo de alertas tempranas sobre las 8 estaciones de monitoreo. Verde: estable. Amarillo: en alerta. Rojo: crítica. Cierre 2025: 5 / 3 / 0.](../outputs/figures/alertas_semaforo.png){width=95%}
+
+![**Figura 12.** Convergencia numérica de la correlación caudal-NDVI por rezago calculada independientemente en Python, R y Julia. Las tres barras de cada grupo son visualmente indistinguibles, validando la interoperabilidad del pipeline.](../outputs/figures/validacion_trilingual_correlacion.png){width=90%}
 
 ---
 
