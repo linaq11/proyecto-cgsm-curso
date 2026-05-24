@@ -303,10 +303,23 @@ fg_sindat  = FeatureGroup(name='__fg_sindatos', show=True, control=False)
 fg_por_estado = {'estable': fg_estable, 'alerta': fg_alerta,
                  'critica': fg_critica, 'sin_datos': fg_sindat}
 
+# Mapeo de IDs internos (sin tilde, joinable con CSVs) a labels visibles.
+# Los identificadores como 'Cano Palos' / 'Isla Boqueron' se mantienen para
+# que las comparaciones con manglar_set y los joins con alertas_estaciones.csv
+# (que usa 'Cano_Palos') sigan funcionando; lo que el lector ve en tooltips
+# y etiquetas del mapa lleva tilde y caracteres correctos.
+PRETTY_STATION = {
+    'Cano Palos':      'Caño Palos',
+    'Cano Clarin':     'Caño Clarín',
+    'Isla Boqueron':   'Isla Boquerón',
+    'Rio Sevilla':     'Río Sevilla',
+}
+
 # Centroides de estaciones — coloreados por estado semáforo del módulo de alertas
 # tempranas (Digital Twin Nivel 2). Si no hay alertas disponibles, se vuelve al
 # coloreo por fuente como respaldo visual.
 for nombre, (lon, lat, tipo) in stations.items():
+    pretty     = PRETTY_STATION.get(nombre, nombre)
     fuente     = 'INVEMAR-GBIF' if tipo == 'I' else 'Complementaria'
     naturaleza = 'manglar' if nombre in manglar_set else 'limnológica'
 
@@ -328,13 +341,13 @@ for nombre, (lon, lat, tipo) in stations.items():
         fill_color=color,
         fill_opacity=0.95,
         tooltip=folium.Tooltip(
-            f'<b>{icono} {nombre}</b><br>'
+            f'<b>{icono} {pretty}</b><br>'
             f'<span style="font-size:10px">Estado: <b>{estado}</b> · '
             f'{naturaleza} · {fuente}</span>',
             sticky=False,
         ),
         popup=folium.Popup(
-            f'<b>{icono} {nombre}</b><br>'
+            f'<b>{icono} {pretty}</b><br>'
             f'<b>Estado semáforo:</b> {estado}<br>'
             f'<b>Naturaleza espectral:</b> {naturaleza}<br>'
             f'<b>Fuente:</b> {fuente}<br>'
@@ -370,6 +383,7 @@ label_anchors = {
 }
 
 for nombre, (lon, lat, tipo) in stations.items():
+    pretty = PRETTY_STATION.get(nombre, nombre)
     naturaleza = 'manglar' if nombre in manglar_set else 'limnológica'
     color_texto = '#1B5E20' if naturaleza == 'manglar' else '#01579B'
 
@@ -384,7 +398,7 @@ for nombre, (lon, lat, tipo) in stations.items():
                   f'text-shadow: -1px -1px 0 white, 1px -1px 0 white, '
                   f'-1px 1px 0 white, 1px 1px 0 white, '
                   f'-1.5px 0 0 white, 1.5px 0 0 white, '
-                  f'0 -1.5px 0 white, 0 1.5px 0 white;">{nombre}</div>')
+                  f'0 -1.5px 0 white, 0 1.5px 0 white;">{pretty}</div>')
         ),
     ).add_to(grupo_etiquetas)
 

@@ -226,6 +226,16 @@ LABEL_OFFSET = {
     'Cano_Clarin':     (10,   6),
 }
 
+# Mapeo de IDs (sin tilde, joinable con CSVs) a labels visibles (con tilde).
+# Los IDs internos como Cano_Palos deben coincidir con la columna 'estacion'
+# de outputs/tables/alertas_estaciones.csv; los labels son lo que el lector ve.
+PRETTY = {
+    'Cano Palos':      'Caño Palos',
+    'Cano Clarin':     'Caño Clarín',
+    'Isla Boqueron':   'Isla Boquerón',
+    'Rio Sevilla':     'Río Sevilla',
+}
+
 # ---- Plotear estaciones ----
 for _, row in df_alertas.iterrows():
     coords = buscar_coords(row['estacion'])
@@ -238,7 +248,8 @@ for _, row in df_alertas.iterrows():
     # Punto interior pequeño para "anclar" el círculo grande
     ax.scatter(lon, lat, s=18, c='white', zorder=5)
 
-    label = row['estacion'].replace('_', ' ')
+    raw_label = row['estacion'].replace('_', ' ')
+    label = PRETTY.get(raw_label, raw_label)
     dx, dy = LABEL_OFFSET.get(row['estacion'], (10, 8))
     ha = 'right' if dx < 0 else 'left'
     ax.annotate(label, xy=(lon, lat), xytext=(dx, dy),
