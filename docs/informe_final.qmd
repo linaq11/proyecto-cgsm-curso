@@ -742,7 +742,7 @@ La cobertura de manglar de la CGSM sostiene servicios ecosistémicos críticos p
 
 # Agradecimientos
 
-Este trabajo utiliza datos de observación terrestre de la **NASA-USGS** (Landsat 8/9, SRTM v3) y de la **NOAA** (índices climáticos ENSO ONI y SOI del Climate Prediction Center), así como el inventario histórico de inundaciones del **Dartmouth Flood Observatory** (Global Flood Database, derivado de MODIS NASA y Sentinel-1 ESA). La segmentación promptable del manglar se realiza con la biblioteca **SamGeo** (Wu y Osco, 2023), adaptación geoespacial del modelo *Segment Anything Model* de Meta AI desarrollada por el **Prof. Qiusheng Wu** (OpenGeos), cuya participación virtual como ponente en la conferencia **NASA Lifelines** ([nasalifelines.org](https://nasalifelines.org/)) motivó el énfasis de este proyecto en el uso de datos NASA aplicados a temas de **acción humanitaria** ---específicamente a la línea de *Flood Early Warning*--- mediante SIG y sensores remotos. Se agradece adicionalmente a INVEMAR por el acceso a la cartografía de referencia 1:25.000 y al IDEAM por los registros hidrométricos del río Magdalena.
+Este trabajo utiliza datos de observación terrestre de la **NASA-USGS** (Landsat 8/9, SRTM v3), de la **NOAA** (índices climáticos ENSO ONI y SOI del Climate Prediction Center) y del **Dartmouth Flood Observatory** (Global Flood Database, derivada de MODIS NASA y Sentinel-1 ESA). La segmentación promptable del manglar se realiza con la biblioteca **SamGeo** (Wu y Osco, 2023), adaptación geoespacial del *Segment Anything Model* de Meta AI desarrollada por **Qiusheng Wu** (OpenGeos). Se agradece a INVEMAR por el acceso a la cartografía de referencia 1:25.000 y al IDEAM por los registros hidrométricos del río Magdalena.
 
 # Referencias
 

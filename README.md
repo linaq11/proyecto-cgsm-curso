@@ -8,7 +8,7 @@
 
 > 🌿 **Dashboard interactivo**: <https://linaq11.github.io/proyecto-cgsm-curso/dashboard.html>
 >
-> 🛰 **Datos NASA y observación terrestre**: Landsat 8/9 (NASA-USGS), SRTM v3 (NASA), índices ENSO ONI/SOI (NOAA CPC), inventario histórico Global Flood Database (Dartmouth, deriva de MODIS NASA), segmentación con [SamGeo](https://github.com/opengeos/segment-geospatial) (Prof. Qiusheng Wu). Tematicamente alineado con la línea [Flood Early Warning](https://nasalifelines.org/hfs-data-series/flood-early-warning-2/) de **NASA Lifelines**.
+> 🛰 **Datos NASA y observación terrestre**: Landsat 8/9 (NASA-USGS), SRTM v3 (NASA), índices ENSO ONI/SOI (NOAA CPC), Global Flood Database (Dartmouth, deriva de MODIS NASA), segmentación con [SamGeo](https://github.com/opengeos/segment-geospatial) (Qiusheng Wu). Tema afín a [Flood Early Warning · NASA Lifelines](https://nasalifelines.org/hfs-data-series/flood-early-warning-2/).
 
 Monitoreo espaciotemporal de la cobertura, fragmentación y vigor del manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025, mediante un pipeline multilenguaje (Python, R, Julia) que integra series ópticas Landsat 8 + Sentinel-2, radar Sentinel-1 SAR y forzantes climáticos (ENSO, IDEAM, ERA5-Land, CHIRPS); detección de quiebres bfast; segmentación con SamGeo y clasificación Random Forest (F1 = 0,83); y validación contra cartografía colombiana INVEMAR 1:25.000 y global ESA WorldCover v200.
 
