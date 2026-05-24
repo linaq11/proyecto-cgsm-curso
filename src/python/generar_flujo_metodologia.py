@@ -23,9 +23,8 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT  = ROOT / 'outputs' / 'figures' / 'flujo_metodologia.png'
 
 # ---- Layout config ----
-FIG_W, FIG_H = 15.5, 4.8   # pulgadas
-BOX_W, BOX_H = 2.20, 1.20  # caja de fase (datos del proyecto)
-OUT_BOX_W, OUT_BOX_H = 2.55, 0.85  # cajas de salida
+FIG_W, FIG_H = 15.5, 2.6   # pulgadas (más compacto: solo fases + Docker)
+BOX_W, BOX_H = 2.20, 1.30  # caja de fase
 
 PHASES = [
     {'n': '1', 'color': '#0d47a1', 'title': 'Datacube',
@@ -48,14 +47,6 @@ PHASES = [
                'Notebooks 05 · 10 · 11']},
 ]
 
-OUTPUTS = [
-    ('32 notebooks',     '.ipynb numerados · reproducibles'),
-    ('54 tablas CSV',    'Resultados numéricos'),
-    ('43 figuras PNG',   'Mapas · series · correlaciones'),
-    ('Dashboard 17 capas','HTML interactivo Leaflet'),
-    ('Informe Quarto 50+ pp','PDF + HTML reproducible'),
-]
-
 # ---- Render ----
 plt.rcParams['font.family'] = ['DejaVu Sans', 'Arial', 'sans-serif']
 fig, ax = plt.subplots(figsize=(FIG_W, FIG_H), dpi=200)
@@ -72,7 +63,7 @@ ax.text(FIG_W/2, FIG_H - 0.20, 'FLUJO DE TRABAJO · 6 FASES SECUENCIALES CON VAL
 
 # ---- Fases (fila superior) ----
 gap = 0.15
-phase_y = 2.55
+phase_y = 0.95   # subido para acomodar FIG_H reducido
 phase_w_total = len(PHASES) * BOX_W + (len(PHASES) - 1) * gap
 phase_x0 = (FIG_W - phase_w_total) / 2
 
@@ -112,47 +103,14 @@ for i, p in enumerate(PHASES):
                                  color='#bf360c', linewidth=1.8, zorder=1)
         ax.add_patch(arrow)
 
-# ---- Salidas (fila inferior) ----
-ax.text(FIG_W/2, 2.15, 'SALIDAS UNIFICADAS', ha='center', va='center',
-        fontsize=9.5, color='#6a6a6a')
-
-out_gap = 0.15
-out_w_total = len(OUTPUTS) * OUT_BOX_W + (len(OUTPUTS) - 1) * out_gap
-out_x0 = (FIG_W - out_w_total) / 2
-out_y = 1.15
-
-for i, (title, sub) in enumerate(OUTPUTS):
-    x = out_x0 + i * (OUT_BOX_W + out_gap)
-    box = FancyBboxPatch((x, out_y), OUT_BOX_W, OUT_BOX_H,
-                         boxstyle='round,pad=0.02,rounding_size=0.08',
-                         linewidth=1.2, edgecolor='#1b5e20', facecolor='#f5f8fa',
-                         zorder=2)
-    ax.add_patch(box)
-    ax.text(x + OUT_BOX_W/2, out_y + OUT_BOX_H - 0.28, title,
-            ha='center', va='center', fontsize=10.5, fontweight=600,
-            color='#1b5e20', zorder=3)
-    ax.text(x + OUT_BOX_W/2, out_y + 0.20, sub,
-            ha='center', va='center', fontsize=8.5, color='#4a4a4a', zorder=3)
-
-# Flechas verticales de cada fase hacia las salidas (suaves)
-for i in range(min(len(PHASES), len(OUTPUTS))):
-    px = phase_x0 + i * (BOX_W + gap) + BOX_W/2
-    ox = out_x0 + i * (OUT_BOX_W + out_gap) + OUT_BOX_W/2
-    arrow = FancyArrowPatch((px, phase_y - 0.02),
-                             (ox, out_y + OUT_BOX_H + 0.02),
-                             arrowstyle='-|>', mutation_scale=8,
-                             color='#bf360c', linewidth=0.9,
-                             alpha=0.35, zorder=1)
-    ax.add_patch(arrow)
-
-# ---- Docker base ----
+# ---- Docker base (debajo de las fases) ----
 docker_w = 5.5
-docker = FancyBboxPatch(((FIG_W - docker_w)/2, 0.20), docker_w, 0.60,
+docker = FancyBboxPatch(((FIG_W - docker_w)/2, 0.15), docker_w, 0.45,
                        boxstyle='round,pad=0.02,rounding_size=0.08',
                        linewidth=1.2, edgecolor='#006064', facecolor='#f5f8fa',
                        linestyle=(0, (5, 3)), zorder=2)
 ax.add_patch(docker)
-ax.text(FIG_W/2, 0.50, 'Contenedor Docker sig_unal v1.11 · base reproducible',
+ax.text(FIG_W/2, 0.375, 'Contenedor Docker sig_unal v1.11 · base reproducible',
         ha='center', va='center', fontsize=10, fontweight=700, color='#006064')
 
 # ---- Guardar ----
