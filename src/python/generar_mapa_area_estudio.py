@@ -232,7 +232,7 @@ ax_c.text(-74.55, 11.085, 'Mar Caribe', fontsize=13, style='italic',
 # Leyenda
 legend_handles = [
     mpatches.Patch(facecolor='none', edgecolor='#C0392B', lw=2.0,
-                   label='Área de estudio (1.286 km²)'),
+                   label='Área de estudio (835 km²)'),
     mpatches.Patch(facecolor='#00FF7F', alpha=0.4, edgecolor='none',
                    label='Manglar (SamGeo, 2024-2025)'),
     Line2D([0], [0], marker='^', color='w', markerfacecolor='#C0392B',
@@ -243,7 +243,7 @@ leg = ax_c.legend(handles=legend_handles, loc='upper left', fontsize=10.5,
                   framealpha=0.92, fancybox=True, edgecolor='#888')
 leg.get_frame().set_linewidth(0.6)
 
-ax_c.set_title('(c) Área de estudio — 1.286 km²', fontsize=15,
+ax_c.set_title('(c) Área de estudio — 835 km²', fontsize=15,
                fontweight='bold', pad=10)
 # N un poco más adentro (0.92, 0.92) para que no roce el borde derecho
 n_txt = ax_c.text(0.92, 0.92, 'N', transform=ax_c.transAxes,
