@@ -3134,6 +3134,14 @@ window.Quarto = {
   <li><a href="#f.4-quiebres-bfast-sobre-las-ocho-estaciones-del-proyecto" id="toc-f.4-quiebres-bfast-sobre-las-ocho-estaciones-del-proyecto" class="nav-link" data-scroll-target="#f.4-quiebres-bfast-sobre-las-ocho-estaciones-del-proyecto">F.4 Quiebres bfast sobre las ocho estaciones del proyecto</a></li>
   <li><a href="#f.5-parches-de-manglar-truncados-por-la-frontera-del-aoi" id="toc-f.5-parches-de-manglar-truncados-por-la-frontera-del-aoi" class="nav-link" data-scroll-target="#f.5-parches-de-manglar-truncados-por-la-frontera-del-aoi">F.5 Parches de manglar truncados por la frontera del AOI</a></li>
   <li><a href="#f.6-listado-completo-de-las-18-anomalías-ndvi-z-2" id="toc-f.6-listado-completo-de-las-18-anomalías-ndvi-z-2" class="nav-link" data-scroll-target="#f.6-listado-completo-de-las-18-anomalías-ndvi-z-2">F.6 Listado completo de las 18 anomalías NDVI (z &lt; −2)</a></li>
+  <li><a href="#f.7-flujo-de-datos-del-pipeline-multilenguaje" id="toc-f.7-flujo-de-datos-del-pipeline-multilenguaje" class="nav-link" data-scroll-target="#f.7-flujo-de-datos-del-pipeline-multilenguaje">F.7 Flujo de datos del pipeline multilenguaje</a></li>
+  <li><a href="#f.8-eventos-gfd-con-mayor-área-inundada-sobre-el-aoi-acotado" id="toc-f.8-eventos-gfd-con-mayor-área-inundada-sobre-el-aoi-acotado" class="nav-link" data-scroll-target="#f.8-eventos-gfd-con-mayor-área-inundada-sobre-el-aoi-acotado">F.8 Eventos GFD con mayor área inundada sobre el AOI acotado</a></li>
+  <li><a href="#f.9-correlación-sar-vh-ndvi-por-estación-rezagos-0-3-meses" id="toc-f.9-correlación-sar-vh-ndvi-por-estación-rezagos-0-3-meses" class="nav-link" data-scroll-target="#f.9-correlación-sar-vh-ndvi-por-estación-rezagos-0-3-meses">F.9 Correlación SAR-VH × NDVI por estación (rezagos 0-3 meses)</a></li>
+  <li><a href="#f.10-datacubes-netcdf-materializados" id="toc-f.10-datacubes-netcdf-materializados" class="nav-link" data-scroll-target="#f.10-datacubes-netcdf-materializados">F.10 Datacubes NetCDF materializados</a></li>
+  <li><a href="#f.11-correlación-enso-ndvi-por-naturaleza-espectral" id="toc-f.11-correlación-enso-ndvi-por-naturaleza-espectral" class="nav-link" data-scroll-target="#f.11-correlación-enso-ndvi-por-naturaleza-espectral">F.11 Correlación ENSO-NDVI por naturaleza espectral</a></li>
+  <li><a href="#f.12-correlación-caudal-ideam-ndvi-por-estación-hidrológica" id="toc-f.12-correlación-caudal-ideam-ndvi-por-estación-hidrológica" class="nav-link" data-scroll-target="#f.12-correlación-caudal-ideam-ndvi-por-estación-hidrológica">F.12 Correlación caudal IDEAM-NDVI por estación hidrológica</a></li>
+  <li><a href="#f.13-correlación-chirps-ndvi-sobre-cuencas-aportantes" id="toc-f.13-correlación-chirps-ndvi-sobre-cuencas-aportantes" class="nav-link" data-scroll-target="#f.13-correlación-chirps-ndvi-sobre-cuencas-aportantes">F.13 Correlación CHIRPS-NDVI sobre cuencas aportantes</a></li>
+  <li><a href="#f.14-correlación-era5-land-vs-ndvi-por-naturaleza-espectral" id="toc-f.14-correlación-era5-land-vs-ndvi-por-naturaleza-espectral" class="nav-link" data-scroll-target="#f.14-correlación-era5-land-vs-ndvi-por-naturaleza-espectral">F.14 Correlación ERA5-Land vs NDVI por naturaleza espectral</a></li>
   </ul></li>
   </ul>
 <div class="quarto-alternate-formats"><h2>Otros formatos</h2><ul><li><a href="informe_anexos.docx"><i class="bi bi-file-word"></i>MS Word</a></li><li><a href="../informe_anexos.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
@@ -3210,7 +3218,7 @@ window.Quarto = {
 </section>
 <section id="anexo-b-estructura-del-repositorio-github" class="level1">
 <h1>Anexo B: Estructura del repositorio GitHub</h1>
-<p>El repositorio público está disponible en <a href="https://github.com/linaq11/proyecto-cgsm-curso" class="uri">https://github.com/linaq11/proyecto-cgsm-curso</a> bajo licencia MIT. La versión anterior del proyecto (baseline marzo 2026 sobre AOI envolvente de 5.073 km²) permanece archivada en <a href="https://github.com/LinaQuinteroF/proyecto-cgsm" class="uri">https://github.com/LinaQuinteroF/proyecto-cgsm</a> para fines de comparación histórica.</p>
+<p>El repositorio público está disponible en <a href="https://github.com/linaq11/proyecto-cgsm-curso" class="uri">https://github.com/linaq11/proyecto-cgsm-curso</a> bajo licencia MIT. La versión anterior del proyecto (línea base marzo 2026 sobre AOI envolvente de 5.073 km²) permanece archivada en <a href="https://github.com/LinaQuinteroF/proyecto-cgsm" class="uri">https://github.com/LinaQuinteroF/proyecto-cgsm</a> para fines de comparación histórica.</p>
 <pre><code>proyecto-cgsm-curso/
 ├── notebooks/        29 notebooks numerados (vigente 01-12 + legacy 03_…14)
 │                     orden de ejecución: 01 → 02 → 02b → 03_acotado →
@@ -3233,7 +3241,7 @@ window.Quarto = {
 │   ├── tables/       47 CSV con resultados numéricos
 │   ├── figures/      35 PNG (mapas, series, correlaciones, validación, alertas)
 │   └── maps/         dashboard_CGSM_final.html (autocontenido, ~80 KB)
-└── docs/             informe_final.{qmd,html,pdf}, articulo_cgsm_journal.*,
+└── docs/             informe_final.{qmd,html,pdf}, informe_anexos.{qmd,html,pdf},
                       dashboard.html (Pages), outputs/{figures,maps}/ (Pages)</code></pre>
 <p>La serie <strong>vigente</strong> (notebooks 01–12 + 02b, 04b/c_acotado, 09b, 11b, 12b/c, 14) reproduce las cifras del cuerpo del informe sobre el AOI acotado de 835 km². La serie <strong>legacy</strong> (03, 04, 04b, 05, 06, 09 sin sufijo _acotado) opera sobre el AOI envolvente de 5.073 km² y se conserva sólo por trazabilidad histórica; no sostiene ninguna conclusión del informe. La guía de ejecución por etapa con dependencias entre notebooks se documenta en <code>notebooks/README.md</code>. Los composites trimestrales y anuales en GeoTIFF y los NetCDF de mayor tamaño no se versionan por restricciones de tamaño de GitHub: se regeneran ejecutando los notebooks en orden secuencial con acceso autenticado a GEE.</p>
 </section>
@@ -3249,7 +3257,7 @@ window.Quarto = {
 </section>
 <section id="anexo-e-fragmentos-de-código-complementaríos" class="level1">
 <h1>Anexo E: Fragmentos de código complementaríos</h1>
-<p>Para mantener el cuerpo del informe centrado en la interpretación de resultados, los fragmentos de código que materializan cada fase del pipeline se documentan en este anexo, organizados temáticamente en cuatro apartados que reproducen el orden lógico de la cadena de procesamiento: datacube y series temporales (E.1), reproyección y topología sobre parches segmentados (E.2), forzamiento climático y detección SAR (E.3), y métricas de fragmentación del paisaje en Julia (E.4).</p>
+<p>Para mantener el cuerpo del informe centrado en la interpretación de resultados, los fragmentos de código que materializan cada fase del pipeline se documentan en este anexo, organizados temáticamente en cuatro apartados que reproducen el orden lógico de la cadena de procesamiento: datacube y series temporales (E.1), reproyección y topología sobre parches segmentados (E.2), forzamiento climático y detección SAR (E.3), y métricas de fragmentación del paisaje en Julia (E.4). Los conceptos técnicos invocados aquí ,datacube, z-score, bfast, SamGeo, predicado DE-9IM, Random Forest, backscatter SAR, dispersión de doble rebote, F1-score, se introducen y explican funcionalmente en el cuerpo del <code>informe_final.pdf</code>; este anexo se concentra en la implementación operativa y supone que el lector conoce ya su significado conceptual.</p>
 <section id="e.1-datacube-multitemporal-y-series-de-tiempo" class="level2">
 <h2 class="anchored" data-anchor-id="e.1-datacube-multitemporal-y-series-de-tiempo">E.1 Datacube multitemporal y series de tiempo</h2>
 <section id="e.1.a-lectura-perezosa-del-datacube-netcdf-con-xarray" class="level3">
@@ -3364,7 +3372,7 @@ window.Quarto = {
 </section>
 <section id="e.3.b-detección-de-inundación-sentinel-1-sar-para-el-evento-de-septiembre-2020" class="level3">
 <h3 class="anchored" data-anchor-id="e.3.b-detección-de-inundación-sentinel-1-sar-para-el-evento-de-septiembre-2020">E.3.b Detección de inundación Sentinel-1 SAR para el evento de septiembre 2020</h3>
-<p>Para el evento de septiembre 2020 se realiza una detección de inundación mediante Sentinel-1 SAR (banda VH, modo IW), comparando el backscatter medio del periodo seco de referencia (enero–marzo 2020, 49 imágenes) contra el periodo de inundación (septiembre–octubre 2020, 36 imágenes). Se aplica un umbral de 3 dB para inundación en agua abierta y se identifica inundación bajo dosel de manglar mediante valores negativos de diferencia SAR —donde el aumento del backscatter refleja el scattering de doble rebote característico de la interacción agua–tronco—.</p>
+<p>Para el evento de septiembre 2020 se realiza una detección de inundación mediante Sentinel-1 SAR (banda VH, modo IW), comparando el backscatter medio del periodo seco de referencia (enero–marzo 2020, 49 imágenes) contra el periodo de inundación (septiembre–octubre 2020, 36 imágenes). Se aplica un umbral de 3 dB para inundación en agua abierta y se identifica inundación bajo dosel de manglar mediante valores negativos de diferencia SAR —donde el aumento del backscatter refleja la dispersión de doble rebote característica de la interacción agua–tronco—.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>s1_dry <span class="op">=</span> ee.ImageCollection(<span class="st">&#39;COPERNICUS/S1_GRD&#39;</span>) <span class="op">\</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    .filterDate(<span class="st">&#39;2020-01-01&#39;</span>,<span class="st">&#39;2020-03-31&#39;</span>).select(<span class="st">&#39;VH&#39;</span>).median()</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>s1_flood <span class="op">=</span> ee.ImageCollection(<span class="st">&#39;COPERNICUS/S1_GRD&#39;</span>) <span class="op">\</span></span>
@@ -3852,6 +3860,805 @@ Tabla 6: Anomalias significativas de NDVI (<span class="math inline">\(z &lt; -
 <td>0,217</td>
 <td>-2,40</td>
 <td>Sentinel-2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="f.7-flujo-de-datos-del-pipeline-multilenguaje" class="level2">
+<h2 class="anchored" data-anchor-id="f.7-flujo-de-datos-del-pipeline-multilenguaje">F.7 Flujo de datos del pipeline multilenguaje</h2>
+<div id="tbl-flujo" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-flujo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla 7: Flujo de datos del pipeline multilenguaje.
+</figcaption>
+<div aria-describedby="tbl-flujo-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 18%">
+<col style="width: 14%">
+<col style="width: 24%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Paso</th>
+<th>Herramienta</th>
+<th>Lenguaje</th>
+<th>Entrada</th>
+<th>Salida</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1. Adquisición</td>
+<td>GEE + geemap</td>
+<td>Python</td>
+<td>Sentinel-2 / Landsat</td>
+<td>Pilas de índices (.tif)</td>
+</tr>
+<tr class="even">
+<td>2. Series de tiempo</td>
+<td>pandas + bfast</td>
+<td>Python / R</td>
+<td>Índices + estaciones</td>
+<td>Z-scores, periodos (.csv)</td>
+</tr>
+<tr class="odd">
+<td>3. Segmentación</td>
+<td>SamGeo + umbrales</td>
+<td>Python</td>
+<td>Composites RGB</td>
+<td>Parches manglar (.geojson)</td>
+</tr>
+<tr class="even">
+<td>4. Métricas</td>
+<td>DataFrames.jl</td>
+<td>Julia</td>
+<td>Parches vectoriales</td>
+<td>Tabla de métricas (.csv)</td>
+</tr>
+<tr class="odd">
+<td>4b. Topología DE-9IM</td>
+<td>geopandas + shapely</td>
+<td>Python</td>
+<td>Parches en EPSG:9377</td>
+<td>Tabla parches_topología (.csv)</td>
+</tr>
+<tr class="even">
+<td>5. Inundación SAR</td>
+<td>GEE Sentinel-1</td>
+<td>Python</td>
+<td>SAR VH seco vs húmedo</td>
+<td>Mapa inundación (.tif)</td>
+</tr>
+<tr class="odd">
+<td>6. Dashboard</td>
+<td>geemap</td>
+<td>Python</td>
+<td>Todas las capas</td>
+<td>Dashboard (.html)</td>
+</tr>
+<tr class="even">
+<td>7. Forzamiento ERA5</td>
+<td>cdsapi + xarray</td>
+<td>Python</td>
+<td>NetCDF ERA5-Land</td>
+<td>Anomalías y correlación (.csv)</td>
+</tr>
+<tr class="odd">
+<td>8. Cubo stars</td>
+<td>stars + sf</td>
+<td>R</td>
+<td>TIFs trimestrales S2</td>
+<td>Series por estación (.csv)</td>
+</tr>
+<tr class="even">
+<td>9. Validación multilingüe</td>
+<td>pandas</td>
+<td>Python</td>
+<td>Series Python + R</td>
+<td>RMSE/rho (.csv)</td>
+</tr>
+<tr class="odd">
+<td>10. RF benchmark</td>
+<td>GEE <code>smileRandomForest</code></td>
+<td>Python</td>
+<td>Sentinel-2 + INVEMAR / WorldCover</td>
+<td>F1, Recall, Precisión (.csv), importancia de variables (.png)</td>
+</tr>
+<tr class="even">
+<td>11. SAR continuo VH</td>
+<td>GEE Sentinel-1 + pandas</td>
+<td>Python</td>
+<td>Sentinel-1 GRD 2018-2025</td>
+<td>Serie SAR-VH mensual, correlación con NDVI (.csv)</td>
+</tr>
+<tr class="odd">
+<td>12. Alertas tempranas</td>
+<td>pandas + matplotlib</td>
+<td>Python</td>
+<td>Series NDVI + SAR + bfast</td>
+<td>Semáforo estaciones (.csv) y mapa (.png)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="f.8-eventos-gfd-con-mayor-área-inundada-sobre-el-aoi-acotado" class="level2">
+<h2 class="anchored" data-anchor-id="f.8-eventos-gfd-con-mayor-área-inundada-sobre-el-aoi-acotado">F.8 Eventos GFD con mayor área inundada sobre el AOI acotado</h2>
+<div id="tbl-gfd" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-gfd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla 8: Eventos de inundación con mayor área afectada dentro del AOI acotado (Global Flood Database, 2001-2017).
+</figcaption>
+<div aria-describedby="tbl-gfd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 22%">
+<col style="width: 22%">
+<col style="width: 16%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Evento</th>
+<th>Inicio</th>
+<th>Fin</th>
+<th>Área (km²)</th>
+<th>Días</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>DFO_2625</td>
+<td>2005-02-11</td>
+<td>2005-02-26</td>
+<td>299,2</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td>DFO_2588</td>
+<td>2004-11-20</td>
+<td>2004-11-27</td>
+<td>274,8</td>
+<td>7</td>
+</tr>
+<tr class="odd">
+<td>DFO_2761</td>
+<td>2005-09-15</td>
+<td>2005-12-16</td>
+<td>239,4</td>
+<td>92</td>
+</tr>
+<tr class="even">
+<td>DFO_1996</td>
+<td>2002-07-20</td>
+<td>2002-07-31</td>
+<td>233,9</td>
+<td>11</td>
+</tr>
+<tr class="odd">
+<td>DFO_4495</td>
+<td>2017-08-04</td>
+<td>2017-08-21</td>
+<td>221,3</td>
+<td>17</td>
+</tr>
+<tr class="even">
+<td>DFO_3212</td>
+<td>2007-10-01</td>
+<td>2007-12-10</td>
+<td>211,5</td>
+<td>70</td>
+</tr>
+<tr class="odd">
+<td>DFO_3750</td>
+<td>2010-11-15</td>
+<td>2010-12-20</td>
+<td>190,1</td>
+<td>35</td>
+</tr>
+<tr class="even">
+<td>DFO_3754</td>
+<td>2010-11-25</td>
+<td>2010-12-20</td>
+<td>175,0</td>
+<td>25</td>
+</tr>
+<tr class="odd">
+<td>DFO_3421</td>
+<td>2008-12-13</td>
+<td>2008-12-14</td>
+<td>151,9</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>DFO_3311</td>
+<td>2008-05-27</td>
+<td>2008-05-28</td>
+<td>78,8</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="f.9-correlación-sar-vh-ndvi-por-estación-rezagos-0-3-meses" class="level2">
+<h2 class="anchored" data-anchor-id="f.9-correlación-sar-vh-ndvi-por-estación-rezagos-0-3-meses">F.9 Correlación SAR-VH × NDVI por estación (rezagos 0-3 meses)</h2>
+<div id="tbl-sar-ndvi-corr" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sar-ndvi-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla 9: Correlación de Pearson entre la serie mensual Sentinel-1 SAR-VH y el NDVI z-score derivado de Sentinel-2 para rezagos de 0 a 3 meses, calculada sobre las ocho estaciones entre 2018 y 2025. Valores en negrita: correlaciones significativas (<span class="math inline">\(p &lt; 0{,}001\)</span>) sobre las cuatro estaciones de manglar denso del Complejo de Pajarales.
+</figcaption>
+<div aria-describedby="tbl-sar-ndvi-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 18%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Estación</th>
+<th>Naturaleza</th>
+<th><span class="math inline">\(\rho\)</span> lag 0</th>
+<th><span class="math inline">\(\rho\)</span> lag 1</th>
+<th><span class="math inline">\(\rho\)</span> lag 2</th>
+<th><span class="math inline">\(\rho\)</span> lag 3</th>
+<th>n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>CP Aguas Negras</td>
+<td>manglar</td>
+<td><strong>+0,807</strong></td>
+<td>+0,788</td>
+<td>+0,773</td>
+<td>+0,758</td>
+<td>85</td>
+</tr>
+<tr class="even">
+<td>CP Luna</td>
+<td>manglar</td>
+<td><strong>+0,731</strong></td>
+<td>+0,710</td>
+<td>+0,717</td>
+<td>+0,722</td>
+<td>83</td>
+</tr>
+<tr class="odd">
+<td>Caño Clarín</td>
+<td>manglar</td>
+<td><strong>+0,640</strong></td>
+<td>+0,380</td>
+<td>-0,025</td>
+<td>-0,127</td>
+<td>63</td>
+</tr>
+<tr class="even">
+<td>Caño Palos</td>
+<td>manglar</td>
+<td><strong>+0,462</strong></td>
+<td>+0,406</td>
+<td>+0,379</td>
+<td>+0,434</td>
+<td>64</td>
+</tr>
+<tr class="odd">
+<td>Isla Boquerón</td>
+<td>limnológica</td>
+<td>+0,166</td>
+<td>+0,192</td>
+<td>+0,205</td>
+<td>+0,226</td>
+<td>70</td>
+</tr>
+<tr class="even">
+<td>Punta Cerro</td>
+<td>limnológica</td>
+<td>+0,008</td>
+<td>+0,086</td>
+<td>+0,043</td>
+<td>+0,053</td>
+<td>70</td>
+</tr>
+<tr class="odd">
+<td>Punta Chino</td>
+<td>limnológica</td>
+<td>+0,134</td>
+<td>+0,168</td>
+<td>+0,178</td>
+<td>+0,203</td>
+<td>70</td>
+</tr>
+<tr class="even">
+<td>Río Sevilla</td>
+<td>borde</td>
+<td>-0,159</td>
+<td>-0,102</td>
+<td>-0,077</td>
+<td>-0,058</td>
+<td>71</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="f.10-datacubes-netcdf-materializados" class="level2">
+<h2 class="anchored" data-anchor-id="f.10-datacubes-netcdf-materializados">F.10 Datacubes NetCDF materializados</h2>
+<div id="tbl-cubos" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cubos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla 10: Datacubes NetCDF CF-1.8 materializados sobre el AOI acotado en EPSG:9377 (MAGNA-SIRGAS Origen Nacional), comprimidos con zlib nivel 4.
+</figcaption>
+<div aria-describedby="tbl-cubos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 14%">
+<col style="width: 18%">
+<col style="width: 24%">
+<col style="width: 10%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Archivo</th>
+<th>Sensor</th>
+<th>Frecuencia</th>
+<th>Periodo</th>
+<th>Bandas</th>
+<th>Tamaño</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>cgsm_datacube_periodos.nc</code></td>
+<td>Sentinel-2</td>
+<td>Tres composites discretos</td>
+<td>Degradación (2020 H2), recuperación (2022 H1), actual (2024–2025)</td>
+<td>RGB (B4, B3, B2)</td>
+<td>40 MB</td>
+</tr>
+<tr class="even">
+<td><code>cgsm_datacube_trimestral.nc</code></td>
+<td>Sentinel-2</td>
+<td>Trimestral</td>
+<td>2018-Q1 a 2025-Q4 (31 trimestres)</td>
+<td>NDVI, NDWI, CMRI</td>
+<td>275 MB</td>
+</tr>
+<tr class="odd">
+<td><code>cgsm_datacube_landsat.nc</code></td>
+<td>Landsat 8/9</td>
+<td>Anual</td>
+<td>2013–2025 (13 años)</td>
+<td>NDVI, NDWI, CMRI</td>
+<td>119 MB</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="f.11-correlación-enso-ndvi-por-naturaleza-espectral" class="level2">
+<h2 class="anchored" data-anchor-id="f.11-correlación-enso-ndvi-por-naturaleza-espectral">F.11 Correlación ENSO-NDVI por naturaleza espectral</h2>
+<div id="tbl-enso-corr" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-enso-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla 11: Correlación de Pearson entre índices ENSO globales (ONI y SOI de NOAA) y NDVI z-score desagregada por naturaleza espectral.
+</figcaption>
+<div aria-describedby="tbl-enso-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 16%">
+<col style="width: 18%">
+<col style="width: 18%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Naturaleza</th>
+<th>Rezago (meses)</th>
+<th><span class="math inline">\(\rho_{\text{ONI}}\)</span></th>
+<th><span class="math inline">\(\rho_{\text{SOI}}\)</span></th>
+<th>n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Manglar</td>
+<td>0</td>
+<td><span class="math inline">\(+0{,}027\)</span></td>
+<td><span class="math inline">\(+0{,}143\)</span></td>
+<td>86</td>
+</tr>
+<tr class="even">
+<td>Manglar</td>
+<td>1</td>
+<td><span class="math inline">\(-0{,}007\)</span></td>
+<td><span class="math inline">\(+0{,}198\)</span></td>
+<td>85</td>
+</tr>
+<tr class="odd">
+<td>Manglar</td>
+<td>2</td>
+<td><span class="math inline">\(-0{,}039\)</span></td>
+<td><span class="math inline">\(+0{,}146\)</span></td>
+<td>84</td>
+</tr>
+<tr class="even">
+<td>Manglar</td>
+<td>3</td>
+<td><span class="math inline">\(-0{,}070\)</span></td>
+<td><span class="math inline">\(+0{,}058\)</span></td>
+<td>83</td>
+</tr>
+<tr class="odd">
+<td>Limnológica</td>
+<td>0</td>
+<td><span class="math inline">\(-0{,}121\)</span></td>
+<td><span class="math inline">\(+0{,}201\)</span></td>
+<td>72</td>
+</tr>
+<tr class="even">
+<td>Limnológica</td>
+<td>1</td>
+<td><span class="math inline">\(-0{,}089\)</span></td>
+<td><span class="math inline">\(+0{,}120\)</span></td>
+<td>71</td>
+</tr>
+<tr class="odd">
+<td>Limnológica</td>
+<td>2</td>
+<td><span class="math inline">\(-0{,}054\)</span></td>
+<td><span class="math inline">\(+0{,}135\)</span></td>
+<td>70</td>
+</tr>
+<tr class="even">
+<td>Limnológica</td>
+<td>3</td>
+<td><span class="math inline">\(-0{,}014\)</span></td>
+<td><span class="math inline">\(+0{,}153\)</span></td>
+<td>69</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="f.12-correlación-caudal-ideam-ndvi-por-estación-hidrológica" class="level2">
+<h2 class="anchored" data-anchor-id="f.12-correlación-caudal-ideam-ndvi-por-estación-hidrológica">F.12 Correlación caudal IDEAM-NDVI por estación hidrológica</h2>
+<div id="tbl-caudal-corr" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-caudal-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla 12: Correlación de Pearson entre anomalía de caudal IDEAM y NDVI z-score, desagregada por estación hidrológica, naturaleza espectral y rezago temporal.
+</figcaption>
+<div aria-describedby="tbl-caudal-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 34%">
+<col style="width: 22%">
+<col style="width: 16%">
+<col style="width: 18%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Estación</th>
+<th>Naturaleza</th>
+<th>Rezago (meses)</th>
+<th><span class="math inline">\(\rho_{\text{caudal}}\)</span></th>
+<th>n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>El Banco (Magdalena)</td>
+<td>Manglar</td>
+<td>0</td>
+<td><span class="math inline">\(+0{,}064\)</span></td>
+<td>74</td>
+</tr>
+<tr class="even">
+<td>El Banco (Magdalena)</td>
+<td>Manglar</td>
+<td>1</td>
+<td><span class="math inline">\(+0{,}039\)</span></td>
+<td>73</td>
+</tr>
+<tr class="odd">
+<td>El Banco (Magdalena)</td>
+<td>Manglar</td>
+<td>2</td>
+<td><span class="math inline">\(+0{,}108\)</span></td>
+<td>72</td>
+</tr>
+<tr class="even">
+<td>El Banco (Magdalena)</td>
+<td>Manglar</td>
+<td>3</td>
+<td><span class="math inline">\(+0{,}256\)</span></td>
+<td>71</td>
+</tr>
+<tr class="odd">
+<td>El Banco (Magdalena)</td>
+<td>Limnológica</td>
+<td>0</td>
+<td><span class="math inline">\(+0{,}181\)</span></td>
+<td>61</td>
+</tr>
+<tr class="even">
+<td>El Banco (Magdalena)</td>
+<td>Limnológica</td>
+<td>1</td>
+<td><span class="math inline">\(+0{,}233\)</span></td>
+<td>60</td>
+</tr>
+<tr class="odd">
+<td>El Banco (Magdalena)</td>
+<td>Limnológica</td>
+<td>2</td>
+<td><span class="math inline">\(+0{,}043\)</span></td>
+<td>59</td>
+</tr>
+<tr class="even">
+<td>El Banco (Magdalena)</td>
+<td>Limnológica</td>
+<td>3</td>
+<td><span class="math inline">\(+0{,}050\)</span></td>
+<td>58</td>
+</tr>
+<tr class="odd">
+<td>Ganadería Caribe (Aracataca)</td>
+<td>Manglar</td>
+<td>0</td>
+<td><span class="math inline">\(+0{,}196\)</span></td>
+<td>68</td>
+</tr>
+<tr class="even">
+<td>Ganadería Caribe (Aracataca)</td>
+<td>Manglar</td>
+<td>1</td>
+<td><span class="math inline">\(+0{,}224\)</span></td>
+<td>67</td>
+</tr>
+<tr class="odd">
+<td>Ganadería Caribe (Aracataca)</td>
+<td>Manglar</td>
+<td>2</td>
+<td><span class="math inline">\(+0{,}184\)</span></td>
+<td>66</td>
+</tr>
+<tr class="even">
+<td>Ganadería Caribe (Aracataca)</td>
+<td>Manglar</td>
+<td>3</td>
+<td><span class="math inline">\(+0{,}180\)</span></td>
+<td>65</td>
+</tr>
+<tr class="odd">
+<td>Ganadería Caribe (Aracataca)</td>
+<td>Limnológica</td>
+<td>0</td>
+<td><span class="math inline">\(+0{,}107\)</span></td>
+<td>58</td>
+</tr>
+<tr class="even">
+<td>Ganadería Caribe (Aracataca)</td>
+<td>Limnológica</td>
+<td>1</td>
+<td><span class="math inline">\(+0{,}263\)</span></td>
+<td>57</td>
+</tr>
+<tr class="odd">
+<td>Ganadería Caribe (Aracataca)</td>
+<td>Limnológica</td>
+<td>2</td>
+<td><span class="math inline">\(+0{,}267\)</span></td>
+<td>56</td>
+</tr>
+<tr class="even">
+<td>Ganadería Caribe (Aracataca)</td>
+<td>Limnológica</td>
+<td>3</td>
+<td><span class="math inline">\(+0{,}150\)</span></td>
+<td>55</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="f.13-correlación-chirps-ndvi-sobre-cuencas-aportantes" class="level2">
+<h2 class="anchored" data-anchor-id="f.13-correlación-chirps-ndvi-sobre-cuencas-aportantes">F.13 Correlación CHIRPS-NDVI sobre cuencas aportantes</h2>
+<div id="tbl-chirps-corr" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-chirps-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla 13: Correlación de Pearson entre anomalía mensual CHIRPS sobre cuencas aportantes y NDVI z-score de las estaciones de la CGSM.
+</figcaption>
+<div aria-describedby="tbl-chirps-corr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 28%">
+<col style="width: 22%">
+<col style="width: 18%">
+<col style="width: 22%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Cuenca CHIRPS</th>
+<th>Naturaleza</th>
+<th>Rezago (meses)</th>
+<th><span class="math inline">\(\rho_{\text{precip}}\)</span></th>
+<th>n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Magdalena alta-media</td>
+<td>Manglar</td>
+<td>0</td>
+<td><span class="math inline">\(+0{,}075\)</span></td>
+<td>86</td>
+</tr>
+<tr class="even">
+<td>Magdalena alta-media</td>
+<td>Manglar</td>
+<td>1</td>
+<td><span class="math inline">\(+0{,}170\)</span></td>
+<td>85</td>
+</tr>
+<tr class="odd">
+<td>Magdalena alta-media</td>
+<td>Manglar</td>
+<td>2</td>
+<td><span class="math inline">\(+0{,}097\)</span></td>
+<td>84</td>
+</tr>
+<tr class="even">
+<td>Magdalena alta-media</td>
+<td>Manglar</td>
+<td>3</td>
+<td><span class="math inline">\(+0{,}252\)</span></td>
+<td>83</td>
+</tr>
+<tr class="odd">
+<td>Magdalena alta-media</td>
+<td>Limnológica</td>
+<td>0</td>
+<td><span class="math inline">\(+0{,}276\)</span></td>
+<td>72</td>
+</tr>
+<tr class="even">
+<td>Magdalena alta-media</td>
+<td>Limnológica</td>
+<td>2</td>
+<td><span class="math inline">\(+0{,}268\)</span></td>
+<td>70</td>
+</tr>
+<tr class="odd">
+<td>Sierra Nevada oeste</td>
+<td>Manglar</td>
+<td>3</td>
+<td><span class="math inline">\(+0{,}281\)</span></td>
+<td>83</td>
+</tr>
+<tr class="even">
+<td>Sierra Nevada oeste</td>
+<td>Limnológica</td>
+<td>2</td>
+<td><span class="math inline">\(+0{,}359\)</span></td>
+<td>70</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="f.14-correlación-era5-land-vs-ndvi-por-naturaleza-espectral" class="level2">
+<h2 class="anchored" data-anchor-id="f.14-correlación-era5-land-vs-ndvi-por-naturaleza-espectral">F.14 Correlación ERA5-Land vs NDVI por naturaleza espectral</h2>
+<div id="tbl-era5" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-era5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla 14: Correlación entre anomalías climáticas ERA5-Land (precipitación y temperatura a 2 m) y NDVI z-score, desagregada por naturaleza espectral.
+</figcaption>
+<div aria-describedby="tbl-era5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 16%">
+<col style="width: 22%">
+<col style="width: 22%">
+<col style="width: 10%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Naturaleza</th>
+<th>Rezago (meses)</th>
+<th><span class="math inline">\(\rho\)</span> precip vs NDVI z</th>
+<th><span class="math inline">\(\rho\)</span> T2m vs NDVI z</th>
+<th>n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Manglar</td>
+<td>0</td>
+<td><span class="math inline">\(-0{,}081\)</span></td>
+<td><span class="math inline">\(+0{,}022\)</span></td>
+<td>86</td>
+</tr>
+<tr class="even">
+<td>Manglar</td>
+<td>1</td>
+<td><span class="math inline">\(-0{,}081\)</span></td>
+<td><span class="math inline">\(+0{,}040\)</span></td>
+<td>85</td>
+</tr>
+<tr class="odd">
+<td>Manglar</td>
+<td>2</td>
+<td><span class="math inline">\(-0{,}123\)</span></td>
+<td><span class="math inline">\(-0{,}018\)</span></td>
+<td>84</td>
+</tr>
+<tr class="even">
+<td>Manglar</td>
+<td>3</td>
+<td><span class="math inline">\(-0{,}020\)</span></td>
+<td><span class="math inline">\(-0{,}087\)</span></td>
+<td>83</td>
+</tr>
+<tr class="odd">
+<td>Limnológica</td>
+<td>0</td>
+<td><span class="math inline">\(+0{,}082\)</span></td>
+<td><span class="math inline">\(-0{,}173\)</span></td>
+<td>72</td>
+</tr>
+<tr class="even">
+<td>Limnológica</td>
+<td>1</td>
+<td><span class="math inline">\(+0{,}108\)</span></td>
+<td><span class="math inline">\(-0{,}149\)</span></td>
+<td>71</td>
+</tr>
+<tr class="odd">
+<td>Limnológica</td>
+<td>2</td>
+<td><span class="math inline">\(+0{,}292\)</span></td>
+<td><span class="math inline">\(-0{,}144\)</span></td>
+<td>70</td>
+</tr>
+<tr class="even">
+<td>Limnológica</td>
+<td>3</td>
+<td><span class="math inline">\(+0{,}271\)</span></td>
+<td><span class="math inline">\(-0{,}201\)</span></td>
+<td>69</td>
 </tr>
 </tbody>
 </table>
