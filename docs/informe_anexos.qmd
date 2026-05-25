@@ -1,0 +1,502 @@
+---
+title: 'Anexos técnicos del Pipeline multilenguaje para el monitoreo de manglar en la CGSM (2013--2025)'
+subtitle: 'Documento complementario del informe final'
+author: 'Lina María Quintero Fonseca'
+date: '2026-05-25'
+lang: es
+crossref:
+  fig-prefix: figura
+  tbl-prefix: tabla
+  sec-prefix: anexo
+  fig-title: Figura
+  tbl-title: Tabla
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    number-sections: false
+    theme: cosmo
+    self-contained: true
+    mainfont: "Times New Roman, Times, serif"
+    fontsize: 11pt
+  docx:
+    toc: true
+    toc-depth: 2
+    number-sections: false
+    reference-doc: reference_unal.docx
+    fig-width: 6.5
+    fig-height: 4
+  pdf:
+    toc: true
+    toc-depth: 2
+    number-sections: false
+    documentclass: article
+    geometry: margin=2.5cm
+    fontsize: 11pt
+    colorlinks: false
+    linkcolor: black
+    urlcolor: black
+    citecolor: black
+    header-includes:
+      - \usepackage{xcolor}
+      - \usepackage{ragged2e}
+      - \usepackage{booktabs}
+      - \usepackage{longtable}
+      - \usepackage{array}
+      - \usepackage{makecell}
+      - \usepackage{colortbl}
+      - \usepackage{tabularray}
+      - \usepackage{etoolbox}
+      - \usepackage{caption}
+      - \usepackage{float}
+      - \usepackage{fancyvrb}
+      - \fvset{fontsize=\scriptsize, frame=single, framesep=2pt}
+      - \UseTblrLibrary{booktabs}
+      - \UseTblrLibrary{varwidth}
+      - \DeclareCaptionFont{capten}{\fontsize{10pt}{12pt}\selectfont}
+      - \captionsetup{font=capten, labelfont={bf,capten}}
+      - \DefTblrTemplate{contfoot-text}{normal}{}
+      - \DefTblrTemplate{conthead-text}{normal}{}
+      - \renewcommand{\arraystretch}{1.05}
+      - \setlength{\tabcolsep}{4pt}
+      - \arrayrulecolor{black!60}
+      - \setlength{\arrayrulewidth}{0.4pt}
+      - \AtBeginEnvironment{longtable}{\small}
+      - \AtBeginEnvironment{tblr}{\small}
+      - \AtBeginEnvironment{longtblr}{\small}
+      - \AtBeginEnvironment{tabular}{\small}
+      - \emergencystretch=3em
+      - \let\oldtoprule\toprule
+      - \let\oldmidrule\midrule
+      - \let\oldbottomrule\bottomrule
+      - \renewcommand{\toprule}{\hline}
+      - \renewcommand{\midrule}{\hline}
+      - \renewcommand{\bottomrule}{\hline}
+      - \setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+      - \setlength{\floatsep}{8pt plus 2pt minus 2pt}
+      - \setlength{\intextsep}{8pt plus 2pt minus 2pt}
+      - \setlength{\abovecaptionskip}{4pt}
+      - \setlength{\belowcaptionskip}{2pt}
+      - \setlength{\parskip}{4pt plus 1pt}
+      - \makeatletter
+      - \def\fps@figure{H}
+      - \def\fps@table{H}
+      - \makeatother
+      - \AtBeginDocument{\hypersetup{pdfborderstyle={/S/U/W 0}, allbordercolors={0 0 0}}}
+      - \AtBeginDocument{\justifying}
+
+# filters:                       # DESACTIVADO: causaba split + overflow
+#   - _filters/grid_tables.lua
+---
+
+# Presentación
+
+Este documento complementario reúne los seis anexos técnicos del proyecto **Pipeline multilenguaje (Python, R, Julia) para el monitoreo de manglar en la Ciénaga Grande de Santa Marta (2013--2025)**. Cada anexo desarrolla material de soporte que sustenta las decisiones metodológicas, la reproducibilidad técnica y la trazabilidad de los resultados reportados en el informe principal (`informe_final.pdf`):
+
+- **Anexo A** documenta la configuración del entorno Docker `sig_unal v1.11` con los paquetes adicionales de Python, R y Julia.
+- **Anexo B** describe la estructura del repositorio GitHub con la serie vigente y la legacy de notebooks.
+- **Anexo C** explica la discrepancia metodológica en el conteo de parches entre las implementaciones de Julia y Python.
+- **Anexo D** reporta el análisis de sensibilidad del acoplamiento caudal-NDVI con la variable alternativa de caudal máximo mensual.
+- **Anexo E** contiene los fragmentos de código que materializan cada fase del pipeline.
+- **Anexo F** reúne dos tablas de detalle (cruce SAR-NDVI-GFD por estación y transiciones JRC) referenciadas desde el cuerpo del informe.
+
+# Anexo A: Configuracion del entorno Docker
+
+El proyecto se ejecuta sobre el contenedor Docker sig_unal v1.11 proporcionado para la asignatura, con las siguientes modificaciones:
+```bash
+# Librerias Python adicionales instaladas
+pip install earthengine-api geemap segment-geospatial leafmap
+pip install rasterio geopandas xarray shapely folium rasterstats
+pip install matplotlib pandas numpy scikit-learn contextily
+pip install cdsapi netCDF4              # descarga ERA5-Land desde CDS
+
+# Autenticacion Google Earth Engine
+earthengine authenticate --auth_mode=notebook
+
+# Autenticacion Climate Data Store (ECMWF) — para ERA5-Land
+# 1) Crear cuenta en https://cds.climate.copernicus.eu/
+# 2) Aceptar terminos del dataset reanalysis-era5-land-monthly-means
+# 3) Crear archivo ~/.cdsapirc con la URL y la API key personales
+```
+```r
+# Paquetes R adicionales
+install.packages(c("bfast", "terra", "sf", "ggplot2", "tseries",
+                   "stars", "dplyr", "tidyr", "readr", "stringr"))
+```
+```julia
+# Paquetes Julia adicionales
+using Pkg
+Pkg.add(["GeoJSON", "DataFrames", "CSV", "Statistics"])
+```
+
+La autenticación con GEE se realiza mediante el flujo `gcloud auth application-default login` con quota project configurado, que genera credenciales almacenadas en `~/.config/gcloud/application_default_credentials.json`. El contenedor requiere un mínimo de 8 GB de RAM asignados en Docker Desktop para ejecutar SamGeo con el backbone vit_b; con vit_h se requieren al menos 12 GB. Los composites RGB se remuestrean de 10 a 30 metros antes de la segmentación para reducir el consumo de memoria.
+
+# Anexo B: Estructura del repositorio GitHub
+
+El repositorio público está disponible en <https://github.com/linaq11/proyecto-cgsm-curso> bajo licencia MIT. La versión anterior del proyecto (baseline marzo 2026 sobre AOI envolvente de 5.073 km²) permanece archivada en <https://github.com/LinaQuinteroF/proyecto-cgsm> para fines de comparación histórica.
+
+```
+proyecto-cgsm-curso/
+├── notebooks/        29 notebooks numerados (vigente 01-12 + legacy 03_…14)
+│                     orden de ejecución: 01 → 02 → 02b → 03_acotado →
+│                     04_acotado → 04b_acotado → 05_acotado → 07 → 08 →
+│                     09b → 10 → 11 → 11b → 12 → 12b → 12c → 13 → 14
+├── src/
+│   ├── python/       utils.py (9377 + DE-9IM), aoi_acotado.py, build_cubos.py,
+│   │                 make_dashboard_html.py, alertas_manglar.py, merge_cubo.py
+│   ├── R/            03_bfast_ndvi.R, 05_stars_cubo.R, 06_bfast_manglar_unificado.R,
+│   │                 08_correlacion_trilingual.R
+│   └── julia/        04_fragmentacion.jl (4326 legado + 9377 vigente),
+│                     05_correlacion_trilingual.jl
+├── data/
+│   ├── raw/          AOI envolvente y acotado, RUNAP SFF + VPI, INVEMAR GBIF,
+│   │                 IDEAM El Banco / Ganadería Caribe
+│   └── processed/
+│       ├── cubo/     3 datacubes NetCDF CF-1.8 (40 / 275 / 119 MB)
+│       └── samgeo/   máscaras y GeoJSON por periodo (degradación / recuperación / actual)
+├── outputs/
+│   ├── tables/       47 CSV con resultados numéricos
+│   ├── figures/      35 PNG (mapas, series, correlaciones, validación, alertas)
+│   └── maps/         dashboard_CGSM_final.html (autocontenido, ~80 KB)
+└── docs/             informe_final.{qmd,html,pdf}, cgsm_version_acotada.*,
+                      dashboard.html (Pages), outputs/{figures,maps}/ (Pages)
+```
+
+La serie **vigente** (notebooks 01--12 + 02b, 04b/c_acotado, 09b, 11b, 12b/c, 14) reproduce las cifras del cuerpo del informe sobre el AOI acotado de 835 km². La serie **legacy** (03, 04, 04b, 05, 06, 09 sin sufijo _acotado) opera sobre el AOI envolvente de 5.073 km² y se conserva sólo por trazabilidad histórica; no sostiene ninguna conclusión del informe. La guía de ejecución por etapa con dependencias entre notebooks se documenta en `notebooks/README.md`. Los composites trimestrales y anuales en GeoTIFF y los NetCDF de mayor tamaño no se versionan por restricciones de tamaño de GitHub: se regeneran ejecutando los notebooks en orden secuencial con acceso autenticado a GEE.
+
+# Anexo C: Nota metodológica sobre el conteo de parches (Julia vs Python)
+
+Las cifras de fragmentacion sobre el AOI acotado se reportan en dos implementaciones independientes que arrojan conteos distintos del mismo conjunto de GeoJSON. En Julia, mediante el algoritmo del shoelace aplicado al anillo exterior de cada polígono (Tabla `tbl-fragmentacion-acotado`), se contabilizan 79, 38 y 15 parches para los periodos de degradación, recuperación y actual respectivamente, en tanto que en Python con `geopandas` usando el atributo `geometry.area` (Tabla `tbl-topológia-acotado`), se contabilizan 17, 17 y 15. La discrepancia obedece a una diferencia metodológica especifica en el calculo del área por parche cuando los polígonos contienen anillos interiores.
+
+Cuando SamGeo segmenta un parche grande de manglar atravesado por un canal hidráulico --como el Caño Clarín o el Caño Aguas Negras--, el GeoJSON resultante exporta ese parche como un polígono con un anillo exterior que delimita la cobertura y uno o más anillos interiores que representan el canal. La implementacion en `geopandas` calcula el área neta restando los huecos --siguiendo la definicion estandar del Simple Features Access para `Polygon.area`-- mientras que la implementacion Julia, al iterar sobre `ring = geom.coordinates[1]`, solo procesa el anillo exterior y reporta el área bruta del envolvente externo sin descontar los canales. En consecuencia, parches con grandes huecos internos quedan clasificados en el rango filtrado 1--5.000 ha por Julia pero por debajo del umbral inferior por `geopandas`, lo que infla el conteo de parches Julia en periodos donde la dinámica hídrica produce huecos detectables --2020 (degradación) y 2022 (recuperación), cuando los canales atraviesan manglar fragmentado por La Niña y la rehabilitacion hidráulica-- y coincide en el periodo actual (2024-2025) donde los parches sobrevivientes son más compactos sin canales internos visibles.
+
+Ambas mediciones tienen validez metodológica diferenciada. La versión `geopandas` reporta el área efectiva de cobertura de manglar, descontando agua interior, y es apropiada para indicadores de superficie y validación contra cartografía de referencia como GMW. La versión Julia reporta el área del envolvente del parche y es apropiada para indicadores de extensión del paisaje fragmentado y para calculos de conectividad mediante distancia entre envolventes. Para evitar confusion en el informe, en la Tabla `tbl-fragmentacion-acotado` se reporta el conteo Julia con la columna explicita "Parches (Julia)" y se utiliza para indicadores de forma --MSI-- y aislamiento --NND--, mientras que en la Tabla `tbl-topológia-acotado` se reporta el conteo `geopandas` y se utiliza para indicadores de superficie y para el cruce con la frontera del AOI mediante predicados DE-9IM.
+
+# Anexo D: Análisis de sensibilidad — caudal máximo vs medio mensual de El Banco
+
+El cuerpo del informe usa el caudal **medio mensual** del río Magdalena en El Banco por coherencia con Ganadería Caribe (Aracataca, disponible solo en variable media). El análisis paralelo con la variable alternativa **caudal máximo mensual** ---también disponible en DHIME, 144 obs. 2013--2025--- arroja correlaciones positivas universales con NDVI cuyo signo coincide y cuyo pico también se ubica en el rezago de tres meses (manglar $\rho_{\text{máx}} = +0{,}277$ vs $\rho_{\text{medio}} = +0{,}256$). La diferencia operativa se concentra en los rezagos cortos: $\rho_{\text{máx}}$ supera a $\rho_{\text{medio}}$ por 0,08--0,12 unidades en lag 0--1, consistente con que los picos extremos del caudal máximo se asocian más rápidamente con cambios espectrales puntuales mientras el caudal medio captura el efecto agregado del régimen sostenido. Las conclusiones científicas del cuerpo del informe son por tanto robustas a la elección de la variable hidrométrica; los datos detallados de ambas series están disponibles en `outputs/tables/caudal_comparacion_max_medio.csv`.
+
+# Anexo E: Fragmentos de código complementaríos
+
+Para mantener el cuerpo del informe centrado en la interpretación de resultados, los fragmentos de código que materializan cada fase del pipeline se documentan en este anexo, organizados temáticamente en cuatro apartados que reproducen el orden lógico de la cadena de procesamiento: datacube y series temporales (E.1), reproyección y topología sobre parches segmentados (E.2), forzamiento climático y detección SAR (E.3), y métricas de fragmentación del paisaje en Julia (E.4).
+
+## E.1 Datacube multitemporal y series de tiempo
+
+### E.1.a Lectura perezosa del datacube NetCDF con xarray
+
+El datacube trimestral materializado como NetCDF CF-1.8 se abre con evaluación perezosa mediante `xarray.open_dataset` con argumento `chunks`, de modo que las operaciones de selección y reducción se planifican como un grafo de cómputo dask y solo se materializan los píxeles necesaríos al invocar `.compute()`. Este patrón resulta indispensable para los tres archivos del proyecto (40 MB, 275 MB y 119 MB) cuando se trabaja sobre la totalidad de las 31 láminas trimestrales sin saturar la memoria del contenedor.
+
+```python
+import xarray as xr
+ds = xr.open_dataset('data/processed/cubo/cgsm_datacube_trimestral.nc',
+                     chunks={'time': 1, 'x': 512, 'y': 512})
+# Atributos CF-1.8: Conventions, institution, creator_name, crs_origen, ...
+# Acceso perezoso por chunks; .compute() materializa cuando es necesario
+ndvi_serie = ds['reflectance'].sel(band_idx='NDVI').median(dim=['x','y']).compute()
+```
+
+### E.1.b Z-scores y detección de anomalías NDVI en Python
+
+Sobre la serie combinada Landsat 8 + Sentinel-2 (929 observaciónes mensuales) se calcula el z-score temporal por estación mediante `groupby().transform()`, lo que permite identificar las anomalías pronunciadas como aquellas con $z < -2$. El resultado alimenta tanto la tabla de eventos de mortandad reportados en la Fase 2 como la lógica del módulo de alertas tempranas del Nivel 2 del Digital Twin.
+
+```python
+# Z-scores y detección de anomalias por estación
+df['z_score'] = df.groupby('estación')['ndvi'].transform(
+    lambda x: (x - x.mean()) / x.std())
+anomalias = df[df['z_score'] < -2].sort_values('z_score')
+```
+
+### E.1.c Cubo `stars` en R y extracción sobre estaciones INVEMAR
+
+Como contraparte local del flujo Python+GEE de la Fase 2, los TIFs trimestrales descargados desde GEE se ensamblan en R como un cubo `stars` proxy ---con evaluación perezosa hasta que `st_extract` materializa los valores sobre las ocho estaciones INVEMAR---. La salida `series_temporales_stars.csv` se contrasta contra `serie_temporal_ndvi_definitiva.csv` para sostener la validación cruzada multilingüe Python ↔ R reportada en la sección homónima.
+
+```r
+library(stars); library(sf); library(dplyr)
+tifs   <- list.files("data/processed/s2", pattern = "NDVI.*\\.tif$", full.names = TRUE)
+fechas <- as.Date(stringr::str_match(basename(tifs), "(\\d{4})_Q(\\d)")[, c(2, 3)])
+cubo   <- read_stars(tifs, along = list(time = fechas), proxy = TRUE)
+serie  <- st_extract(cubo, st_transform(estaciones_sf, st_crs(cubo)))
+```
+
+### E.1.d Construcción de la colección Sentinel-2 SR Harmonized y cálculo de índices
+
+La colección óptica del proyecto se arma en Google Earth Engine filtrando `COPERNICUS/S2_SR_HARMONIZED` sobre el AOI, aplicando una máscara de nubes basada en la banda QA60 y añadiendo en una sola pasada los tres índices espectrales que sostienen el resto del pipeline ---NDVI, NDWI y CMRI---.
+
+```python
+# Construir coleccion S2 SR Harmonized y agregar tres indices espectrales
+def add_indices(image):
+    ndvi = image.normalizedDifference(['B8', 'B4']).rename('NDVI')
+    ndwi = image.normalizedDifference(['B3', 'B8']).rename('NDWI')
+    cmri = ndvi.subtract(ndwi).rename('CMRI')
+    return image.addBands([ndvi, ndwi, cmri])
+
+s2 = (ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+        .filterBounds(aoi)
+        .filterDate('2018-01-01', '2025-12-31')
+        .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+        .map(mask_s2_clouds)
+        .map(add_indices))
+```
+
+### E.1.e Detección de quiebres estructurales con bfast en R
+
+Sobre las series mensuales combinadas Landsat 8 + Sentinel-2 (929 observaciones) se aplica el algoritmo `bfast::bfast` con `h = 0,10` y descomposición armónica en dos iteraciones, lo que arroja los quiebres asociados a El Niño 2015--2016, La Niña 2020--2021 y El Niño 2023--2024.
+
+```r
+library(bfast)
+serie  <- read.csv("outputs/tables/serie_temporal_ndvi_combinada.csv")
+ts_est <- ts(subset(serie, estación == "Cano_Palos")$ndvi,
+             start = c(2013, 1), frequency = 12)
+fit    <- bfast(ts_est, h = 0.10, season = "harmonic", max.iter = 2)
+plot(fit)   # quiebres 2016 (El Nino), 2020 (La Nina), 2023-24 (El Nino)
+```
+
+## E.2 Reproyección al sistema oficial colombiano y topología DE-9IM
+
+### E.2.a Lectura perezosa del raster, reproyección a EPSG:9377 y predicados topológicos
+
+Los rasters de máscara producidos por SamGeo se inspeccionan abriendo el archivo con `rasterio.open()` para extraer dimensiones, CRS, resolución y valor de NoData sin materializar la grilla en memoria; los GeoJSON resultantes se reproyectan a MAGNA-SIRGAS Origen Nacional (EPSG:9377) ---estándar oficial del IGAC desde la Resolución 471 de 2020--- y sobre los parches reproyectados se aplican los predicados topológicos `intersects` con la frontera del AOI y `contains` con los puntos de muestreo INVEMAR, en ambos casos delegando en GEOS los mismos cálculos que sustentan PostGIS y JTS.
+
+```python
+from src.python.utils import (
+    raster_metadata, vector_to_9377, area_ha_9377,
+    parches_borde, parches_con_punto, EPSG_NACIONAL,
+)
+
+# Inspeccion lazy del raster: metadatos sin cargar la grilla
+meta = raster_metadata('data/processed/samgeo/mask_actual.tif')
+
+# Reproyeccion al sistema oficial colombiano MAGNA-SIRGAS
+vector_to_9377('data/processed/samgeo/manglar_actual.geojson',
+               'data/processed/samgeo/manglar_actual_9377.geojson')
+
+# Predicados topológicos DE-9IM sobre los parches reproyectados
+gdf = area_ha_9377(gpd.read_file('data/processed/samgeo/manglar_actual_9377.geojson'))
+gdf = parches_borde(gdf, aoi)             # intersects con la frontera
+gdf = parches_con_punto(gdf, estaciones)  # contains con los puntos INVEMAR
+```
+
+### E.2.b Segmentación promptable con SamGeo vit_b y vectorización por periodo
+
+La segmentación automática de los composites RGB de los tres periodos de referencia se ejecuta con el backbone vit_b de SamGeo ---versión adaptada al límite de memoria del contenedor sig_unal v1.11--- produciendo una máscara raster por periodo que se vectoriza a GeoJSON para el posterior filtrado por área y cálculo de métricas de fragmentación.
+
+```python
+from samgeo import SamGeo
+
+# Modelo base vit_b para ajustarse a la RAM del contenedor
+sam = SamGeo(model_type='vit_b', automátic=True)
+
+for periodo in ['degradación', 'recuperación', 'actual']:
+    rgb  = f'{res_dir}/CGSM_RGB_{periodo}_30m.tif'
+    mask = f'{out_dir}/mask_{periodo}.tif'
+    poly = f'{out_dir}/manglar_{periodo}.geojson'
+    sam.generate(rgb, output=mask)        # raster binario
+    sam.tiff_to_vector(mask, poly)        # parches vectoriales
+```
+
+## E.3 Forzamiento climático y detección SAR
+
+### E.3.a Descarga ERA5-Land mediante cdsapi y cálculo de anomalías mensuales
+
+La descarga del reanálisis ERA5-Land del ECMWF se realiza con `cdsapi` directamente desde el Climate Data Store, solicitando precipitación total y temperatura a dos metros sobre un bounding box que envuelve la CGSM con buffer; los datos se reciben en NetCDF con convenciones CF y se cargan con `xarray.open_dataset(chunks=...)` aplicando un patrón perezoso, calculando la climatología mensual y la anomalía respecto a ella para los rezagos cero a tres meses.
+
+```python
+import cdsapi, xarray as xr
+c = cdsapi.Client()
+c.retrieve('reanalysis-era5-land-monthly-means', {
+    'product_type': 'monthly_averaged_reanalysis',
+    'variable': ['total_precipitation', '2m_temperature'],
+    'year': [str(y) for y in range(2018, 2026)],
+    'month': [f'{m:02d}' for m in range(1, 13)],
+    'time': '00:00', 'area': [11.20, -75.05, 10.30, -74.05],
+    'format': 'netcdf'}, 'data/raw/era5_land_cgsm_monthly.nc')
+ds = xr.open_dataset('data/raw/era5_land_cgsm_monthly.nc', chunks={'time': 12})
+anom = ds.groupby('time.month') - ds.groupby('time.month').mean('time')
+```
+
+### E.3.b Detección de inundación Sentinel-1 SAR para el evento de septiembre 2020
+
+Para el evento de septiembre 2020 se realiza una detección de inundación mediante Sentinel-1 SAR (banda VH, modo IW), comparando el backscatter medio del periodo seco de referencia (enero--marzo 2020, 49 imágenes) contra el periodo de inundación (septiembre--octubre 2020, 36 imágenes). Se aplica un umbral de 3 dB para inundación en agua abierta y se identifica inundación bajo dosel de manglar mediante valores negativos de diferencia SAR ---donde el aumento del backscatter refleja el scattering de doble rebote característico de la interacción agua--tronco---.
+
+```python
+s1_dry = ee.ImageCollection('COPERNICUS/S1_GRD') \
+    .filterDate('2020-01-01','2020-03-31').select('VH').median()
+s1_flood = ee.ImageCollection('COPERNICUS/S1_GRD') \
+    .filterDate('2020-09-01','2020-10-31').select('VH').median()
+sar_diff = s1_dry.subtract(s1_flood)
+flood_open = sar_diff.gt(3).selfMask()    # agua abierta
+flood_canopy = sar_diff.lt(-2).selfMask() # bajo dosel
+```
+
+## E.4 Métricas de fragmentación del paisaje (Julia)
+
+### E.4.a Cálculo de área (shoelace), MSI y NND sobre parches en EPSG:9377
+
+La función `compute_metrics` agrega los parches segmentados de cada periodo, calcula el área de cada polígono mediante la fórmula del cordón sobre coordenadas en metros (EPSG:9377), deriva el índice de forma medio MSI = perímetro / √(π·área) y la distancia al vecino más cercano NND, y devuelve un `DataFrame` con la fila resumen del periodo. Esta función se invoca tres veces ---una por periodo de referencia--- y los resultados alimentan la tabla de fragmentación reportada en la sección homónima del cuerpo del informe.
+
+```julia
+using GeoJSON, DataFrames, Statistics
+
+function compute_metrics(periodo, base_dir)
+    path = joinpath(base_dir, "manglar_$(periodo)_9377.geojson")
+    parches = GeoJSON.read(read(path, String))
+
+    # Area por formula del cordon (shoelace) y perimetro en metros
+    áreas = [shoelace_area(p) for p in parches]
+    perim = [polygon_perimeter(p) for p in parches]
+    msi   = perim ./ sqrt.(pi .* áreas)            # indice de forma medio
+    nnd   = nearest_neighbor_distances(parches)    # km al vecino más cercano
+
+    return DataFrame(
+        periodo    = periodo,
+        n_parches  = length(parches),
+        area_total = sum(áreas) / 1e4,             # hectáreas
+        area_media = mean(áreas) / 1e4,
+        msi_mean   = mean(msi),
+        nnd_mean   = mean(nnd) / 1e3,
+    )
+end
+```
+
+
+# Anexo F: Tablas detalladas movidas desde el cuerpo
+
+Para mantener el cuerpo del informe centrado en la narrativa de los hallazgos, dos tablas de detalle metodológico se reubican en este anexo: el cruce estación por estación entre la señal SAR de septiembre 2020, la anomalía NDVI y la frecuencia de inundación histórica de la Global Flood Database (referida en la sección de Validación con datos NASA), y las nueve transiciones de superficie del JRC Global Surface Water 1984--2021 (referida en la sección de Dinámica hídrica).
+
+## F.1 Cruce SAR + NDVI + GFD por estación
+
+| Estación | Naturaleza | Dentro AOI acotado | SAR diff (dB) | NDVI sept-2020 | Eventos GFD | Interpretación |
+|----------|-----------|--------------------|---------------|----------------|-------------|----------------|
+| Isla Boquerón | Limnológica | No | N/A | -0,018 | 10 de 16 | Fuera del AOI: sobre lámina de agua del complejo lagunar central |
+| Punta Cerro | Limnológica | No | N/A | -0,078 | 10 de 16 | Fuera del AOI: sobre lámina de agua del complejo lagunar central |
+| Punta Chino | Limnológica | No | N/A | 0,200 | 9 de 16 | Fuera del AOI: sobre lámina de agua del complejo lagunar central |
+| Río Sevilla | Limnológica | No | N/A | 0,050 | 10 de 16 | Fuera del AOI: sobre lámina de agua del complejo lagunar central |
+| Caño Palos | Manglar | Sí | +0,15 | 0,400 | 2 de 16 | Sin afectación SAR mayor |
+| CP Pajarales | Manglar | No | N/A | 0,300 | 9 de 16 | Fuera del AOI: oeste del SFF, en zona riberana |
+| Caño Clarín | Manglar | No | N/A | 0,500 | 1 de 16 | Fuera del AOI: sur del SFF, sobre zona de rehabilitación hidráulica |
+| VIPIS | Manglar | Sí | +0,12 | 0,350 | 9 de 16 | Sin afectación SAR mayor |
+
+: Cruce de señal SAR, NDVI y frecuencia de inundación histórica por estación, restringido al AOI acotado SFF + VPI Salamanca. {#tbl-cruce tbl-colwidths="[12, 12, 12, 10, 12, 11, 31]"}
+
+## F.2 Transiciones JRC Global Surface Water 1984--2021
+
+| Transición JRC dentro del AOI acotado | Área (km²) | Interpretación |
+|-------------------------------|-----------|----------------|
+| Permanente | 377,75 | Lámina de agua estable |
+| Nuevo permanente | 23,55 | Cuerpos nuevos consolidados |
+| Permanente perdido | 18,55 | Cuerpos de agua secados |
+| Estacional | 17,98 | Zonas con régimen estacional estable |
+| Nuevo estacional | 31,31 | Nuevas áreas de inundación estacional |
+| Estacional perdido | 29,38 | Zonas que dejaron de inundarse |
+| Permanente a estacional | 18,54 | Retroceso parcial de lámina permanente |
+| Efímero estacional | 49,30 | Inundación intermitente sin patrón estacional |
+| Efímero permanente | 1,74 | Agua intermitente persistente |
+
+: Transiciones JRC Global Surface Water (1984--2021) dentro del AOI acotado SFF + VPI Salamanca. El AOI contiene 385,3 km² de agua permanente (>75 % del tiempo) y 44,1 km² estacional (25--75 %), de modo que casi la mitad del polígono protegido es lámina de agua. {#tbl-jrc tbl-colwidths="[40, 18, 42]"}
+
+
+## F.3 Entorno de ejecución (runtime Docker)
+
+| Componente | Especificación |
+|-----------|----------------|
+| Contenedor | Docker sig_unal v1.11 (Ubuntu + RStudio Server) |
+| Python | 3.12.3 + geemap, samgeo, leafmap, rasterio, geopandas |
+| R | 4.3.3 + terra, sf, tidyverse, bfast, tmap |
+| Julia | 1.11.3 + DataFrames, CSV, GeoJSON, Statistics |
+| Quarto | 1.4.550 (informe reproducible) |
+| Control de versiones | Git + GitHub |
+| Geocomputación en la nube | Google Earth Engine (API Python) |
+
+: Entorno de ejecución completo del proyecto. {#tbl-entorno}
+
+## F.4 Quiebres bfast sobre las ocho estaciones del proyecto
+
+| Estación | Quiebres (h=0,15) | Fecha principal | Quiebres (h=0,10) | Evento asociado |
+|----------|-------------------|-----------------|-------------------|-----------------|
+| CP Pajarales | 1 | 2016-10 | 1 | El Niño 2015--2016 |
+| Caño Clarín | 1 | 2016-09 | 1 | El Niño 2015--2016 |
+| Caño Palos | 1 | 2015-06 | error | El Niño (inicio) |
+| Isla Boqueron | 2 | 2016-04, 2018-05 | 2 | El Niño + transicion |
+| Punta Cerro | 1 | 2016-11 | 3 | El Niño + La Niña + recuperación |
+| Punta Chino | 1 | 2016-05 | 2 | El Niño 2015--2016 |
+| Río Sevilla | 1 | 2016-12 | 1 | El Niño 2015--2016 |
+| VIPIS | 2 | 2016-04, 2022-03 | 2 | El Niño + recuperación |
+
+: Quiebres estructurales detectados por bfast sobre las ocho estaciones del proyecto en la serie combinada Landsat 8 + Sentinel-2 (2013--2025). El análisis refinado sobre las cuatro estaciones de manglar denso se reporta en la tabla @tbl-bfast-unificado del informe principal. {#tbl-bfast}
+
+## F.5 Parches de manglar truncados por la frontera del AOI
+
+| Periodo | Parches | Parches en borde | % en borde | Área en borde (ha) |
+|---------|---------|------------------|------------|--------------------|
+| Degradación (2020-S2)  | 17 | 6 | 35,3 | 5.104,3 |
+| Recuperación (2022-S1) | 17 | 8 | 47,1 | 8.325,7 |
+| Actual (2024--2025)    | 15 | 8 | 53,3 | 5.237,9 |
+
+: Parches de manglar truncados por la frontera del AOI acotado (predicado DE-9IM `intersects` con tolerancia de 30 m). Los parches se cuentan agregados como features completos en `geopandas`. {#tbl-topología-acotado}
+
+## F.6 Listado completo de las 18 anomalías NDVI (z < −2)
+
+| Estación | Fecha | NDVI | z-score | Sensor |
+|----------|-------|------|---------|--------|
+| Isla Boqueron | 2020-09 | -0,018 | -3,36 | Sentinel-2 |
+| Caño Clarín | 2018-03 | 0,166 | -3,15 | Sentinel-2 |
+| VIPIS | 2016-04 | -0,291 | -2,93 | Landsat 8 |
+| Caño Clarín | 2025-03 | 0,223 | -2,77 | Sentinel-2 |
+| Caño Palos | 2024-09 | 0,272 | -2,66 | Sentinel-2 |
+| CP Pajarales | 2018-03 | 0,203 | -2,50 | Sentinel-2 |
+| Punta Cerro | 2020-09 | -0,078 | -2,46 | Sentinel-2 |
+| CP Pajarales | 2022-09 | 0,217 | -2,40 | Sentinel-2 |
+
+: Anomalias significativas de NDVI ($z < -2$) en la serie combinada 2013--2025, ordenadas por z-score decreciente. {#tbl-anomalias}
+
+## F.7 Flujo de datos del pipeline multilenguaje
+
+| Paso | Herramienta | Lenguaje | Entrada | Salida |
+|---|---|---|---|---|
+| 1. Adquisición | GEE + geemap | Python | Sentinel-2 / Landsat | Stacks de índices (.tif) |
+| 2. Series de tiempo | pandas + bfast | Python / R | Índices + estaciones | Z-scores, periodos (.csv) |
+| 3. Segmentación | SamGeo + umbrales | Python | Composites RGB | Parches manglar (.geojson) |
+| 4. Métricas | DataFrames.jl | Julia | Parches vectoriales | Tabla de métricas (.csv) |
+| 4b. Topología DE-9IM | geopandas + shapely | Python | Parches en EPSG:9377 | Tabla parches_topología (.csv) |
+| 5. Inundación SAR | GEE Sentinel-1 | Python | SAR VH seco vs húmedo | Mapa inundación (.tif) |
+| 6. Dashboard | geemap | Python | Todas las capas | Dashboard (.html) |
+| 7. Forzamiento ERA5 | cdsapi + xarray | Python | NetCDF ERA5-Land | Anomalías y correlación (.csv) |
+| 8. Cubo stars | stars + sf | R | TIFs trimestrales S2 | Series por estación (.csv) |
+| 9. Validación multilingüe | pandas | Python | Series Python + R | RMSE/rho (.csv) |
+| 10. RF benchmark | GEE `smileRandomForest` | Python | Sentinel-2 + INVEMAR / WorldCover | F1, Recall, Precisión (.csv), importancia de variables (.png) |
+| 11. SAR continuo VH | GEE Sentinel-1 + pandas | Python | Sentinel-1 GRD 2018-2025 | Serie SAR-VH mensual, correlación con NDVI (.csv) |
+| 12. Alertas tempranas | pandas + matplotlib | Python | Series NDVI + SAR + bfast | Semáforo estaciones (.csv) y mapa (.png) |
+
+: Flujo de datos del pipeline multilenguaje. {#tbl-flujo tbl-colwidths="[18, 18, 14, 24, 26]"}
+
+## F.8 Eventos GFD con mayor área inundada sobre el AOI acotado
+
+| Evento | Inicio | Fin | Área (km²) | Días |
+|---|---|---|---|---|
+| DFO_2625 | 2005-02-11 | 2005-02-26 | 299,2 | 15 |
+| DFO_2588 | 2004-11-20 | 2004-11-27 | 274,8 | 7 |
+| DFO_2761 | 2005-09-15 | 2005-12-16 | 239,4 | 92 |
+| DFO_1996 | 2002-07-20 | 2002-07-31 | 233,9 | 11 |
+| DFO_4495 | 2017-08-04 | 2017-08-21 | 221,3 | 17 |
+| DFO_3212 | 2007-10-01 | 2007-12-10 | 211,5 | 70 |
+| DFO_3750 | 2010-11-15 | 2010-12-20 | 190,1 | 35 |
+| DFO_3754 | 2010-11-25 | 2010-12-20 | 175,0 | 25 |
+| DFO_3421 | 2008-12-13 | 2008-12-14 | 151,9 | 1 |
+| DFO_3311 | 2008-05-27 | 2008-05-28 | 78,8 | 1 |
+
+: Eventos de inundación con mayor área afectada dentro del AOI acotado (Global Flood Database, 2001-2017). {#tbl-gfd tbl-colwidths="[30, 22, 22, 16, 10]"}
+
+## F.9 Correlación SAR-VH × NDVI por estación (rezagos 0-3 meses)
+
+| Estación | Naturaleza | $\rho$ lag 0 | $\rho$ lag 1 | $\rho$ lag 2 | $\rho$ lag 3 | n |
+|---|---|---|---|---|---|---|
+| CP Aguas Negras | manglar | **+0,807** | +0,788 | +0,773 | +0,758 | 85 |
+| CP Luna | manglar | **+0,731** | +0,710 | +0,717 | +0,722 | 83 |
+| Caño Clarín | manglar | **+0,640** | +0,380 | -0,025 | -0,127 | 63 |
+| Caño Palos | manglar | **+0,462** | +0,406 | +0,379 | +0,434 | 64 |
+| Isla Boquerón | limnológica | +0,166 | +0,192 | +0,205 | +0,226 | 70 |
+| Punta Cerro | limnológica | +0,008 | +0,086 | +0,043 | +0,053 | 70 |
+| Punta Chino | limnológica | +0,134 | +0,168 | +0,178 | +0,203 | 70 |
+| Río Sevilla | borde | -0,159 | -0,102 | -0,077 | -0,058 | 71 |
+
+: Correlación de Pearson entre la serie mensual Sentinel-1 SAR-VH y el NDVI z-score derivado de Sentinel-2 para rezagos de 0 a 3 meses, calculada sobre las ocho estaciones entre 2018 y 2025. Valores en negrita: correlaciones significativas ($p < 0{,}001$) sobre las cuatro estaciones de manglar denso del Complejo de Pajarales. {#tbl-sar-ndvi-corr tbl-colwidths="[22, 18, 13, 13, 13, 13, 8]"}

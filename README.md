@@ -4,7 +4,7 @@
 ![Stack](https://img.shields.io/badge/Stack-Python%20%C2%B7%20R%20%C2%B7%20Julia-blue)
 [![Dashboard en vivo](https://img.shields.io/badge/Dashboard-en%20vivo-success?logo=github)](https://linaq11.github.io/proyecto-cgsm-curso/dashboard.html)
 [![Informe PDF](https://img.shields.io/badge/Descargar-Informe%20PDF-red)](https://github.com/linaq11/proyecto-cgsm-curso/raw/main/docs/informe_final.pdf)
-[![Artículo journal](https://img.shields.io/badge/Art%C3%ADculo-PDF-orange)](https://github.com/linaq11/proyecto-cgsm-curso/raw/main/docs/articulo_cgsm_journal.pdf)
+[![Artículo journal](https://img.shields.io/badge/Art%C3%ADculo-PDF-orange)](https://github.com/linaq11/proyecto-cgsm-curso/raw/main/docs/cgsm_version_acotada.pdf)
 
 > 🌿 **Dashboard interactivo**: <https://linaq11.github.io/proyecto-cgsm-curso/dashboard.html>
 >
@@ -78,7 +78,7 @@ proyecto-cgsm-curso/
 ├── docs/                Informe Quarto + dashboard ejecutivo servido por GitHub Pages
 │   ├── dashboard.html               Dashboard principal (open-design, self-contained)
 │   ├── informe_final.{pdf,html,qmd} Informe técnico completo
-│   ├── articulo_cgsm_journal.*      Artículo journal condensado
+│   ├── cgsm_version_acotada.*      Artículo journal condensado
 │   └── outputs/                     Figuras y mapa copiados para Pages
 ├── notebooks/           29 notebooks numerados (Python + R) en orden de ejecución
 ├── outputs/             Figuras PNG, tablas CSV, mapas HTML, métricas

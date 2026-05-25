@@ -1,6 +1,6 @@
 --[[
 Filtro Lua para Quarto/Pandoc que convierte cada tabla pipe a un entorno
-LaTeX `longtblr` (de tabularray) con cuadrícula completa --hlines+vlines--
+LaTeX `tblr` (de tabularray) con cuadrícula completa --hlines+vlines--
 en lugar del estilo booktabs que solo dibuja líneas horizontales.
 
 Requiere en el preámbulo LaTeX:
@@ -45,18 +45,36 @@ function Table(tbl)
     return tbl
   end
 
-  -- Construir column-spec con anchos relativos si están definidos
+  -- Construir column-spec con anchos relativos SIEMPRE proporcionales a \linewidth.
+  -- Si Pandoc no aporta widths (todas las celdas con cs[2]==0), distribuimos uniforme.
   local col_specs = {}
   local widths = {}
+  local total_w = 0
   for _, cs in ipairs(tbl.colspecs) do
     table.insert(col_specs, ALIGN_TO_TBLR[cs[1]] or 'l')
-    if cs[2] and cs[2] > 0 then
-      table.insert(widths, string.format('%.2f', cs[2]))
-    end
+    local w = (cs[2] and cs[2] > 0) and cs[2] or 0
+    table.insert(widths, w)
+    total_w = total_w + w
   end
   local n = #col_specs
-  -- tabularray colspec acepta cadena tipo "lcr" sin comas; usar forma corta
-  local colsig = 'colspec={' .. table.concat(col_specs, '') .. '}'
+
+  -- Si no hay widths del Markdown, repartir uniformemente para evitar overflow.
+  if total_w == 0 then
+    for i = 1, n do widths[i] = 1 / n end
+    total_w = 1
+  end
+
+  -- Construir colspec usando X[weight, align] de tabularray.
+  -- X distribuye automáticamente el ancho disponible (= \linewidth en tblr)
+  -- proporcional a los weights. Multiplicamos por 100 y redondeamos para
+  -- obtener weights enteros estables.
+  local colspec_parts = {}
+  for i = 1, n do
+    local weight = math.max(1, math.floor((widths[i] / total_w) * 100 + 0.5))
+    table.insert(colspec_parts,
+      string.format('X[%d,%s]', weight, col_specs[i]))
+  end
+  local colsig = 'colspec={' .. table.concat(colspec_parts, '') .. '}'
 
   -- Construir filas del cuerpo
   local header_rows = {}
@@ -81,24 +99,31 @@ function Table(tbl)
     cap_latex = cap_latex:gsub('\n+$', '')
   end
   if tbl.attr and tbl.attr.identifier and tbl.attr.identifier ~= '' then
-    label = '\\label{' .. tbl.attr.identifier .. '}'
+    label = tbl.attr.identifier
   end
 
-  -- Armar el entorno longtblr con cuadrícula completa
+  -- Armar tblr (sin page-break) dentro de un float table con caption + label.
+  -- Esto produce cuadrícula completa sin "Tabla X: (Continued)" entre filas.
   local lines = {}
-  table.insert(lines, '\\begin{longtblr}[')
+  table.insert(lines, '\\begin{table}[H]')
+  table.insert(lines, '\\centering')
   if cap_latex ~= '' then
-    table.insert(lines, '  caption={' .. cap_latex .. '},')
+    if label ~= '' then
+      table.insert(lines, '\\caption{' .. cap_latex .. '}\\label{' .. label .. '}')
+    else
+      table.insert(lines, '\\caption{' .. cap_latex .. '}')
+    end
+  elseif label ~= '' then
+    table.insert(lines, '\\label{' .. label .. '}')
   end
-  if label ~= '' then
-    table.insert(lines, '  label={' .. (tbl.attr.identifier or '') .. '},')
-  end
-  table.insert(lines, ']{')
+
+  table.insert(lines, '\\begin{tblr}{')
   table.insert(lines, '  ' .. colsig .. ',')
-  table.insert(lines, '  hlines, vlines,')
-  table.insert(lines, '  rowhead = ' .. tostring(#header_rows) .. ',')
-  table.insert(lines, '  row{1}={font=\\bfseries},')
-  table.insert(lines, '  rowsep=2pt')
+  table.insert(lines, '  hlines={black!50, 0.3pt},')
+  table.insert(lines, '  vlines={black!50, 0.3pt},')
+  table.insert(lines, '  row{1}={font=\\bfseries\\scriptsize},')
+  table.insert(lines, '  rowsep=1.5pt,')
+  table.insert(lines, '  stretch=0')
   table.insert(lines, '}')
 
   for _, h in ipairs(header_rows) do
@@ -108,7 +133,8 @@ function Table(tbl)
     table.insert(lines, r .. ' \\\\')
   end
 
-  table.insert(lines, '\\end{longtblr}')
+  table.insert(lines, '\\end{tblr}')
+  table.insert(lines, '\\end{table}')
 
   return pandoc.RawBlock('latex', table.concat(lines, '\n'))
 end

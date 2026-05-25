@@ -68,7 +68,7 @@ Para renderizar el informe técnico y el artículo journal:
 
 ```bash
 quarto render docs/informe_final.qmd          # 28 páginas · PDF + HTML + DOCX
-quarto render docs/articulo_cgsm_journal.qmd  # ~5.300 palabras · PDF + HTML
+quarto render docs/cgsm_version_acotada.qmd  # ~5.300 palabras · PDF + HTML
 ```
 
 ## Carpetas y convenciones de salida

@@ -11,6 +11,8 @@ crossref:
   tbl-prefix: Tabla
   fig-title: Fig.
   tbl-title: Tabla
+# filters:                       # DESACTIVADO: causaba split + overflow
+#   - _filters/grid_tables.lua
 format:
   html:
     toc: true
@@ -18,6 +20,12 @@ format:
     theme: cosmo
     self-contained: true
     fontsize: 11pt
+  docx:
+    toc: false
+    number-sections: true
+    reference-doc: reference_unal.docx
+    fig-width: 6.0
+    fig-height: 4
   pdf:
     toc: false
     number-sections: true
@@ -36,11 +44,34 @@ format:
       - \usepackage{array}
       - \usepackage{tabularray}
       - \usepackage{etoolbox}
+      - \usepackage{float}
       - \UseTblrLibrary{booktabs}
+      - \UseTblrLibrary{varwidth}
       - \renewcommand{\arraystretch}{1.15}
       - \setlength{\tabcolsep}{4pt}
-      - \AtBeginEnvironment{longtable}{\footnotesize}
-      - \AtBeginEnvironment{tblr}{\footnotesize}
+      - \usepackage{caption}
+      - \DeclareCaptionFont{capten}{\fontsize{10pt}{12pt}\selectfont}
+      - \captionsetup{font=capten, labelfont={bf,capten}}
+      - \AtBeginEnvironment{longtable}{\small}
+      - \AtBeginEnvironment{tblr}{\small}
+      - \AtBeginEnvironment{longtblr}{\small}
+      - \AtBeginEnvironment{tabular}{\small}
+      - \let\oldtoprule\toprule
+      - \let\oldmidrule\midrule
+      - \let\oldbottomrule\bottomrule
+      - \renewcommand{\toprule}{\hline}
+      - \renewcommand{\midrule}{\hline}
+      - \renewcommand{\bottomrule}{\hline}
+      - \setlength{\textfloatsep}{8pt plus 2pt minus 2pt}
+      - \setlength{\floatsep}{8pt plus 2pt minus 2pt}
+      - \setlength{\intextsep}{8pt plus 2pt minus 2pt}
+      - \setlength{\abovecaptionskip}{4pt}
+      - \setlength{\belowcaptionskip}{2pt}
+      - \setlength{\parskip}{4pt plus 1pt}
+      - \makeatletter
+      - \def\fps@figure{H}
+      - \def\fps@table{H}
+      - \makeatother
       - \AtBeginDocument{\justifying}
 ---
 
@@ -64,7 +95,9 @@ El presente estudio responde a la siguiente pregunta de investigación: *¿cómo
 
 ## Área de estudio y delimitación
 
-El área de estudio comprende los 835,3 km² del área protegida oficial conformada por la unión del Santuario de Fauna y Flora CGSM y la Vía Parque Isla de Salamanca, extraídos del Registro Único Nacional de Áreas Protegidas (RUNAP). Esta delimitación reemplaza una iteración preliminar sobre un AOI envolvente de 5.073 km² ---que incluía vegetación riberana, salitral y zonas agropecuarias--- y garantiza la comparabilidad con la cartografía oficial colombiana de manglares 1:25.000 [@invemar2020] y con el Global Mangrove Watch v3.0 [@bunting2022]. Se definieron ocho estaciones de muestreo: cinco con coordenadas exactas del dataset INVEMAR-GBIF [@beltran2022] ---Isla Boquerón, Punta Cerro, Punta Chino, Río Sevilla y Caño Palos--- y tres complementarias sobre cobertura de manglar verificada mediante NDVI > 0,4 en composites Sentinel-2 de 2024 ---Caño Clarín, CP Luna y CP Aguas Negras---.
+El área de estudio comprende los 835,3 km² del área protegida oficial conformada por la unión del Santuario de Fauna y Flora CGSM y la Vía Parque Isla de Salamanca, extraídos del Registro Único Nacional de Áreas Protegidas (RUNAP) (Fig. @fig-area-estudio). Esta delimitación reemplaza una iteración preliminar sobre un AOI envolvente de 5.073 km² ---que incluía vegetación riberana, salitral y zonas agropecuarias--- y garantiza la comparabilidad con la cartografía oficial colombiana de manglares 1:25.000 [@invemar2020] y con el Global Mangrove Watch v3.0 [@bunting2022]. Se definieron ocho estaciones de muestreo: cinco con coordenadas exactas del dataset INVEMAR-GBIF [@beltran2022] ---Isla Boquerón, Punta Cerro, Punta Chino, Río Sevilla y Caño Palos--- y tres complementarias sobre cobertura de manglar verificada mediante NDVI > 0,4 en composites Sentinel-2 de 2024 ---Caño Clarín, CP Luna y CP Aguas Negras---.
+
+![Localización del área de estudio. (a) Colombia con el departamento del Magdalena resaltado; (b) departamento del Magdalena con el bounding box del AOI acotado; (c) composite Sentinel-2 RGB del periodo actual (2024--2025) con el polígono del AOI (835 km², rojo) y las cinco estaciones INVEMAR-GBIF (triángulos rojos).](../outputs/figures/mapa_area_estudio.png){#fig-area-estudio width=72%}
 
 ## Datos y fuentes
 
@@ -87,7 +120,9 @@ El pipeline integró ocho fuentes públicas (Tabla @tbl-fuentes). La cobertura �
 
 ## Arquitectura multilingüe
 
-La arquitectura distribuye las tareas entre tres lenguajes según la fortaleza disciplinar de cada uno. Python ejecutó la adquisición en Google Earth Engine, la segmentación con SamGeo (backbone vit_b sobre composites RGB remuestreados a 30 m), la construcción del datacube NetCDF CF-1.8 con `xarray` y `rioxarray`, el clasificador Random Forest y la generación del dashboard interactivo con `folium`. R se reservó para los quiebres bfast [@verbesselt2010] sobre las series mensuales combinadas Landsat 8 + Sentinel-2 (`h = 0,10`), la construcción del cubo `stars` como contraparte local del flujo Python+GEE y las réplicas estadísticas con `tidyverse`. Julia procesó las métricas de fragmentación del paisaje (NP, MSI, NND) sobre miles de polígonos reproyectados al sistema oficial colombiano MAGNA-SIRGAS Origen Nacional (EPSG:9377) mediante el algoritmo del cordón, y los predicados topológicos DE-9IM con `LibGEOS.jl`, la misma biblioteca GEOS que sustenta PostGIS y GeoPandas. Todo el flujo se ejecutó dentro de un contenedor Docker reproducible (`sig_unal v1.11`).
+La arquitectura distribuye las tareas entre tres lenguajes según la fortaleza disciplinar de cada uno (Fig. @fig-flujo). Python ejecutó la adquisición en Google Earth Engine, la segmentación con SamGeo (backbone vit_b sobre composites RGB remuestreados a 30 m), la construcción del datacube NetCDF CF-1.8 con `xarray` y `rioxarray`, el clasificador Random Forest y la generación del dashboard interactivo con `folium`. R se reservó para los quiebres bfast [@verbesselt2010] sobre las series mensuales combinadas Landsat 8 + Sentinel-2 (`h = 0,10`), la construcción del cubo `stars` como contraparte local del flujo Python+GEE y las réplicas estadísticas con `tidyverse`. Julia procesó las métricas de fragmentación del paisaje (NP, MSI, NND) sobre miles de polígonos reproyectados al sistema oficial colombiano MAGNA-SIRGAS Origen Nacional (EPSG:9377) mediante el algoritmo del cordón, y los predicados topológicos DE-9IM con `LibGEOS.jl`, la misma biblioteca GEOS que sustenta PostGIS y GeoPandas. Todo el flujo se ejecutó dentro de un contenedor Docker reproducible (`sig_unal v1.11`).
+
+![Flujo metodológico del proyecto. Seis fases secuenciales con validación cruzada entre Python, R y Julia, todas ejecutadas dentro del contenedor Docker `sig_unal v1.11` que garantiza la reproducibilidad bit a bit del análisis.](../outputs/figures/flujo_metodologia.png){#fig-flujo width=75%}
 
 ## Análisis de series temporales
 
@@ -135,7 +170,9 @@ Las métricas de fragmentación describen una secuencia de contracción del áre
 
 : Métricas de fragmentación sobre el AOI acotado en EPSG:9377. {#tbl-fragmentacion}
 
-La contracción del área no equivale a pérdida funcional del manglar: el NDVI mediano del dosel sobre los píxeles con NDVI > 0,4 cayó a 0,60 entre el segundo semestre de 2019 y el primer semestre de 2020 ---coincidiendo con la sequía precursora y el episodio La Niña 2020--2021--- y recuperó valores estables alrededor de 0,80 desde 2022. El balance neto de cobertura entre el periodo de degradación y el estado actual arrojó 183,2 km² de pérdida y 259,2 km² de ganancia sobre una base estable de 690,9 km², equivalente a un cambio neto positivo de +76,0 km².
+La contracción del área no equivale a pérdida funcional del manglar: el NDVI mediano del dosel sobre los píxeles con NDVI > 0,4 cayó a 0,60 entre el segundo semestre de 2019 y el primer semestre de 2020 ---coincidiendo con la sequía precursora y el episodio La Niña 2020--2021--- y recuperó valores estables alrededor de 0,80 desde 2022 (Fig. @fig-ndvi-mediano). El balance neto de cobertura entre el periodo de degradación y el estado actual arrojó 183,2 km² de pérdida y 259,2 km² de ganancia sobre una base estable de 690,9 km², equivalente a un cambio neto positivo de +76,0 km².
+
+![Serie temporal del NDVI mediano del manglar sobre el AOI acotado (SFF CGSM + VPI Salamanca, 835 km²) entre 2018 y 2025, calculada a partir del datacube trimestral CF-1.8 restringida a píxeles con NDVI > 0,4. Las franjas sombreadas marcan los tres periodos de referencia; la caída de 2019--2020 coincide con la sequía y el episodio La Niña.](../outputs/figures/ndvi_mediano_manglar_acotado.png){#fig-ndvi-mediano width=72%}
 
 ## Inundación SAR y dinámica hídrica de largo plazo
 
@@ -156,6 +193,8 @@ Las cuatro fuentes climático-hidrológicas convergen en una reformulación oper
 
 : Correlación de Pearson entre cada forzante climático-hidrológico y la anomalía NDVI z-score sobre las cuatro estaciones de manglar denso. {#tbl-clima-resumen tbl-colwidths="[42, 22, 36]"}
 
+![Anomalía z-score del caudal mensual IDEAM para el río Magdalena en El Banco (panel superior) y el río Aracataca en Ganadería Caribe (panel inferior), 2013--2025. Las franjas sombreadas marcan los dos eventos ENSO documentados; nótese que los picos de caudal extremo ($z > +2$) ocurren en 2022, no en 2020, lo que matiza la cadena causal La Niña → caudal → mortandad.](../outputs/figures/caudal_ideam_series_2013_2025.png){#fig-caudal width=80%}
+
 La reformulación de la cadena causal opera en cuatro pasos. *Primero*, el episodio La Niña 2020--2021 induce un régimen prolongado de mayor precipitación regional ---visible en ERA5, SOI positivo, caudal y CHIRPS--- que se acumula progresivamente en los caudales fluviales hasta alcanzar valores extremos ($z > +2$) en 2022, no en 2020. *Segundo*, el aporte sostenido de caudal en la mayor parte del periodo es beneficioso para el manglar pues reduce la hipersalinización del sustrato. *Tercero*, el evento puntual de mortandad de septiembre 2020 no se explica por un pico de caudal simultáneo sino por la lluvia local intensa acompañada de los 43,08 km² de inundación bajo dosel detectada por SAR. *Cuarto*, los efectos de mediano plazo del régimen La Niña se manifiestan en los quiebres bfast de 2022 sobre CP Aguas Negras y CP Luna, periodo en el cual los caudales alcanzan su máximo histórico.
 
 ## Validación doble y benchmark Random Forest
@@ -171,13 +210,17 @@ La clasificación por umbrales NDVI > 0,70 + elevación SRTM < 10 m + distancia 
 
 : Validación cruzada del clasificador por umbrales y benchmark Random Forest contra dos cartografías de referencia. {#tbl-validacion tbl-colwidths="[24, 28, 12, 12, 12, 12]"}
 
+![Importancia relativa de las quince variables predictoras del clasificador Random Forest, ordenadas por contribución al modelo (Gini importance). Las bandas SWIR de Sentinel-2 (B11, B12) y la distancia al agua del JRC concentran la mayor capacidad discriminante.](../outputs/figures/rf_feature_importance.png){#fig-rf width=68%}
+
 ## Validación cruzada multilingüe
 
 La convergencia operativa entre Python, R y Julia se verificó mediante cuatro validaciones cruzadas formales. La serie NDVI extraída con `stars::st_extract` en R sobre el cubo trimestral reprodujo la serie de `reduceRegions` en GEE con $\rho > 0,95$ y RMSE < 0,05 unidades NDVI. La correlación caudal-NDVI por rezago calculada en los tres lenguajes produjo valores idénticos hasta tres decimales ($\rho = 0,064$ / $0,039$ / $0,108$ / $0,256$ para los rezagos 0 a 3 meses), con diferencia máxima del orden de $10^{-4}$. Los predicados topológicos DE-9IM ejecutados con `LibGEOS.jl` en Julia produjeron conteos idénticos a `geopandas` + `shapely` para parches totales y en borde. Las réplicas en R de los análisis ENSO y caudal IDEAM coincidieron hasta tres decimales con las ejecuciones en Python para las dieciséis filas de la tabla de caudal y las ocho de la tabla ENSO.
 
 ## Módulo operativo de alertas tempranas
 
-La integración de las series NDVI, SAR-VH y los quiebres bfast en un módulo operativo de semáforo materializa el Nivel 2 del paradigma Digital Twin. La ejecución del módulo sobre el corte 2024-12 a 2025-12 arrojó cinco estaciones estables ---incluidas las cuatro de manglar denso del Complejo de Pajarales---, tres estaciones de borde en alerta (Río Sevilla, Punta Chino y Caño Clarín por persistencia de anomalías históricas) y ninguna en estado crítico. Esta distribución constituye la primera fotografía cuantitativa del estado del ecosistema sustentada en una lógica reproducible, ejecutable mensualmente al ingreso de cada nuevo composite Sentinel-2 y Sentinel-1.
+La integración de las series NDVI, SAR-VH y los quiebres bfast en un módulo operativo de semáforo materializa el Nivel 2 del paradigma Digital Twin (Fig. @fig-alertas). La ejecución del módulo sobre el corte 2024-12 a 2025-12 arrojó cinco estaciones estables ---incluidas las cuatro de manglar denso del Complejo de Pajarales---, tres estaciones de borde en alerta (Río Sevilla, Punta Chino y Caño Clarín por persistencia de anomalías históricas) y ninguna en estado crítico. Esta distribución constituye la primera fotografía cuantitativa del estado del ecosistema sustentada en una lógica reproducible, ejecutable mensualmente al ingreso de cada nuevo composite Sentinel-2 y Sentinel-1.
+
+![Mapa semáforo del estado del manglar de la CGSM por estación de monitoreo al cierre del corte 2024-12 a 2025-12. Verde = estable; amarillo = alerta; rojo = crítica. La distribución (5 estables, 3 en alerta, 0 críticas) constituye la primera fotografía cuantitativa del estado operativo del ecosistema sustentada en una lógica reproducible.](../outputs/figures/alertas_semaforo.png){#fig-alertas width=72%}
 
 # Discusión
 
@@ -223,11 +266,11 @@ Instituto de Investigaciones Marinas y Costeras [INVEMAR]. (2024). *Monitoreo de
 
 Murillo-Sandoval, P. J., Fatoyinbo, L., y Simard, M. (2022). Mangroves cover change trajectories 1984--2020: The gradual decrease of mangroves in Colombia. *Frontiers in Marine Science*, *9*, 892946. <https://doi.org/10.3389/fmars.2022.892946>
 
-Selvaraj, J. J., y Gallego-Pérez, B. E. (2023). Assessing mangrove forests in the Colombian Pacific coast using cloud computing and Random Forest classification. *Marine Pollution Bulletin*, *193*, 115176. <https://doi.org/10.1016/j.marpolbul.2023.115176>
+Selvaraj, J. J., y Gallego-Pérez, J. (2023). An enhanced approach to mangrove forest analysis in the Colombian Pacific coast using óptical and SAR data in Google Earth Engine. *Remote Sensing Applications: Society and Environment*, *30*, 100938. <https://doi.org/10.1016/j.rsase.2023.100938>
 
 Verbesselt, J., Hyndman, R., Newnham, G., y Culvenor, D. (2010). Detecting trend and seasonal changes in satellite image time series. *Remote Sensing of Environment*, *114*(1), 106--115. <https://doi.org/10.1016/j.rse.2009.08.014>
 
-Vinasco, L., Hamburger, A., y Anaya, J. A. (2020). Análisis multitemporal de la cobertura vegetal en la Ciénaga Grande de Santa Marta entre 2013 y 2018. *Cuadernos del Caribe*, *24*(2), 39--56.
+Vinasco, J. S., Rodríguez, D. A., Velásquez, S., Quintero, D. F., Livni, L. R., y Hernández, F. L. (2020). Coverage changes detection at Ciénaga Grande, Santa Marta -- Colombia using automátic classification. *The International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences*, *XLII-3/W12-2020*, 195--200. <https://doi.org/10.5194/isprs-archives-XLII-3-W12-2020-195-2020>
 
 Wu, Q., y Osco, L. P. (2023). samgeo: A Python package for segmenting geospatial data with the Segment Anything Model (SAM). *Journal of Open Source Software*, *8*(89), 5663. <https://doi.org/10.21105/joss.05663>
 
