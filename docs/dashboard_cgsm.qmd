@@ -185,7 +185,7 @@ except Exception as e:
 | Métrica | INVEMAR 1:25.000 | ESA WorldCover v200 |
 |---|---|---|
 | F1-score | **0,583** | 0,548 |
-| Precision | **0,811** | 0,768 |
+| Precisión | **0,811** | 0,768 |
 | Recall | 0,454 | 0,426 |
 | Especificidad | 0,954 | 0,944 |
 
