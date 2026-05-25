@@ -10,7 +10,7 @@
 >
 > 🛰 **Datos NASA y observación terrestre**: Landsat 8/9 (NASA-USGS), SRTM v3 (NASA), índices ENSO ONI/SOI (NOAA CPC), Global Flood Database (Dartmouth, deriva de MODIS NASA), segmentación con [SamGeo](https://github.com/opengeos/segment-geospatial) (Qiusheng Wu). Tema afín a [Flood Early Warning · NASA Lifelines](https://nasalifelines.org/hfs-data-series/flood-early-warning-2/).
 
-Monitoreo espaciotemporal de la cobertura, fragmentación y vigor del manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025, mediante un pipeline multilenguaje (Python, R, Julia) que integra series ópticas Landsat 8 + Sentinel-2, radar Sentinel-1 SAR y forzantes climáticos (ENSO, IDEAM, ERA5-Land, CHIRPS); detección de quiebres bfast; segmentación con SamGeo y clasificación Random Forest (F1 = 0,83); y validación contra cartografía colombiana INVEMAR 1:25.000 y global ESA WorldCover v200.
+Monitoreo espaciotemporal de la cobertura, fragmentación y vigor del manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025, mediante un pipeline multilenguaje (Python, R, Julia) que integra series ópticas Landsat 8 + Sentinel-2, radar Sentinel-1 SAR y forzamientos climáticos (ENSO, IDEAM, ERA5-Land, CHIRPS); detección de quiebres bfast; segmentación con SamGeo y clasificación Random Forest (F1 = 0,83); y validación contra cartografía colombiana INVEMAR 1:25.000 y global ESA WorldCover v200.
 
 **Curso:** Programación en SIG, Maestría en Geomática, Universidad Nacional de Colombia &nbsp;&nbsp; **Autora:** Lina María Quintero Fonseca &nbsp;&nbsp; **Docente:** Alexys H. Rodríguez-Avellaneda Ph.D. &nbsp;&nbsp; **Fecha de entrega:** 20 de mayo de 2026
 
@@ -90,7 +90,7 @@ proyecto-cgsm-curso/
 
 ## Citas y datos abiertos
 
-Los datos satelitales provienen de Google Earth Engine (Sentinel-2, Landsat 8/9, Sentinel-1 SAR, JRC GSW, SRTM, GFD). Los datos de campo provienen del INVEMAR vía GBIF ([DOI: 10.15472/0fqdp4](https://doi.org/10.15472/0fqdp4)). Los forzantes climáticos provienen de NOAA-CPC (ENSO), IDEAM-DHIME (caudal) y ECMWF ERA5-Land/CHIRPS (clima local). La cartografía de referencia es INVEMAR 1:25.000 y ESA WorldCover v200.
+Los datos satelitales provienen de Google Earth Engine (Sentinel-2, Landsat 8/9, Sentinel-1 SAR, JRC GSW, SRTM, GFD). Los datos de campo provienen del INVEMAR vía GBIF ([DOI: 10.15472/0fqdp4](https://doi.org/10.15472/0fqdp4)). Los forzamientos climáticos provienen de NOAA-CPC (ENSO), IDEAM-DHIME (caudal) y ECMWF ERA5-Land/CHIRPS (clima local). La cartografía de referencia es INVEMAR 1:25.000 y ESA WorldCover v200.
 
 ## Licencia
 
