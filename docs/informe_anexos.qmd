@@ -563,3 +563,18 @@ Para mantener el cuerpo del informe centrado en la narrativa de los hallazgos, d
 | Sierra Nevada oeste | Limnológica | 2 | $+0{,}359$ | 70 |
 
 : Correlación de Pearson entre anomalía mensual CHIRPS sobre cuencas aportantes y NDVI z-score de las estaciones de la CGSM. {#tbl-chirps-corr tbl-colwidths="[28, 22, 18, 22, 10]"}
+
+## F.14 Correlación ERA5-Land vs NDVI por naturaleza espectral
+
+| Naturaleza | Rezago (meses) | $\rho$ precip vs NDVI z | $\rho$ T2m vs NDVI z | n |
+|---|---|---|---|---|
+| Manglar | 0 | $-0{,}081$ | $+0{,}022$ | 86 |
+| Manglar | 1 | $-0{,}081$ | $+0{,}040$ | 85 |
+| Manglar | 2 | $-0{,}123$ | $-0{,}018$ | 84 |
+| Manglar | 3 | $-0{,}020$ | $-0{,}087$ | 83 |
+| Limnológica | 0 | $+0{,}082$ | $-0{,}173$ | 72 |
+| Limnológica | 1 | $+0{,}108$ | $-0{,}149$ | 71 |
+| Limnológica | 2 | $+0{,}292$ | $-0{,}144$ | 70 |
+| Limnológica | 3 | $+0{,}271$ | $-0{,}201$ | 69 |
+
+: Correlación entre anomalías climáticas ERA5-Land (precipitación y temperatura a 2 m) y NDVI z-score, desagregada por naturaleza espectral. {#tbl-era5 tbl-colwidths="[18, 16, 22, 22, 10]"}
