@@ -500,3 +500,66 @@ Para mantener el cuerpo del informe centrado en la narrativa de los hallazgos, d
 | Río Sevilla | borde | -0,159 | -0,102 | -0,077 | -0,058 | 71 |
 
 : Correlación de Pearson entre la serie mensual Sentinel-1 SAR-VH y el NDVI z-score derivado de Sentinel-2 para rezagos de 0 a 3 meses, calculada sobre las ocho estaciones entre 2018 y 2025. Valores en negrita: correlaciones significativas ($p < 0{,}001$) sobre las cuatro estaciones de manglar denso del Complejo de Pajarales. {#tbl-sar-ndvi-corr tbl-colwidths="[22, 18, 13, 13, 13, 13, 8]"}
+
+## F.10 Datacubes NetCDF materializados
+
+| Archivo | Sensor | Frecuencia | Periodo | Bandas | Tamaño |
+|---------|--------|------------|---------|--------|--------|
+| `cgsm_datacube_periodos.nc` | Sentinel-2 | Tres composites discretos | Degradación (2020 H2), recuperación (2022 H1), actual (2024--2025) | RGB (B4, B3, B2) | 40 MB |
+| `cgsm_datacube_trimestral.nc` | Sentinel-2 | Trimestral | 2018-Q1 a 2025-Q4 (31 trimestres) | NDVI, NDWI, CMRI | 275 MB |
+| `cgsm_datacube_landsat.nc` | Landsat 8/9 | Anual | 2013--2025 (13 años) | NDVI, NDWI, CMRI | 119 MB |
+
+: Datacubes NetCDF CF-1.8 materializados sobre el AOI acotado en EPSG:9377 (MAGNA-SIRGAS Origen Nacional), comprimidos con zlib nivel 4. {#tbl-cubos tbl-colwidths="[28, 14, 18, 24, 10, 6]"}
+
+## F.11 Correlación ENSO-NDVI por naturaleza espectral
+
+| Naturaleza | Rezago (meses) | $\rho_{\text{ONI}}$ | $\rho_{\text{SOI}}$ | n |
+|---|---|---|---|---|
+| Manglar | 0 | $+0{,}027$ | $+0{,}143$ | 86 |
+| Manglar | 1 | $-0{,}007$ | $+0{,}198$ | 85 |
+| Manglar | 2 | $-0{,}039$ | $+0{,}146$ | 84 |
+| Manglar | 3 | $-0{,}070$ | $+0{,}058$ | 83 |
+| Limnológica | 0 | $-0{,}121$ | $+0{,}201$ | 72 |
+| Limnológica | 1 | $-0{,}089$ | $+0{,}120$ | 71 |
+| Limnológica | 2 | $-0{,}054$ | $+0{,}135$ | 70 |
+| Limnológica | 3 | $-0{,}014$ | $+0{,}153$ | 69 |
+
+: Correlación de Pearson entre índices ENSO globales (ONI y SOI de NOAA) y NDVI z-score desagregada por naturaleza espectral. {#tbl-enso-corr tbl-colwidths="[18, 16, 18, 18, 10]"}
+
+## F.12 Correlación caudal IDEAM-NDVI por estación hidrológica
+
+| Estación | Naturaleza | Rezago (meses) | $\rho_{\text{caudal}}$ | n |
+|---|---|---|---|---|
+| El Banco (Magdalena) | Manglar | 0 | $+0{,}064$ | 74 |
+| El Banco (Magdalena) | Manglar | 1 | $+0{,}039$ | 73 |
+| El Banco (Magdalena) | Manglar | 2 | $+0{,}108$ | 72 |
+| El Banco (Magdalena) | Manglar | 3 | $+0{,}256$ | 71 |
+| El Banco (Magdalena) | Limnológica | 0 | $+0{,}181$ | 61 |
+| El Banco (Magdalena) | Limnológica | 1 | $+0{,}233$ | 60 |
+| El Banco (Magdalena) | Limnológica | 2 | $+0{,}043$ | 59 |
+| El Banco (Magdalena) | Limnológica | 3 | $+0{,}050$ | 58 |
+| Ganadería Caribe (Aracataca) | Manglar | 0 | $+0{,}196$ | 68 |
+| Ganadería Caribe (Aracataca) | Manglar | 1 | $+0{,}224$ | 67 |
+| Ganadería Caribe (Aracataca) | Manglar | 2 | $+0{,}184$ | 66 |
+| Ganadería Caribe (Aracataca) | Manglar | 3 | $+0{,}180$ | 65 |
+| Ganadería Caribe (Aracataca) | Limnológica | 0 | $+0{,}107$ | 58 |
+| Ganadería Caribe (Aracataca) | Limnológica | 1 | $+0{,}263$ | 57 |
+| Ganadería Caribe (Aracataca) | Limnológica | 2 | $+0{,}267$ | 56 |
+| Ganadería Caribe (Aracataca) | Limnológica | 3 | $+0{,}150$ | 55 |
+
+: Correlación de Pearson entre anomalía de caudal IDEAM y NDVI z-score, desagregada por estación hidrológica, naturaleza espectral y rezago temporal. {#tbl-caudal-corr tbl-colwidths="[34, 22, 16, 18, 10]"}
+
+## F.13 Correlación CHIRPS-NDVI sobre cuencas aportantes
+
+| Cuenca CHIRPS | Naturaleza | Rezago (meses) | $\rho_{\text{precip}}$ | n |
+|---|---|---|---|---|
+| Magdalena alta-media | Manglar | 0 | $+0{,}075$ | 86 |
+| Magdalena alta-media | Manglar | 1 | $+0{,}170$ | 85 |
+| Magdalena alta-media | Manglar | 2 | $+0{,}097$ | 84 |
+| Magdalena alta-media | Manglar | 3 | $+0{,}252$ | 83 |
+| Magdalena alta-media | Limnológica | 0 | $+0{,}276$ | 72 |
+| Magdalena alta-media | Limnológica | 2 | $+0{,}268$ | 70 |
+| Sierra Nevada oeste | Manglar | 3 | $+0{,}281$ | 83 |
+| Sierra Nevada oeste | Limnológica | 2 | $+0{,}359$ | 70 |
+
+: Correlación de Pearson entre anomalía mensual CHIRPS sobre cuencas aportantes y NDVI z-score de las estaciones de la CGSM. {#tbl-chirps-corr tbl-colwidths="[28, 22, 18, 22, 10]"}
