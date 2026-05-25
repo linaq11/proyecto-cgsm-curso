@@ -133,7 +133,7 @@ La autenticación con GEE se realiza mediante el flujo `gcloud auth application-
 
 # Anexo B: Estructura del repositorio GitHub
 
-El repositorio público está disponible en <https://github.com/linaq11/proyecto-cgsm-curso> bajo licencia MIT. La versión anterior del proyecto (baseline marzo 2026 sobre AOI envolvente de 5.073 km²) permanece archivada en <https://github.com/LinaQuinteroF/proyecto-cgsm> para fines de comparación histórica.
+El repositorio público está disponible en <https://github.com/linaq11/proyecto-cgsm-curso> bajo licencia MIT. La versión anterior del proyecto (línea base marzo 2026 sobre AOI envolvente de 5.073 km²) permanece archivada en <https://github.com/LinaQuinteroF/proyecto-cgsm> para fines de comparación histórica.
 
 ```
 proyecto-cgsm-curso/
@@ -316,7 +316,7 @@ anom = ds.groupby('time.month') - ds.groupby('time.month').mean('time')
 
 ### E.3.b Detección de inundación Sentinel-1 SAR para el evento de septiembre 2020
 
-Para el evento de septiembre 2020 se realiza una detección de inundación mediante Sentinel-1 SAR (banda VH, modo IW), comparando el backscatter medio del periodo seco de referencia (enero--marzo 2020, 49 imágenes) contra el periodo de inundación (septiembre--octubre 2020, 36 imágenes). Se aplica un umbral de 3 dB para inundación en agua abierta y se identifica inundación bajo dosel de manglar mediante valores negativos de diferencia SAR ---donde el aumento del backscatter refleja el scattering de doble rebote característico de la interacción agua--tronco---.
+Para el evento de septiembre 2020 se realiza una detección de inundación mediante Sentinel-1 SAR (banda VH, modo IW), comparando el backscatter medio del periodo seco de referencia (enero--marzo 2020, 49 imágenes) contra el periodo de inundación (septiembre--octubre 2020, 36 imágenes). Se aplica un umbral de 3 dB para inundación en agua abierta y se identifica inundación bajo dosel de manglar mediante valores negativos de diferencia SAR ---donde el aumento del backscatter refleja la dispersión de doble rebote característica de la interacción agua--tronco---.
 
 ```python
 s1_dry = ee.ImageCollection('COPERNICUS/S1_GRD') \
@@ -453,7 +453,7 @@ Para mantener el cuerpo del informe centrado en la narrativa de los hallazgos, d
 
 | Paso | Herramienta | Lenguaje | Entrada | Salida |
 |---|---|---|---|---|
-| 1. Adquisición | GEE + geemap | Python | Sentinel-2 / Landsat | Stacks de índices (.tif) |
+| 1. Adquisición | GEE + geemap | Python | Sentinel-2 / Landsat | Pilas de índices (.tif) |
 | 2. Series de tiempo | pandas + bfast | Python / R | Índices + estaciones | Z-scores, periodos (.csv) |
 | 3. Segmentación | SamGeo + umbrales | Python | Composites RGB | Parches manglar (.geojson) |
 | 4. Métricas | DataFrames.jl | Julia | Parches vectoriales | Tabla de métricas (.csv) |
