@@ -11,7 +11,7 @@ Uso:
     cd /home/rstudio/work/proyecto-cgsm
     python scripts/embellish_docx_tables.py docs/informe_final.docx
     python scripts/embellish_docx_tables.py docs/informe_anexos.docx
-    python scripts/embellish_docx_tables.py docs/cgsm_version_acotada.docx
+    python scripts/embellish_docx_tables.py docs/informe_anexos.docx
 
 Requiere:  pip install python-docx
 """
@@ -236,7 +236,6 @@ if __name__ == '__main__':
         targets = [
             ROOT / 'docs' / 'informe_final.docx',
             ROOT / 'docs' / 'informe_anexos.docx',
-            ROOT / 'docs' / 'cgsm_version_acotada.docx',
         ]
     else:
         targets = [Path(a) for a in sys.argv[1:]]

@@ -68,21 +68,7 @@ for fmt in pdf html docx; do
 done
 
 # ──────────────────────────────────────────────────────────────────────
-# 3. ARTÍCULO JOURNAL (PDF + HTML + DOCX)
-# ──────────────────────────────────────────────────────────────────────
-echo
-echo "──── 3/3 · cgsm_version_acotada.qmd ────"
-for fmt in pdf html docx; do
-  echo "  → $fmt"
-  if quarto render docs/cgsm_version_acotada.qmd --to "$fmt" 2>&1 | tail -3; then
-    echo "  ✓ $fmt OK"
-  else
-    echo "  ✗ $fmt FALLÓ"
-  fi
-done
-
-# ──────────────────────────────────────────────────────────────────────
-# 3b. Embellecer tablas de los DOCX (header azul, bordes, banded rows)
+# 3. Embellecer tablas de los DOCX (header azul, bordes, banded rows)
 # ──────────────────────────────────────────────────────────────────────
 echo
 echo "──── Embellecedor de tablas DOCX ────"
@@ -104,8 +90,7 @@ echo "════════════════════════�
 echo " ARCHIVOS GENERADOS"
 echo "════════════════════════════════════════════════════════════════════"
 for f in docs/informe_final.pdf docs/informe_final.html docs/informe_final.docx \
-         docs/informe_anexos.pdf docs/informe_anexos.html docs/informe_anexos.docx \
-         docs/cgsm_version_acotada.pdf docs/cgsm_version_acotada.html docs/cgsm_version_acotada.docx; do
+         docs/informe_anexos.pdf docs/informe_anexos.html docs/informe_anexos.docx; do
   if [ -f "$f" ]; then
     sz=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f" 2>/dev/null)
     mb=$(awk "BEGIN{printf \"%.2f\", $sz/1024/1024}")
@@ -118,6 +103,6 @@ done
 
 echo
 echo "Si todo está OK, hacer commit + push:"
-echo "  git add docs/informe_final.{pdf,html,docx} docs/informe_anexos.{pdf,html} docs/cgsm_version_acotada.{pdf,html}"
-echo "  git commit -m \"Re-render informe principal + anexos + articulo journal\""
+echo "  git add docs/informe_final.{pdf,html,docx} docs/informe_anexos.{pdf,html,docx}"
+echo "  git commit -m \"Re-render informe principal + anexos\""
 echo "  git push"

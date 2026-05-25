@@ -158,7 +158,7 @@ proyecto-cgsm-curso/
 │   ├── tables/       47 CSV con resultados numéricos
 │   ├── figures/      35 PNG (mapas, series, correlaciones, validación, alertas)
 │   └── maps/         dashboard_CGSM_final.html (autocontenido, ~80 KB)
-└── docs/             informe_final.{qmd,html,pdf}, cgsm_version_acotada.*,
+└── docs/             informe_final.{qmd,html,pdf}, informe_anexos.{qmd,html,pdf},
                       dashboard.html (Pages), outputs/{figures,maps}/ (Pages)
 ```
 

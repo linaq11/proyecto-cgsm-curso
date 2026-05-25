@@ -64,11 +64,11 @@ Para regenerar el módulo de alertas tempranas:
 python src/python/alertas_manglar.py
 ```
 
-Para renderizar el informe técnico y el artículo journal:
+Para renderizar el informe técnico:
 
 ```bash
 quarto render docs/informe_final.qmd          # 28 páginas · PDF + HTML + DOCX
-quarto render docs/cgsm_version_acotada.qmd  # ~5.300 palabras · PDF + HTML
+quarto render docs/informe_anexos.qmd         # Anexos · PDF + HTML + DOCX
 ```
 
 ## Carpetas y convenciones de salida
