@@ -178,7 +178,7 @@ El cuerpo del informe usa el caudal **medio mensual** del río Magdalena en El B
 
 # Anexo E: Fragmentos de código complementaríos
 
-Para mantener el cuerpo del informe centrado en la interpretación de resultados, los fragmentos de código que materializan cada fase del pipeline se documentan en este anexo, organizados temáticamente en cuatro apartados que reproducen el orden lógico de la cadena de procesamiento: datacube y series temporales (E.1), reproyección y topología sobre parches segmentados (E.2), forzamiento climático y detección SAR (E.3), y métricas de fragmentación del paisaje en Julia (E.4).
+Para mantener el cuerpo del informe centrado en la interpretación de resultados, los fragmentos de código que materializan cada fase del pipeline se documentan en este anexo, organizados temáticamente en cuatro apartados que reproducen el orden lógico de la cadena de procesamiento: datacube y series temporales (E.1), reproyección y topología sobre parches segmentados (E.2), forzamiento climático y detección SAR (E.3), y métricas de fragmentación del paisaje en Julia (E.4). Los conceptos técnicos invocados aquí ,datacube, z-score, bfast, SamGeo, predicado DE-9IM, Random Forest, backscatter SAR, dispersión de doble rebote, F1-score, se introducen y explican funcionalmente en el cuerpo del `informe_final.pdf`; este anexo se concentra en la implementación operativa y supone que el lector conoce ya su significado conceptual.
 
 ## E.1 Datacube multitemporal y series de tiempo
 
