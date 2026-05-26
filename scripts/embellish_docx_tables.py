@@ -197,6 +197,23 @@ def _table_contains_drawing(tbl):
     return False
 
 
+def _iter_all_tables(doc):
+    """Itera TODAS las tablas del documento, incluyendo anidadas en
+    celdas de otras tablas. python-docx doc.tables solo devuelve top-level."""
+    def _walk(tables):
+        for t in tables:
+            yield t
+            for row in t.rows:
+                for cell in row.cells:
+                    yield from _walk(cell.tables)
+    yield from _walk(doc.tables)
+
+
+def _is_wrapper_1x1(tbl):
+    """True si la tabla es un wrapper pandoc 1x1 (sin filas multiples)."""
+    return len(tbl.rows) == 1 and len(tbl.rows[0].cells) == 1
+
+
 def _unwrap_figure_tables(doc):
     """Reemplaza cada tabla wrapper de figura por los parrafos que
     contiene su unica celda. Pandoc envuelve cada figura en una tabla
@@ -390,9 +407,16 @@ def embellish(path: Path):
     # 3) Desenvolver las tablas wrapper de figura (1x1 con imagen)
     unwrapped = _unwrap_figure_tables(doc)
 
-    # 4) Estilizar cada tabla restante
+    # 4) Estilizar tablas reales (datos). Las wrapper 1x1 de pandoc se
+    #    saltan: solo se limpian bordes/shading; la tabla anidada
+    #    interior recibe el header bold.
     n = 0
-    for tbl in doc.tables:
+    n_wrappers = 0
+    for tbl in _iter_all_tables(doc):
+        if _is_wrapper_1x1(tbl):
+            _strip_table_borders_and_shading(tbl)
+            n_wrappers += 1
+            continue
         n += 1
         _strip_table_style(tbl)
         _set_table_width(tbl, pct=100)
@@ -408,7 +432,7 @@ def embellish(path: Path):
                     for run in p.runs:
                         run.font.size = TABLE_FONT_SZ
                         if r_idx == 0:
-                            # Header: solo bold, sin fondo, texto negro
+                            # Header: bold negro, sin fondo
                             run.font.bold = True
                             run.font.color.rgb = BODY_TEXT
 
@@ -421,7 +445,7 @@ def embellish(path: Path):
     _compact_layout(doc)
 
     doc.save(str(path))
-    print(f'  ✓ {n} tablas embellecidas · {unwrapped} wrappers de figura eliminados')
+    print(f'  ✓ {n} tablas reales embellecidas · {n_wrappers} wrappers 1x1 limpiados · {unwrapped} wrappers de figura eliminados')
 
 
 if __name__ == '__main__':
