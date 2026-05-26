@@ -99,6 +99,18 @@ def _strip_paragraph_borders(doc):
                     _strip(p)
 
 
+def _strip_caption_shading(doc):
+    """Quita el w:shd (relleno) de cualquier párrafo que esté FUERA de
+    una tabla, es decir, de captions de tabla/figura y prosa del body.
+    Esto borra la banda cyan que el reference doc aplica a las captions."""
+    for p in doc.paragraphs:
+        p_pr = p._p.find(qn('w:pPr'))
+        if p_pr is None:
+            continue
+        for shd in p_pr.findall(qn('w:shd')):
+            p_pr.remove(shd)
+
+
 def _strip_figure_borders(doc):
     """Quita el contorno (a:ln) de TODAS las imágenes."""
     A_NS  = 'http://schemas.openxmlformats.org/drawingml/2006/main'
@@ -294,6 +306,7 @@ def embellish(path: Path):
 
     # 4) Quitar bordes de párrafos (captions) y figuras
     _strip_paragraph_borders(doc)
+    _strip_caption_shading(doc)
     _strip_figure_borders(doc)
 
     doc.save(str(path))
