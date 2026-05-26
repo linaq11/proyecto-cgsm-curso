@@ -144,6 +144,49 @@ def _clear_cell_shading(cell):
         tc_pr.remove(shd)
 
 
+def _table_contains_drawing(tbl):
+    """True si la tabla contiene una imagen/figura embebida (wrapper de
+    figura generado por pandoc). Esas tablas no deben recibir styling
+    de header cyan."""
+    for el in tbl._tbl.iter():
+        tag = el.tag
+        if tag.endswith('}drawing') or tag.endswith('}blip') or tag.endswith('}pic'):
+            return True
+    return False
+
+
+def _strip_table_borders_and_shading(tbl):
+    """Para tablas wrapper de figuras: borra bordes y shading
+    completamente, sin aplicar el styling de header cyan."""
+    tbl_pr = tbl._tbl.tblPr
+    for s in tbl_pr.findall(qn('w:tblStyle')):
+        tbl_pr.remove(s)
+    for old in tbl_pr.findall(qn('w:tblBorders')):
+        tbl_pr.remove(old)
+    for pos in tbl_pr.findall(qn('w:tblpPr')):
+        tbl_pr.remove(pos)
+    for wrap in tbl_pr.findall(qn('w:tblOverlap')):
+        tbl_pr.remove(wrap)
+    tbl_borders = OxmlElement('w:tblBorders')
+    for edge in ('top', 'left', 'bottom', 'right', 'insideH', 'insideV'):
+        b = OxmlElement(f'w:{edge}')
+        b.set(qn('w:val'), 'nil')
+        tbl_borders.append(b)
+    tbl_pr.append(tbl_borders)
+    for row in tbl.rows:
+        for cell in row.cells:
+            tc_pr = cell._tc.get_or_add_tcPr()
+            for old in tc_pr.findall(qn('w:tcBorders')):
+                tc_pr.remove(old)
+            tc_borders = OxmlElement('w:tcBorders')
+            for edge in ('top', 'left', 'bottom', 'right'):
+                b = OxmlElement(f'w:{edge}')
+                b.set(qn('w:val'), 'nil')
+                tc_borders.append(b)
+            tc_pr.append(tc_borders)
+            _clear_cell_shading(cell)
+
+
 def _set_cell_margins(cell, top=40, right=60, bottom=40, left=60):
     tc_pr = cell._tc.get_or_add_tcPr()
     tc_mar = OxmlElement('w:tcMar')
@@ -275,9 +318,14 @@ def embellish(path: Path):
     # 2) Forzar el resto del texto a negro (sin tocar los ● de estado)
     _force_body_text_black(doc)
 
-    # 3) Estilizar cada tabla
+    # 3) Estilizar cada tabla (excepto wrappers de figuras)
     n = 0
+    skipped_fig = 0
     for tbl in doc.tables:
+        if _table_contains_drawing(tbl):
+            _strip_table_borders_and_shading(tbl)
+            skipped_fig += 1
+            continue
         n += 1
         _strip_table_style(tbl)
         _set_table_width(tbl, pct=100)
@@ -310,7 +358,7 @@ def embellish(path: Path):
     _strip_figure_borders(doc)
 
     doc.save(str(path))
-    print(f'  ✓ {n} tablas embellecidas · header azul-cyan + texto blanco · ● coloreados')
+    print(f'  ✓ {n} tablas embellecidas · {skipped_fig} wrappers de figura limpiadas')
 
 
 if __name__ == '__main__':
