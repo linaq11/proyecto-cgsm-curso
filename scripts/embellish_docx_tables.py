@@ -99,6 +99,48 @@ def _strip_paragraph_borders(doc):
                     _strip(p)
 
 
+def _compact_layout(doc):
+    """Reduce margenes y tamano de fuente Normal para que el DOCX se
+    pagine compacto similar al PDF. Sin esto, los defaults de Word
+    (11pt + 2.54cm) duplican la cantidad de paginas vs el PDF que
+    usa scriptsize global."""
+    # Margenes: 1.8 cm top/bot, 2 cm left/right (twips: 1 cm = 567)
+    PG_MAR = {
+        'top':    str(int(1.8 * 567)),
+        'bottom': str(int(1.8 * 567)),
+        'left':   str(int(2.0 * 567)),
+        'right':  str(int(2.0 * 567)),
+        'header': str(int(0.8 * 567)),
+        'footer': str(int(0.8 * 567)),
+        'gutter': '0',
+    }
+    for section in doc.sections:
+        sectPr = section._sectPr
+        # Quitar pgMar previo si existe
+        for old in sectPr.findall(qn('w:pgMar')):
+            sectPr.remove(old)
+        pgMar = OxmlElement('w:pgMar')
+        for k, v in PG_MAR.items():
+            pgMar.set(qn(f'w:{k}'), v)
+        # Insertar pgMar dentro de sectPr
+        sectPr.append(pgMar)
+    # Reducir fuente del estilo Normal a 10 pt
+    try:
+        normal = doc.styles['Normal']
+        normal.font.size = Pt(10)
+    except KeyError:
+        pass
+    # Tambien comprimir interlineado del Normal (1.15 -> 1.05)
+    try:
+        normal = doc.styles['Normal']
+        pf = normal.paragraph_format
+        pf.line_spacing = 1.05
+        pf.space_after = Pt(2)
+        pf.space_before = Pt(0)
+    except (KeyError, AttributeError):
+        pass
+
+
 def _strip_caption_shading(doc):
     """Quita el w:shd (relleno) de cualquier párrafo que esté FUERA de
     una tabla, es decir, de captions de tabla/figura y prosa del body.
@@ -356,6 +398,9 @@ def embellish(path: Path):
     _strip_paragraph_borders(doc)
     _strip_caption_shading(doc)
     _strip_figure_borders(doc)
+    # 5) Compactar layout (margenes + fuente Normal) para que el DOCX
+    #    se pagine cerca del PDF en vez de duplicar paginas
+    _compact_layout(doc)
 
     doc.save(str(path))
     print(f'  ✓ {n} tablas embellecidas · {skipped_fig} wrappers de figura limpiadas')
