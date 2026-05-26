@@ -1,5 +1,5 @@
 ---
-title: 'Pipeline multilenguaje (Python, R, Julia) para el monitoreo de manglar en la CGSM (2013--2025)'
+title: 'Pipeline multilenguaje GeoAI para el monitoreo del manglar en la Ciénaga Grande de Santa Marta (2013--2025)'
 author: 'Lina María Quintero Fonseca'
 date: '2026-05-25'
 lang: es

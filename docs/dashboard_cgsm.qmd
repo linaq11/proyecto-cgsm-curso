@@ -324,7 +324,7 @@ dict(icon="check2-all", color="success", value="4",
 
 #### Proyecto
 
-**Pipeline multilenguaje (Python, R, Julia) para el monitoreo de manglar en la CGSM (2013–2025)**
+**Pipeline multilenguaje GeoAI para el monitoreo del manglar en la Ciénaga Grande de Santa Marta (2013–2025)**
 
 Trabajo final de la asignatura *Programación en SIG*, Maestría en Geomática, Universidad Nacional de Colombia, semestre 2026-1.
 
