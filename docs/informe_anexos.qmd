@@ -273,7 +273,7 @@ gdf = parches_borde(gdf, aoi)             # intersects con la frontera
 gdf = parches_con_punto(gdf, estaciones)  # contains con los puntos INVEMAR
 ```
 
-### E.2.b Segmentación promptable con SamGeo vit_b y vectorización por periodo
+### E.2.b Segmentación guiada por prompts con SamGeo vit_b y vectorización por periodo
 
 La segmentación automática de los composites RGB de los tres periodos de referencia se ejecuta con el backbone vit_b de SamGeo ---versión adaptada al límite de memoria del contenedor sig_unal v1.11--- produciendo una máscara raster por periodo que se vectoriza a GeoJSON para el posterior filtrado por área y cálculo de métricas de fragmentación.
 
