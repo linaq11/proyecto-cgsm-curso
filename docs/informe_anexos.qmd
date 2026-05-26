@@ -91,14 +91,15 @@ format:
 
 # Presentación
 
-Este documento complementario reúne los seis anexos técnicos del proyecto **Pipeline multilenguaje (Python, R, Julia) para el monitoreo de manglar en la Ciénaga Grande de Santa Marta (2013--2025)**. Cada anexo desarrolla material de soporte que sustenta las decisiones metodológicas, la reproducibilidad técnica y la trazabilidad de los resultados reportados en el informe principal (`informe_final.pdf`):
+Este documento complementario reúne cinco anexos técnicos del proyecto **Pipeline multilenguaje (Python, R, Julia) para el monitoreo de manglar en la Ciénaga Grande de Santa Marta (2013--2025)**. Cada anexo desarrolla material de soporte que sustenta las decisiones metodológicas, la reproducibilidad técnica y la trazabilidad de los resultados reportados en el informe principal (`informe_final.pdf`):
 
 - **Anexo A** documenta la configuración del entorno Docker `sig_unal v1.11` con los paquetes adicionales de Python, R y Julia.
 - **Anexo B** describe la estructura del repositorio GitHub con la serie vigente y la legacy de notebooks.
 - **Anexo C** explica la discrepancia metodológica en el conteo de parches entre las implementaciones de Julia y Python.
-- **Anexo D** reporta el análisis de sensibilidad del acoplamiento caudal-NDVI con la variable alternativa de caudal máximo mensual.
 - **Anexo E** contiene los fragmentos de código que materializan cada fase del pipeline.
-- **Anexo F** reúne dos tablas de detalle (cruce SAR-NDVI-GFD por estación y transiciones JRC) referenciadas desde el cuerpo del informe.
+- **Anexo F** reúne las tablas de detalle movidas desde el cuerpo del informe.
+
+(La letra D queda sin usar; el análisis de sensibilidad caudal máximo vs medio que ocupaba esa posición se sintetiza ahora en el cuerpo del informe principal y los datos detallados quedan en `outputs/tables/caudal_comparacion_max_medio.csv`.)
 
 # Anexo A: Configuracion del entorno Docker
 
@@ -171,10 +172,6 @@ Las cifras de fragmentacion sobre el AOI acotado se reportan en dos implementaci
 Cuando SamGeo segmenta un parche grande de manglar atravesado por un canal hidráulico --como el Caño Clarín o el Caño Aguas Negras--, el GeoJSON resultante exporta ese parche como un polígono con un anillo exterior que delimita la cobertura y uno o más anillos interiores que representan el canal. La implementacion en `geopandas` calcula el área neta restando los huecos --siguiendo la definicion estandar del Simple Features Access para `Polygon.area`-- mientras que la implementacion Julia, al iterar sobre `ring = geom.coordinates[1]`, solo procesa el anillo exterior y reporta el área bruta del envolvente externo sin descontar los canales. En consecuencia, parches con grandes huecos internos quedan clasificados en el rango filtrado 1--5.000 ha por Julia pero por debajo del umbral inferior por `geopandas`, lo que infla el conteo de parches Julia en periodos donde la dinámica hídrica produce huecos detectables --2020 (degradación) y 2022 (recuperación), cuando los canales atraviesan manglar fragmentado por La Niña y la rehabilitacion hidráulica-- y coincide en el periodo actual (2024-2025) donde los parches sobrevivientes son más compactos sin canales internos visibles.
 
 Ambas mediciones tienen validez metodológica diferenciada. La versión `geopandas` reporta el área efectiva de cobertura de manglar, descontando agua interior, y es apropiada para indicadores de superficie y validación contra cartografía de referencia como GMW. La versión Julia reporta el área del envolvente del parche y es apropiada para indicadores de extensión del paisaje fragmentado y para calculos de conectividad mediante distancia entre envolventes. Para evitar confusion en el informe, en la Tabla `tbl-fragmentacion-acotado` se reporta el conteo Julia con la columna explicita "Parches (Julia)" y se utiliza para indicadores de forma --MSI-- y aislamiento --NND--, mientras que en la Tabla `tbl-topológia-acotado` se reporta el conteo `geopandas` y se utiliza para indicadores de superficie y para el cruce con la frontera del AOI mediante predicados DE-9IM.
-
-# Anexo D: Análisis de sensibilidad — caudal máximo vs medio mensual de El Banco
-
-El cuerpo del informe usa el caudal **medio mensual** del río Magdalena en El Banco por coherencia con Ganadería Caribe (Aracataca, disponible solo en variable media). El análisis paralelo con la variable alternativa **caudal máximo mensual** ---también disponible en DHIME, 144 obs. 2013--2025--- arroja correlaciones positivas universales con NDVI cuyo signo coincide y cuyo pico también se ubica en el rezago de tres meses (manglar $\rho_{\text{máx}} = +0{,}277$ vs $\rho_{\text{medio}} = +0{,}256$). La diferencia operativa se concentra en los rezagos cortos: $\rho_{\text{máx}}$ supera a $\rho_{\text{medio}}$ por 0,08--0,12 unidades en lag 0--1, consistente con que los picos extremos del caudal máximo se asocian más rápidamente con cambios espectrales puntuales mientras el caudal medio captura el efecto agregado del régimen sostenido. Las conclusiones científicas del cuerpo del informe son por tanto robustas a la elección de la variable hidrométrica; los datos detallados de ambas series están disponibles en `outputs/tables/caudal_comparacion_max_medio.csv`.
 
 # Anexo E: Fragmentos de código complementaríos
 
