@@ -401,23 +401,16 @@ def embellish(path: Path):
             for c_idx, cell in enumerate(row.cells):
                 _set_cell_borders(cell)
                 _set_cell_margins(cell)
-                if r_idx == 0:
-                    # Header: fondo azul-cyan + texto blanco bold
-                    _set_cell_shading(cell, HEADER_BG)
-                    for p in cell.paragraphs:
-                        p.paragraph_format.space_before = Pt(0)
-                        p.paragraph_format.space_after  = Pt(0)
-                        for run in p.runs:
+                _clear_cell_shading(cell)
+                for p in cell.paragraphs:
+                    p.paragraph_format.space_before = Pt(0)
+                    p.paragraph_format.space_after  = Pt(0)
+                    for run in p.runs:
+                        run.font.size = TABLE_FONT_SZ
+                        if r_idx == 0:
+                            # Header: solo bold, sin fondo, texto negro
                             run.font.bold = True
-                            run.font.size = HEADER_FONT_SZ
-                            run.font.color.rgb = HEADER_TEXT
-                else:
-                    _clear_cell_shading(cell)
-                    for p in cell.paragraphs:
-                        p.paragraph_format.space_before = Pt(0)
-                        p.paragraph_format.space_after  = Pt(0)
-                        for run in p.runs:
-                            run.font.size = TABLE_FONT_SZ
+                            run.font.color.rgb = BODY_TEXT
 
     # 5) Quitar bordes de párrafos (captions) y figuras
     _strip_paragraph_borders(doc)
