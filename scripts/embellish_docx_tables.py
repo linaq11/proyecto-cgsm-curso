@@ -1,16 +1,16 @@
 """
 Post-procesa los DOCX rendereados por Quarto para que las tablas se vean
 bonitas (Word):
-    - bordes negros visibles en todas las celdas (full grid)
-    - cabecera con fondo azul suave + texto blanco bold
-    - alternancia de filas (banded rows)
-    - texto compacto (9 pt) y padding pequeño
+    - cabecera con fondo azul-cyan + texto blanco bold
+    - bordes finos grises en todas las celdas
+    - texto compacto (10 pt)
     - ancho de tabla = 100% de la página
+    - reemplaza emojis de estado 🟢/🟡/🔴 por círculos ● coloreados
+      (verde/amarillo/rojo) que sí renderizan en cualquier fuente Word
 
 Uso:
     cd /home/rstudio/work/proyecto-cgsm
     python scripts/embellish_docx_tables.py docs/informe_final.docx
-    python scripts/embellish_docx_tables.py docs/informe_anexos.docx
     python scripts/embellish_docx_tables.py docs/informe_anexos.docx
 
 Requiere:  pip install python-docx
@@ -19,65 +19,79 @@ import sys
 from pathlib import Path
 from docx import Document
 from docx.shared import Pt, RGBColor
-from docx.oxml.ns import qn, nsmap
+from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
 
-def _set_cell_borders(cell, color='000000', size='8'):
-    """Elimina todos los bordes de la celda (val=nil)."""
+# ── estilo ─────────────────────────────────────────────────────────────
+HEADER_BG       = '2E86AB'   # azul medio (mismo tono que la imagen ref)
+HEADER_TEXT     = RGBColor(0xFF, 0xFF, 0xFF)
+BODY_TEXT       = RGBColor(0x00, 0x00, 0x00)
+BORDER_COLOR    = 'BFBFBF'   # gris claro
+BORDER_SIZE     = '4'        # eighths of pt → 4 = 0.5 pt fina
+TABLE_FONT_SZ   = Pt(10)
+HEADER_FONT_SZ  = Pt(10)
+
+# emojis 🟢🟡🔴 → ● coloreado (Word renderiza ● fiable en cualquier fuente)
+STATUS_EMOJI = {
+    '🟢': '4CAF50',   # verde
+    '🟡': 'FFC107',   # amarillo
+    '🔴': 'F44336',   # rojo
+}
+STATUS_GLYPH = '●'
+
+
+def _hex_to_rgb(h):
+    return RGBColor(int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16))
+
+
+def _set_cell_borders(cell, color=BORDER_COLOR, size=BORDER_SIZE):
+    """Bordes finos grises en los cuatro lados de la celda."""
     tc_pr = cell._tc.get_or_add_tcPr()
-    # Limpiar tcBorders previo
     for old in tc_pr.findall(qn('w:tcBorders')):
         tc_pr.remove(old)
     tc_borders = OxmlElement('w:tcBorders')
     for edge in ('top', 'left', 'bottom', 'right'):
         b = OxmlElement(f'w:{edge}')
-        b.set(qn('w:val'), 'nil')         # nil = sin borde
+        b.set(qn('w:val'), 'single')
+        b.set(qn('w:sz'), size)
+        b.set(qn('w:color'), color)
         tc_borders.append(b)
     tc_pr.append(tc_borders)
 
 
 def _strip_table_style(tbl):
-    """Quita el estilo heredado del reference doc y los bordes a nivel
-    de tabla; reemplaza por bordes sólidos negros uniformes. También
-    quita cualquier posicionamiento flotante / wrapping (marco externo)."""
+    """Quita el estilo heredado del reference doc y reaplica bordes
+    finos grises a nivel tabla. Quita posicionamiento flotante."""
     tbl_pr = tbl._tbl.tblPr
-    # 1. quitar referencia al estilo (no más 'TableGrid' etc del reference)
     for s in tbl_pr.findall(qn('w:tblStyle')):
         tbl_pr.remove(s)
-    # 2. limpiar bordes a nivel tabla
     for old in tbl_pr.findall(qn('w:tblBorders')):
         tbl_pr.remove(old)
-    # 3. quitar posicionamiento flotante (causa el "marco externo")
     for pos in tbl_pr.findall(qn('w:tblpPr')):
         tbl_pr.remove(pos)
-    # 4. quitar wrapping
     for wrap in tbl_pr.findall(qn('w:tblOverlap')):
         tbl_pr.remove(wrap)
-    # 5. declarar todos los bordes a nivel tabla como "nil" (sin línea)
     tbl_borders = OxmlElement('w:tblBorders')
-    for edge in ('top', 'left', 'bottom', 'right',
-                 'insideH', 'insideV'):
+    for edge in ('top', 'left', 'bottom', 'right', 'insideH', 'insideV'):
         b = OxmlElement(f'w:{edge}')
-        b.set(qn('w:val'), 'nil')
+        b.set(qn('w:val'), 'single')
+        b.set(qn('w:sz'), BORDER_SIZE)
+        b.set(qn('w:color'), BORDER_COLOR)
         tbl_borders.append(b)
     tbl_pr.append(tbl_borders)
 
 
 def _strip_paragraph_borders(doc):
-    """Recorre TODOS los párrafos del documento (body + celdas) y quita
-    cualquier `w:pBdr` (border-around-paragraph). Esto elimina el
-    'recuadro' que el reference doc añade a captions de figuras/tablas."""
+    """Quita cualquier w:pBdr (border-around-paragraph) en body y celdas."""
     def _strip(p):
         p_pr = p._p.find(qn('w:pPr'))
         if p_pr is None:
             return
         for pbdr in p_pr.findall(qn('w:pBdr')):
             p_pr.remove(pbdr)
-    # Body
     for p in doc.paragraphs:
         _strip(p)
-    # Tablas
     for tbl in doc.tables:
         for row in tbl.rows:
             for cell in row.cells:
@@ -86,52 +100,25 @@ def _strip_paragraph_borders(doc):
 
 
 def _strip_figure_borders(doc):
-    """Quita el contorno (línea de borde) de TODAS las imágenes inline
-    o ancladas del documento. Busca elementos `<a:ln>` (line) dentro
-    de drawings y los reemplaza por `<a:ln><a:noFill/></a:ln>` para
-    asegurar que ni siquiera un estilo heredado pueda pintar borde."""
+    """Quita el contorno (a:ln) de TODAS las imágenes."""
     A_NS  = 'http://schemas.openxmlformats.org/drawingml/2006/main'
     A_LN  = f'{{{A_NS}}}ln'
-    A_NOFILL = f'{{{A_NS}}}noFill'
-    # Eliminar todos los <a:ln> existentes
     for ln in list(doc.element.iter(A_LN)):
         parent = ln.getparent()
         if parent is not None:
             parent.remove(ln)
-    # (Opcional) inyectar un <a:ln><a:noFill/></a:ln> dentro de cada
-    # <pic:spPr> para sellar el borde a None definitivamente.
     PIC_NS = 'http://schemas.openxmlformats.org/drawingml/2006/picture'
     SP_PR  = f'{{{PIC_NS}}}spPr'
     from lxml import etree
     for sp_pr in doc.element.iter(SP_PR):
         ln_off = etree.SubElement(sp_pr, A_LN)
-        etree.SubElement(ln_off, A_NOFILL)
-
-
-def _force_all_text_black(doc):
-    """Recorre todo el documento (body + tablas) y fuerza color = negro
-    en cada run de texto. También quita cursiva y bold heredados de los
-    estilos Caption del reference doc para los párrafos con estilo
-    'Image Caption', 'Caption' o similar (texto de leyendas de figuras
-    y tablas)."""
-    def _process_paragraph(p):
-        # Solo forzar color a negro; preservar cursivas de cualquier estilo
-        for run in p.runs:
-            run.font.color.rgb = RGBColor(0, 0, 0)
-    # Body
-    for p in doc.paragraphs:
-        _process_paragraph(p)
-    # Tablas
-    for tbl in doc.tables:
-        for row in tbl.rows:
-            for cell in row.cells:
-                for p in cell.paragraphs:
-                    _process_paragraph(p)
+        etree.SubElement(ln_off, '{%s}noFill' % A_NS)
 
 
 def _set_cell_shading(cell, color_hex):
-    """Aplica color de relleno a una celda."""
     tc_pr = cell._tc.get_or_add_tcPr()
+    for old in tc_pr.findall(qn('w:shd')):
+        tc_pr.remove(old)
     shd = OxmlElement('w:shd')
     shd.set(qn('w:val'), 'clear')
     shd.set(qn('w:color'), 'auto')
@@ -139,12 +126,17 @@ def _set_cell_shading(cell, color_hex):
     tc_pr.append(shd)
 
 
-def _set_cell_margins(cell, top=60, right=80, bottom=60, left=80):
-    """Padding interno de celda en twentieths of a point (1 pt = 20)."""
+def _clear_cell_shading(cell):
+    tc_pr = cell._tc.get_or_add_tcPr()
+    for shd in tc_pr.findall(qn('w:shd')):
+        tc_pr.remove(shd)
+
+
+def _set_cell_margins(cell, top=40, right=60, bottom=40, left=60):
     tc_pr = cell._tc.get_or_add_tcPr()
     tc_mar = OxmlElement('w:tcMar')
     for edge, val in (('top', top), ('left', left),
-                       ('bottom', bottom), ('right', right)):
+                      ('bottom', bottom), ('right', right)):
         m = OxmlElement(f'w:{edge}')
         m.set(qn('w:w'), str(val))
         m.set(qn('w:type'), 'dxa')
@@ -153,18 +145,16 @@ def _set_cell_margins(cell, top=60, right=80, bottom=60, left=80):
 
 
 def _set_table_width(table, pct=100):
-    """Fuerza el ancho de la tabla al 100% de la página."""
     tbl_pr = table._tbl.tblPr
     tbl_w = tbl_pr.find(qn('w:tblW'))
     if tbl_w is None:
         tbl_w = OxmlElement('w:tblW')
         tbl_pr.append(tbl_w)
-    tbl_w.set(qn('w:w'), f'{pct * 50}')   # pct units = pct * 50
+    tbl_w.set(qn('w:w'), f'{pct * 50}')
     tbl_w.set(qn('w:type'), 'pct')
 
 
 def _set_table_layout_autofit(table):
-    """Permite que las celdas autoajusten el ancho del contenido."""
     tbl_pr = table._tbl.tblPr
     layout = tbl_pr.find(qn('w:tblLayout'))
     if layout is None:
@@ -173,65 +163,145 @@ def _set_table_layout_autofit(table):
     layout.set(qn('w:type'), 'autofit')
 
 
-# ── estilo: limpio, sin fondos, bordes negros sólidos ────────────────
-BORDER_COLOR   = '000000'  # negro
-BORDER_SIZE    = '16'      # eighths of pt → 16 = 2pt sólida inequívoca
-TABLE_FONT_SZ  = Pt(10)   # 10 pt para texto de tablas (cuerpo = 11 pt)
-HEADER_FONT_SZ = Pt(10)
+def _replace_status_emojis_in_paragraph(p):
+    """Reemplaza 🟢🟡🔴 por ● coloreado en CADA run del párrafo.
+    Si un run contiene un emoji, se divide: el texto antes/después
+    queda en runs separados con el color heredado, y el ● va en su
+    propio run con el color correspondiente."""
+    for run in list(p.runs):
+        text = run.text
+        if not any(e in text for e in STATUS_EMOJI):
+            continue
+        # Reconstruir el texto carácter a carácter
+        new_segments = []  # lista de (texto, color_or_None)
+        buf = ''
+        for ch in text:
+            if ch in STATUS_EMOJI:
+                if buf:
+                    new_segments.append((buf, None))
+                    buf = ''
+                new_segments.append((STATUS_GLYPH, STATUS_EMOJI[ch]))
+            else:
+                buf += ch
+        if buf:
+            new_segments.append((buf, None))
+        # Aplicar al run actual: primer segmento
+        if new_segments:
+            first_txt, first_color_hex = new_segments[0]
+            run.text = first_txt
+            if first_color_hex is not None:
+                run.font.color.rgb = _hex_to_rgb(first_color_hex)
+            # Insertar runs adicionales detrás del actual
+            parent_p = run._element.getparent()
+            insert_idx = list(parent_p).index(run._element)
+            for seg_txt, seg_color_hex in new_segments[1:]:
+                new_run = OxmlElement('w:r')
+                orig_rpr = run._element.find(qn('w:rPr'))
+                if orig_rpr is not None:
+                    import copy as _copy
+                    new_rpr = _copy.deepcopy(orig_rpr)
+                    new_run.append(new_rpr)
+                t = OxmlElement('w:t')
+                t.text = seg_txt
+                t.set(qn('xml:space'), 'preserve')
+                new_run.append(t)
+                insert_idx += 1
+                parent_p.insert(insert_idx, new_run)
+                if seg_color_hex is not None:
+                    rpr = new_run.find(qn('w:rPr'))
+                    if rpr is None:
+                        rpr = OxmlElement('w:rPr')
+                        new_run.insert(0, rpr)
+                    for c in rpr.findall(qn('w:color')):
+                        rpr.remove(c)
+                    color_el = OxmlElement('w:color')
+                    color_el.set(qn('w:val'), seg_color_hex)
+                    rpr.append(color_el)
 
 
-def _clear_cell_shading(cell):
-    """Quita cualquier shading existente (vuelve a blanco)."""
-    tc_pr = cell._tc.get_or_add_tcPr()
-    for shd in tc_pr.findall(qn('w:shd')):
-        tc_pr.remove(shd)
+def _replace_status_emojis(doc):
+    """Recorre body + celdas y aplica el reemplazo de emojis de estado."""
+    for p in doc.paragraphs:
+        _replace_status_emojis_in_paragraph(p)
+    for tbl in doc.tables:
+        for row in tbl.rows:
+            for cell in row.cells:
+                for p in cell.paragraphs:
+                    _replace_status_emojis_in_paragraph(p)
+
+
+def _force_body_text_black(doc):
+    """Recorre todo el documento (body + tablas) y fuerza color = negro,
+    SALVO en runs cuyo color ya fue establecido en un valor de la paleta
+    de estados (verde/amarillo/rojo) por el reemplazo de emojis."""
+    status_hexes = {h.upper() for h in STATUS_EMOJI.values()}
+    def _process_paragraph(p):
+        for run in p.runs:
+            rgb = run.font.color.rgb
+            if rgb is not None and str(rgb).upper() in status_hexes:
+                continue  # preservar color de estado
+            run.font.color.rgb = BODY_TEXT
+    for p in doc.paragraphs:
+        _process_paragraph(p)
+    for tbl in doc.tables:
+        for row in tbl.rows:
+            for cell in row.cells:
+                for p in cell.paragraphs:
+                    _process_paragraph(p)
 
 
 def embellish(path: Path):
     print(f'──── {path.name}')
     if not path.exists():
-        print(f'  SKIP (no existe)')
+        print('  SKIP (no existe)')
         return
     doc = Document(str(path))
+
+    # 1) Reemplazar emojis 🟢🟡🔴 por ● coloreados ANTES de forzar negro
+    _replace_status_emojis(doc)
+
+    # 2) Forzar el resto del texto a negro (sin tocar los ● de estado)
+    _force_body_text_black(doc)
+
+    # 3) Estilizar cada tabla
     n = 0
     for tbl in doc.tables:
         n += 1
-        # 1. Quitar estilo heredado del reference doc (bordes punteados/azules)
         _strip_table_style(tbl)
         _set_table_width(tbl, pct=100)
         _set_table_layout_autofit(tbl)
         for r_idx, row in enumerate(tbl.rows):
             for c_idx, cell in enumerate(row.cells):
-                # Bordes sólidos negros en todas las celdas
-                _set_cell_borders(cell, color=BORDER_COLOR, size=BORDER_SIZE)
-                # Sin shading (blanco)
-                _clear_cell_shading(cell)
-                # Padding interno reducido
-                _set_cell_margins(cell, top=40, right=60, bottom=40, left=60)
-                # Tipografía
-                for p in cell.paragraphs:
-                    p.paragraph_format.space_before = Pt(0)
-                    p.paragraph_format.space_after  = Pt(0)
-                    for run in p.runs:
-                        run.font.size = TABLE_FONT_SZ
-                        if r_idx == 0:
+                _set_cell_borders(cell)
+                _set_cell_margins(cell)
+                if r_idx == 0:
+                    # Header: fondo azul-cyan + texto blanco bold
+                    _set_cell_shading(cell, HEADER_BG)
+                    for p in cell.paragraphs:
+                        p.paragraph_format.space_before = Pt(0)
+                        p.paragraph_format.space_after  = Pt(0)
+                        for run in p.runs:
                             run.font.bold = True
-                            # Header: texto negro bold, sin color de relleno
-                            run.font.color.rgb = RGBColor(0, 0, 0)
                             run.font.size = HEADER_FONT_SZ
-    # Forzar todo el texto a negro
-    _force_all_text_black(doc)
-    # Quitar bordes de párrafo (recuadros alrededor de captions)
+                            run.font.color.rgb = HEADER_TEXT
+                else:
+                    _clear_cell_shading(cell)
+                    for p in cell.paragraphs:
+                        p.paragraph_format.space_before = Pt(0)
+                        p.paragraph_format.space_after  = Pt(0)
+                        for run in p.runs:
+                            run.font.size = TABLE_FONT_SZ
+
+    # 4) Quitar bordes de párrafos (captions) y figuras
     _strip_paragraph_borders(doc)
-    # Quitar bordes de las figuras (contorno de imágenes inline / ancladas)
     _strip_figure_borders(doc)
+
     doc.save(str(path))
-    print(f'  ✓ {n} tablas embellecidas · texto en negro · sin recuadros en captions ni figuras')
+    print(f'  ✓ {n} tablas embellecidas · header azul-cyan + texto blanco · ● coloreados')
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        # Procesar los 3 documentos por default
         ROOT = Path(__file__).resolve().parents[1]
         targets = [
             ROOT / 'docs' / 'informe_final.docx',
