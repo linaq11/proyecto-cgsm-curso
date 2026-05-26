@@ -197,6 +197,33 @@ def _table_contains_drawing(tbl):
     return False
 
 
+def _unwrap_figure_tables(doc):
+    """Reemplaza cada tabla wrapper de figura por los parrafos que
+    contiene su unica celda. Pandoc envuelve cada figura en una tabla
+    1x1 para layout; al quitar la tabla y dejar solo los parrafos, el
+    DOCX queda sin la 'caja' invisible alrededor de la figura."""
+    unwrapped = 0
+    for tbl in list(doc.tables):
+        if not _table_contains_drawing(tbl):
+            continue
+        tbl_el = tbl._tbl
+        tbl_parent = tbl_el.getparent()
+        # Recolectar parrafos de la unica celda (en orden)
+        cell_paragraphs = []
+        for row in tbl.rows:
+            for cell in row.cells:
+                for p in cell.paragraphs:
+                    cell_paragraphs.append(p._p)
+        # Insertar parrafos justo antes de la tabla (lxml mueve, no copia)
+        tbl_idx = list(tbl_parent).index(tbl_el)
+        for i, p_el in enumerate(cell_paragraphs):
+            tbl_parent.insert(tbl_idx + i, p_el)
+        # Borrar la tabla vacia
+        tbl_parent.remove(tbl_el)
+        unwrapped += 1
+    return unwrapped
+
+
 def _strip_table_borders_and_shading(tbl):
     """Para tablas wrapper de figuras: borra bordes y shading
     completamente, sin aplicar el styling de header cyan."""
@@ -360,14 +387,12 @@ def embellish(path: Path):
     # 2) Forzar el resto del texto a negro (sin tocar los ● de estado)
     _force_body_text_black(doc)
 
-    # 3) Estilizar cada tabla (excepto wrappers de figuras)
+    # 3) Desenvolver las tablas wrapper de figura (1x1 con imagen)
+    unwrapped = _unwrap_figure_tables(doc)
+
+    # 4) Estilizar cada tabla restante
     n = 0
-    skipped_fig = 0
     for tbl in doc.tables:
-        if _table_contains_drawing(tbl):
-            _strip_table_borders_and_shading(tbl)
-            skipped_fig += 1
-            continue
         n += 1
         _strip_table_style(tbl)
         _set_table_width(tbl, pct=100)
@@ -394,16 +419,16 @@ def embellish(path: Path):
                         for run in p.runs:
                             run.font.size = TABLE_FONT_SZ
 
-    # 4) Quitar bordes de párrafos (captions) y figuras
+    # 5) Quitar bordes de párrafos (captions) y figuras
     _strip_paragraph_borders(doc)
     _strip_caption_shading(doc)
     _strip_figure_borders(doc)
-    # 5) Compactar layout (margenes + fuente Normal) para que el DOCX
+    # 6) Compactar layout (margenes + fuente Normal) para que el DOCX
     #    se pagine cerca del PDF en vez de duplicar paginas
     _compact_layout(doc)
 
     doc.save(str(path))
-    print(f'  ✓ {n} tablas embellecidas · {skipped_fig} wrappers de figura limpiadas')
+    print(f'  ✓ {n} tablas embellecidas · {unwrapped} wrappers de figura eliminados')
 
 
 if __name__ == '__main__':
