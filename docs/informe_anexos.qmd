@@ -116,7 +116,7 @@ earthengine authenticate --auth_mode=notebook
 
 # Autenticacion Climate Data Store (ECMWF) — para ERA5-Land
 # 1) Crear cuenta en https://cds.climate.copernicus.eu/
-# 2) Aceptar terminos del dataset reanalysis-era5-land-monthly-means
+# 2) Aceptar terminos del conjunto de datos reanalysis-era5-land-monthly-means
 # 3) Crear archivo ~/.cdsapirc con la URL y la API key personales
 ```
 ```r
@@ -169,7 +169,7 @@ La serie **vigente** (notebooks 01--12 + 02b, 04b/c_acotado, 09b, 11b, 12b/c, 14
 
 Las cifras de fragmentación sobre el AOI acotado se reportan en dos implementaciones independientes que arrojan conteos distintos del mismo conjunto de GeoJSON. En Julia, mediante el algoritmo del shoelace aplicado al anillo exterior de cada polígono (Tabla `tbl-fragmentación-acotado`), se contabilizan 79, 38 y 15 parches para los periodos de degradación, recuperación y actual respectivamente, en tanto que en Python con `geopandas` usando el atributo `geometry.area` (Tabla `tbl-topológia-acotado`), se contabilizan 17, 17 y 15. La discrepancia obedece a una diferencia metodológica especifica en el calculo del área por parche cuando los polígonos contienen anillos interiores.
 
-Cuando SamGeo segmenta un parche grande de manglar atravesado por un canal hidráulico --como el Caño Clarín o el Caño Aguas Negras--, el GeoJSON resultante exporta ese parche como un polígono con un anillo exterior que delimita la cobertura y uno o más anillos interiores que representan el canal. La implementacion en `geopandas` calcula el área neta restando los huecos --siguiendo la definición estándar del Simple Features Access para `Polygon.area`-- mientras que la implementacion Julia, al iterar sobre `ring = geom.coordinates[1]`, solo procesa el anillo exterior y reporta el área bruta del envolvente externo sin descontar los canales. En consecuencia, parches con grandes huecos internos quedan clasificados en el rango filtrado 1--5.000 ha por Julia pero por debajo del umbral inferior por `geopandas`, lo que infla el conteo de parches Julia en periodos donde la dinámica hídrica produce huecos detectables --2020 (degradación) y 2022 (recuperación), cuando los canales atraviesan manglar fragmentado por La Niña y la rehabilitacion hidráulica-- y coincide en el periodo actual (2024-2025) donde los parches sobrevivientes son más compactos sin canales internos visibles.
+Cuando SamGeo segmenta un parche grande de manglar atravesado por un canal hidráulico --como el Caño Clarín o el Caño Aguas Negras--, el GeoJSON resultante exporta ese parche como un polígono con un anillo exterior que delimita la cobertura y uno o más anillos interiores que representan el canal. La implementacion en `geopandas` calcula el área neta restando los huecos --siguiendo la definición estándar del Simple Features Access para `Polygon.area`-- mientras que la implementacion Julia, al iterar sobre `ring = geom.coordinates[1]`, solo procesa el anillo exterior y reporta el área bruta del envolvente externo sin descontar los canales. En consecuencia, parches con grandes huecos internos quedan clasificados en el rango filtrado 1--5.000 ha por Julia pero por debajo del umbral inferior por `geopandas`, lo que infla el conteo de parches Julia en periodos donde la dinámica hídrica produce huecos detectables --2020 (degradación) y 2022 (recuperación), cuando los canales atraviesan manglar fragmentado por La Niña y la rehabilitación hidráulica-- y coincide en el periodo actual (2024-2025) donde los parches sobrevivientes son más compactos sin canales internos visibles.
 
 Ambas mediciones tienen validez metodológica diferenciada. La versión `geopandas` reporta el área efectiva de cobertura de manglar, descontando agua interior, y es apropiada para indicadores de superficie y validación contra cartografía de referencia como GMW. La versión Julia reporta el área del envolvente del parche y es apropiada para indicadores de extensión del paisaje fragmentado y para calculos de conectividad mediante distancia entre envolventes. Para evitar confusion en el informe, en la Tabla `tbl-fragmentación-acotado` se reporta el conteo Julia con la columna explicita "Parches (Julia)" y se utiliza para indicadores de forma --MSI-- y aislamiento --NND--, mientras que en la Tabla `tbl-topológia-acotado` se reporta el conteo `geopandas` y se utiliza para indicadores de superficie y para el cruce con la frontera del AOI mediante predicados DE-9IM.
 
@@ -181,11 +181,11 @@ Para mantener el cuerpo del informe centrado en la interpretación de resultados
 
 ### E.1.a Lectura perezosa del datacube NetCDF con xarray
 
-El datacube trimestral materializado como NetCDF CF-1.8 se abre con evaluación perezosa mediante `xarray.open_dataset` con argumento `chunks`, de modo que las operaciones de selección y reducción se planifican como un grafo de cómputo dask y solo se materializan los píxeles necesaríos al invocar `.compute()`. Este patrón resulta indispensable para los tres archivos del proyecto (40 MB, 275 MB y 119 MB) cuando se trabaja sobre la totalidad de las 31 láminas trimestrales sin saturar la memoria del contenedor.
+El datacube trimestral materializado como NetCDF CF-1.8 se abre con evaluación perezosa mediante `xarray.open_conjunto de datos` con argumento `chunks`, de modo que las operaciones de selección y reducción se planifican como un grafo de cómputo dask y solo se materializan los píxeles necesaríos al invocar `.compute()`. Este patrón resulta indispensable para los tres archivos del proyecto (40 MB, 275 MB y 119 MB) cuando se trabaja sobre la totalidad de las 31 láminas trimestrales sin saturar la memoria del contenedor.
 
 ```python
 import xarray as xr
-ds = xr.open_dataset('data/processed/cubo/cgsm_datacube_trimestral.nc',
+ds = xr.open_conjunto de datos('data/processed/cubo/cgsm_datacube_trimestral.nc',
                      chunks={'time': 1, 'x': 512, 'y': 512})
 # Atributos CF-1.8: Conventions, institution, creator_name, crs_origen, ...
 # Acceso perezoso por chunks; .compute() materializa cuando es necesario
@@ -295,7 +295,7 @@ for periodo in ['degradación', 'recuperación', 'actual']:
 
 ### E.3.a Descarga ERA5-Land mediante cdsapi y cálculo de anomalías mensuales
 
-La descarga del reanálisis ERA5-Land del ECMWF se realiza con `cdsapi` directamente desde el Climate Data Store, solicitando precipitación total y temperatura a dos metros sobre un bounding box que envuelve la CGSM con buffer; los datos se reciben en NetCDF con convenciones CF y se cargan con `xarray.open_dataset(chunks=...)` aplicando un patrón perezoso, calculando la climatología mensual y la anomalía respecto a ella para los rezagos cero a tres meses.
+La descarga del reanálisis ERA5-Land del ECMWF se realiza con `cdsapi` directamente desde el Climate Data Store, solicitando precipitación total y temperatura a dos metros sobre un bounding box que envuelve la CGSM con buffer; los datos se reciben en NetCDF con convenciones CF y se cargan con `xarray.open_conjunto de datos(chunks=...)` aplicando un patrón perezoso, calculando la climatología mensual y la anomalía respecto a ella para los rezagos cero a tres meses.
 
 ```python
 import cdsapi, xarray as xr
@@ -307,7 +307,7 @@ c.retrieve('reanalysis-era5-land-monthly-means', {
     'month': [f'{m:02d}' for m in range(1, 13)],
     'time': '00:00', 'area': [11.20, -75.05, 10.30, -74.05],
     'format': 'netcdf'}, 'data/raw/era5_land_cgsm_monthly.nc')
-ds = xr.open_dataset('data/raw/era5_land_cgsm_monthly.nc', chunks={'time': 12})
+ds = xr.open_conjunto de datos('data/raw/era5_land_cgsm_monthly.nc', chunks={'time': 12})
 anom = ds.groupby('time.month') - ds.groupby('time.month').mean('time')
 ```
 
