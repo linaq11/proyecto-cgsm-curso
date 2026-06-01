@@ -694,50 +694,35 @@
 
   <div class="hero">
     <h2 style="margin:0">Objetivo general</h2>
-    <p style="font-size:var(--fs-md)"><b>Caracterizar la dinámica espaciotemporal del manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025</b> mediante una pipeline reproducible que integre Python, R y Julia con datos satelitales, climáticos e in-situ.</p>
+    <p style="font-size:var(--fs-md)"><b>Desarrollar un pipeline multilenguaje para el monitoreo del manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025.</b></p>
   </div>
 
-  <h3>Los 8 objetivos específicos · cada uno mapeado a notebooks</h3>
+  <h3>Los 5 objetivos específicos · alineados con el documento final</h3>
 
   <div class="card accent">
-    <h4>OE1 · Construir el datacube multitemporal</h4>
-    <p class="simple">Adquirir Sentinel-2 + Landsat 8 (2013-2025) vía GEE sobre AOI acotado (835 km²), aplicar máscaras de nubes, generar composites trimestrales y persistir en NetCDF CF-1.8 sobre EPSG:9377.</p>
-    <span class="tag">Notebook 01</span><span class="tag">Notebook 09</span><span class="tag py">Python</span>
+    <h4>OE1 · Construir un datacube multitemporal de índices espectrales</h4>
+    <p class="simple">Datacube multitemporal de índices espectrales (NDVI, NDWI, CMRI) sobre la CGSM para el periodo 2013-2025, integrando imágenes Landsat 8 y Sentinel-2. AOI acotado 835 km², composites trimestrales, NetCDF CF-1.8 sobre EPSG:9377.</p>
+    <span class="tag">Notebooks 01 · 09</span><span class="tag py">Python</span>
   </div>
   <div class="card accent">
-    <h4>OE2 · Analizar series temporales y detectar quiebres</h4>
-    <p class="simple">Extraer 929 registros mensuales NDVI en 8 estaciones, calcular z-scores, identificar anomalías y aplicar BFAST en R para detectar quiebres estructurales.</p>
-    <span class="tag">02</span><span class="tag">02b</span><span class="tag">02c</span><span class="tag py">Python</span><span class="tag r">R</span>
+    <h4>OE2 · Detectar periodos de degradación y recuperación</h4>
+    <p class="simple">Detectar periodos de degradación y recuperación del manglar mediante anomalías z-score y quiebres estructurales BFAST sobre las series temporales de NDVI. 929 registros mensuales en 8 estaciones.</p>
+    <span class="tag">02 · 02b · 02c</span><span class="tag py">Python</span><span class="tag r">R</span>
   </div>
   <div class="card accent">
-    <h4>OE3 · Segmentar parches con SamGeo y topología</h4>
-    <p class="simple">Aplicar SAM sobre 3 RGB Sentinel-2 representativos. Reproyectar a 9377. Computar predicados topológicos DE-9IM en Python y Julia.</p>
-    <span class="tag">03</span><span class="tag">04b</span><span class="tag">04c</span><span class="tag py">Python</span><span class="tag jl">Julia</span>
+    <h4>OE3 · Segmentar con SamGeo y caracterizar la fragmentación</h4>
+    <p class="simple">Segmentar la cobertura de manglar mediante SamGeo y caracterizar su fragmentación espacial a partir de métricas del paisaje (parches, área media, MSI, NND) calculadas en el sistema de referencia EPSG:9377. Cómputo geométrico en Julia.</p>
+    <span class="tag">03 · 04 · 04b · 04c</span><span class="tag py">Python</span><span class="tag jl">Julia</span>
   </div>
   <div class="card accent">
-    <h4>OE4 · Medir fragmentación del paisaje en Julia</h4>
-    <p class="simple">Implementar el algoritmo shoelace. Reportar parches, área media, MSI y NND para los tres periodos.</p>
-    <span class="tag">04</span><span class="tag jl">Julia</span>
+    <h4>OE4 · Evaluar la relación con forzamientos climático-hidrológicos</h4>
+    <p class="simple">Evaluar la relación temporal y estadística entre las perturbaciones detectadas en el manglar y los forzamientos climático-hidrológicos representados por ERA5-Land, índices ENSO de NOAA, caudal IDEAM-DHIME y precipitación CHIRPS.</p>
+    <span class="tag">07 · 11 · 11b · 12 · 12b · 12c</span><span class="tag py">Python</span><span class="tag r">R</span>
   </div>
   <div class="card accent">
-    <h4>OE5 · Acoplar forzamientos climáticos</h4>
-    <p class="simple">Cruzar NDVI con ERA5-Land (clima local), ONI/SOI (ENSO global), CHIRPS (lluvia) y caudal IDEAM (ríos aportantes).</p>
-    <span class="tag">07</span><span class="tag">11</span><span class="tag">11b</span><span class="tag">12</span><span class="tag">12b</span><span class="tag">12c</span><span class="tag py">Python</span><span class="tag r">R</span>
-  </div>
-  <div class="card accent">
-    <h4>OE6 · Validar contra cartografía y NASA</h4>
-    <p class="simple">Comparar contra INVEMAR 1:25.000 y ESA WorldCover v200. Benchmark Random Forest vs umbrales. Detectar inundación con Sentinel-1 SAR + GFD + JRC.</p>
-    <span class="tag">05</span><span class="tag">10</span><span class="tag">11</span><span class="tag">13</span>
-  </div>
-  <div class="card accent">
-    <h4>OE7 · Validación cruzada trilingüe</h4>
-    <p class="simple">Replicar el mismo análisis con los tres lenguajes y verificar convergencia. Las cuatro pruebas cruzadas (NDVI, caudal-NDVI, DE-9IM y ENSO) coinciden hasta el tercer decimal.</p>
-    <span class="tag">08</span><span class="tag">14</span><span class="tag py">Python</span><span class="tag r">R</span><span class="tag jl">Julia</span>
-  </div>
-  <div class="card accent">
-    <h4>OE8 · Dashboard + informe Quarto + artículo journal</h4>
-    <p class="simple">HTML con 17 capas temáticas. Informe de 29 páginas (Typst) que documenta cada decisión. Artículo journal condensado (~5.300 palabras) para revista indexada.</p>
-    <span class="tag">06</span><span class="tag">docs/informe_final.qmd</span><span class="tag">docs/cgsm_version_acotada.qmd</span>
+    <h4>OE5 · Validar contra cartografía oficial y benchmark Random Forest</h4>
+    <p class="simple">Validar la clasificación de manglar frente a las cartografías de referencia INVEMAR 1:25.000 y ESA WorldCover v200, comparando el clasificador por umbrales con un modelo de referencia Random Forest. F1 umbrales 0,583/0,548 vs F1 RF 0,826/0,889.</p>
+    <span class="tag">05 · 10 · 11 · 13</span><span class="tag py">Python</span>
   </div>
 </section>
 
