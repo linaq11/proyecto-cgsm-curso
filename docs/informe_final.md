@@ -1,18 +1,3 @@
----
-title: "Pipeline multilenguaje GeoAI para el monitoreo del manglar en la Ciénaga Grande de Santa Marta (2013–2025)"
-author: "Lina María Quintero Fonseca"
-date: "2026-05-31"
-lang: es
-format:
-  typst:
-    toc: false
-    number-sections: true
-    fontsize: 11pt
-    margin:
-      x: 2.5cm
-      y: 2.5cm
-    section-numbering: 1.1.a
----
 Universidad Nacional de Colombia Facultad de Ciencias Agrarias
 
 Programación en SIG, Proyecto Final
@@ -205,7 +190,7 @@ Finalmente, los productos del proyecto se integraron en un dashboard HTML con ca
 
 ## 7.8 Flujo de datos
 
-![](figures/flujo_metodologia.png){width="6.5in" height="3.658193350831146in"}
+![](informe_final_media/media/image3.png){width="6.5in" height="3.658193350831146in"}
 
 *Figura 3: Flujo metodológico del proyecto: cinco fases técnicas más un módulo transversal de forzamiento climático, ejecutadas dentro del contenedor Docker sig_unal v1.11 con validación cruzada entre Python, R y Julia.*
 
