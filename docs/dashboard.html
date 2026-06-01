@@ -480,11 +480,13 @@ a:focus-visible, button:focus-visible {
 <section id="panel-resumen" class="tab-panel active" role="tabpanel">
   <div class="purpose">
     <i class="bi bi-shield-check"></i>
-    <div>Herramienta de consulta operativa para gestores ambientales del
-    <strong>Plan de Manejo Ambiental del sitio <abbr title="Convención sobre humedales de importancia internacional. La CGSM es sitio Ramsar Nº 562 desde 1998">Ramsar</abbr> CGSM</strong>
-    y para las comunidades pesqueras de Tasajera, Pueblo Viejo y Buenavista.
-    Productos derivados de satélites públicos (Landsat 8/9 NASA-USGS, Sentinel-2/1 ESA)
-    validados contra cartografía <abbr title="Instituto de Investigaciones Marinas y Costeras 'José Benito Vives de Andréis' — autoridad colombiana en cartografía marino-costera">INVEMAR</abbr> 1:25.000.
+    <div>Herramienta de consulta operativa que transforma datos satelitales públicos
+    (Landsat 8/9 NASA-USGS, Sentinel-2/1 ESA) en indicadores de degradación, recuperación
+    e inundación del manglar de la Ciénaga Grande de Santa Marta. El monitor apoya
+    el seguimiento ambiental del <strong>sitio <abbr title="Convención sobre humedales de importancia internacional. La CGSM es sitio Ramsar Nº 562 desde 1998">Ramsar</abbr> CGSM</strong>
+    y la respuesta ante crisis hidroclimáticas que pueden afectar servicios ecosistémicos
+    clave para las comunidades pesqueras de Tasajera, Pueblo Viejo y Buenavista.
+    Validación cruzada contra cartografía <abbr title="Instituto de Investigaciones Marinas y Costeras 'José Benito Vives de Andréis' — autoridad colombiana en cartografía marino-costera">INVEMAR</abbr> 1:25.000.
     <a href="#glosario" id="purpose-glossary-link">Glosario ↗</a>
     <a href="#fuentes-nasa" id="purpose-nasa-link">Fuentes NASA ↗</a></div>
   </div>
@@ -519,12 +521,43 @@ a:focus-visible, button:focus-visible {
       <div class="kpi-body"><p class="kpi-title">Años de monitoreo continuo</p><p class="kpi-value">13</p></div></div>
   </div>
 
+  <div class="row">
+    <div class="card" style="background:linear-gradient(135deg,var(--surface-2),var(--surface));border-left:4px solid var(--primary,#0d6efd)">
+      <div class="card-body" style="padding:18px 22px">
+        <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+          <div style="flex:1;min-width:280px">
+            <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;color:var(--primary,#0d6efd)"><i class="bi bi-compass"></i> Cómo leer este monitor</h3>
+            <ol style="margin:0;padding-left:20px;font-size:13.5px;line-height:1.7">
+              <li><b>Estado actual</b> del manglar (KPIs e indicadores arriba)</li>
+              <li><b>Cambios de vigor NDVI</b> entre 2018 y 2025</li>
+              <li><b>Inundación SAR</b> durante La Niña 2020</li>
+              <li><b>Relación con caudal, precipitación y ENSO</b></li>
+              <li><b>Estado operativo por estación</b> (semáforo verde/amarillo/rojo)</li>
+            </ol>
+          </div>
+          <div style="flex:1;min-width:280px">
+            <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:1px;margin:0 0 10px;color:var(--primary,#0d6efd)"><i class="bi bi-broadcast"></i> Fuentes NASA y observación terrestre</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+              <span class="pill" style="font-size:11.5px;background:var(--info-soft);color:var(--info)">Landsat 8/9 NASA-USGS</span>
+              <span class="pill" style="font-size:11.5px;background:var(--info-soft);color:var(--info)">SRTM NASA</span>
+              <span class="pill" style="font-size:11.5px;background:var(--info-soft);color:var(--info)">Global Flood Database</span>
+              <span class="pill" style="font-size:11.5px;background:var(--info-soft);color:var(--info)">NOAA ENSO</span>
+              <span class="pill" style="font-size:11.5px;background:var(--info-soft);color:var(--info)">SamGeo / OpenGeos</span>
+              <span class="pill" style="font-size:11.5px;background:var(--warning-soft);color:var(--warning)">Alerta temprana</span>
+            </div>
+            <p style="font-size:12.5px;margin:0;color:var(--text-muted)">Detalle completo en la sección <a href="#fuentes-nasa" style="color:var(--primary);border-bottom:1px solid var(--primary);text-decoration:none">Fuentes NASA ↗</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="row cols-1-1">
     <div class="card figure-card">
       <div class="card-head"><h2 class="card-title">NDVI mediano del manglar denso · 2018–2025</h2></div>
       <div class="card-body figure">
         <img src="outputs/figures/ndvi_mediano_manglar_acotado.png" alt="Serie NDVI mediano del manglar 2018-2025">
-        <p class="caption">NDVI mensual sobre las cuatro estaciones de manglar denso. Caída a 0,60 en mid-2020 (La Niña) y recuperación sostenida hasta 0,80 desde 2022. Las bandas marcan los tres periodos de referencia: degradación, recuperación y actual.</p>
+        <p class="caption">NDVI mensual sobre las cuatro estaciones de manglar denso. Caída a 0,60 en mediados de 2020 (La Niña) y recuperación sostenida hasta 0,80 desde 2022. Las bandas marcan los tres periodos de referencia: degradación, recuperación y actual.</p>
       </div>
     </div>
     <div class="card figure-card">
@@ -547,11 +580,11 @@ a:focus-visible, button:focus-visible {
 
   <div class="row cols-55-45">
     <div class="card">
-      <div class="card-head"><h2 class="card-title">Cronología de quiebres bfast · 2013–2025</h2></div>
+      <div class="card-head"><h2 class="card-title">Cronología de quiebres BFAST · 2013–2025</h2></div>
       <div class="card-body">
         <ul class="findings">
           <li><span class="finding-tag yr">2016</span><span class="finding-txt">Quiebre estructural generalizado en 7 de 8 estaciones, asociado al evento El Niño 2015-2016.</span></li>
-          <li><span class="finding-tag yr danger">sep 2020</span><span class="finding-txt">Segunda perturbación mayor (anomalía NDVI z &lt; −3 en 2 de 8 estaciones) bajo La Niña 2020-2021. Quiebres bfast en <strong>Caño Palos (jul-2020)</strong> y <strong>Caño Clarín (feb-2020, abr-2021)</strong>.</span></li>
+          <li><span class="finding-tag yr danger">sep 2020</span><span class="finding-txt">Segunda perturbación mayor (anomalía NDVI z &lt; −3 en 2 de 8 estaciones) bajo La Niña 2020-2021. Quiebres BFAST en <strong>Caño Palos (jul-2020)</strong> y <strong>Caño Clarín (feb-2020, abr-2021)</strong>.</span></li>
           <li><span class="finding-tag yr">2022</span><span class="finding-txt">Quiebres adicionales en <strong>CP Aguas Negras (abr-2022)</strong> y <strong>CP Luna (ene-2022)</strong> por excedente hídrico post-Niña.</span></li>
           <li><span class="finding-tag yr warning">2023–24</span><span class="finding-txt">Tercer bloque: <strong>CP Aguas Negras (oct-2023)</strong>, <strong>Caño Palos (jul-2024)</strong> y <strong>CP Luna (jul-2024)</strong>, coincidente con El Niño 2023-2024 visible en el índice ONI.</span></li>
           <li><span class="finding-tag yr info">2001–17</span><span class="finding-txt">14 inundaciones documentadas (Global Flood Database). Máximo histórico: DFO_2625 (feb 2005), 299 km² afectados.</span></li>
@@ -563,7 +596,7 @@ a:focus-visible, button:focus-visible {
         relevantes —definidas como un
         <abbr title="z-score: desviación estandarizada respecto a la media histórica. z<-2 = anomalía significativa">z-score</abbr>
         menor a −2 frente a la media histórica de la estación— y los quiebres estructurales se identifican con el método
-        <abbr title="Breaks For Additive Season and Trend (Verbesselt et al., 2010): método estadístico que detecta cambios estructurales en series temporales descomponiéndolas en tendencia + estacionalidad + ruido">bfast</abbr>.</p>
+        <abbr title="Breaks For Additive Season and Trend (Verbesselt et al., 2010): método estadístico que detecta cambios estructurales en series temporales descomponiéndolas en tendencia + estacionalidad + ruido">BFAST</abbr>.</p>
       </div>
     </div>
 
@@ -606,13 +639,11 @@ a:focus-visible, button:focus-visible {
       <div class="card-body">
         <p>Entre 2020 y 2025 el área clasificada como manglar pasó de <strong>12.426 a 4.037 ha</strong>
         y el número de fragmentos cayó de <strong>79 a 15</strong>, mientras el tamaño medio de
-        fragmento creció de 157 a 269 ha. La paradoja es aparente: aunque el bosque ocupa menos
-        superficie cartografíada, los fragmentos sobrevivientes son más grandes y el vigor del
-        dosel —medido por el
+        fragmento creció de 157 a 269 ha. Aunque el área clasificada disminuye, los parches
+        sobrevivientes muestran mayor tamaño medio y recuperación del vigor
         <abbr title="Normalized Difference Vegetation Index — índice de vigor del dosel, escala 0-1">NDVI</abbr>
-        mediano— recuperó valores de 0,80 desde 2022, frente a los 0,60 de mid-2020. Esto
-        sugiere que el sistema se consolida alrededor de unidades de manglar más maduras en
-        lugar de fragmentarse aún más.</p>
+        mediano del dosel (de 0,60 en mediados de 2020 a 0,80 desde 2022). Esto sugiere
+        consolidación estructural del manglar, no necesariamente pérdida homogénea del ecosistema.</p>
       </div>
     </div>
   </div>
@@ -671,9 +702,10 @@ a:focus-visible, button:focus-visible {
           Detección de inundación por diferencia de retrodispersión
           <abbr title="Sentinel-1 (ESA): satélite de radar de apertura sintética que opera de día y de noche, atravesando nubes">Sentinel-1</abbr>
           <abbr title="SAR = Synthetic Aperture Radar; VH = polarización vertical-horizontal, sensible a estructura de vegetación e inundación">SAR-VH</abbr>
-          entre periodo seco (ene-mar 2020, 49 imágenes) y periodo inundado
-          (sep-oct 2020, 36 imágenes). Umbral de +3 dB para agua abierta; valores
-          negativos para inundación bajo dosel (scattering de doble rebote agua-tronco).
+          entre el periodo seco de referencia (enero-marzo de 2020, 49 imágenes) y el periodo de inundación
+          (septiembre-octubre de 2020, 36 imágenes). Se identificó agua abierta cuando ΔVH fue inferior a −3 dB,
+          asociada con reflexión especular, y manglar inundado bajo dosel cuando ΔVH fue positiva,
+          atribuible a dispersión de doble rebote agua-tronco.
         </p>
         <div class="table-wrap">
           <table class="data">
@@ -896,7 +928,7 @@ a:focus-visible, button:focus-visible {
         y de la segmentación con
         <abbr title="Segment Anything for Geospatial: integración del modelo Segment Anything Model de Meta AI para segmentación automática de imágenes satelitales">SamGeo</abbr>;
         <strong>R</strong> corre los quiebres
-        <abbr title="Breaks For Additive Season and Trend (Verbesselt et al., 2010): detecta cambios estructurales en series temporales">bfast</abbr>
+        <abbr title="Breaks For Additive Season and Trend (Verbesselt et al., 2010): detecta cambios estructurales en series temporales">BFAST</abbr>
         y las series ecohidrológicas con <code>tidyverse</code> y <code>stars</code>;
         <strong>Julia</strong> calcula las métricas de fragmentación y los predicados topológicos
         sobre los polígonos vectoriales. Para confirmar que los tres entornos producen
@@ -983,8 +1015,8 @@ a:focus-visible, button:focus-visible {
         <h3 style="margin-top:24px">Pregunta de investigación</h3>
         <p class="question">¿Cómo ha variado la cobertura, la fragmentación y el vigor del
         manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025, y qué evidencia
-        cuantitativa permite atribuir las perturbaciones detectadas a forzamientos climáticos
-        asociados al evento La Niña 2020–2021?</p>
+        cuantitativa permite relacionar las perturbaciones detectadas con los forzamientos
+        climáticos asociados a los eventos ENSO del periodo?</p>
       </div>
     </div>
 
@@ -1043,7 +1075,7 @@ a:focus-visible, button:focus-visible {
           <span class="chip">Docker</span>
           <span class="chip">GEE</span>
           <span class="chip">SamGeo</span>
-          <span class="chip">bfast</span>
+          <span class="chip">BFAST</span>
           <span class="chip">LibGEOS</span>
           <span class="chip">tidyverse</span>
           <span class="chip">DataFrames.jl</span>
@@ -1095,7 +1127,7 @@ a:focus-visible, button:focus-visible {
       <div class="card-head"><h2 class="card-title">Flujo de la metodología · de la imagen al indicador</h2></div>
       <div class="card-body figure">
         <img src="outputs/figures/flujo_metodologia.png" alt="Flujo de metodología">
-        <p class="caption">Flujo metodológico en seis fases secuenciales: ingesta GEE, construcción del datacube, análisis de series bfast, segmentación SamGeo + Random Forest, métricas de fragmentación Julia, validación cruzada SAR + INVEMAR. Validación entre Python, R y Julia en cada fase. Toda la cadena se ejecuta dentro de un contenedor Docker que garantiza reproducibilidad bit a bit.</p>
+        <p class="caption">Flujo metodológico en seis fases secuenciales: ingesta GEE, construcción del datacube, análisis de series BFAST, segmentación SamGeo + Random Forest, métricas de fragmentación Julia, validación cruzada SAR + INVEMAR. Validación entre Python, R y Julia en cada fase. Toda la cadena se ejecuta dentro de un contenedor Docker que garantiza reproducibilidad bit a bit.</p>
       </div>
     </div>
 
@@ -1111,7 +1143,7 @@ a:focus-visible, button:focus-visible {
           <dt>MSI</dt><dd>Mean Shape Index. Razón perímetro/área de los parches. 1 = forma simple, &gt;1 = bordes irregulares.</dd>
           <dt>NND</dt><dd>Nearest Neighbor Distance. Distancia media al parche más cercano.</dd>
           <dt>F1 / Recall / Precision</dt><dd>Métricas de exactitud de clasificación. F1 es la media armónica entre Precision y Recall.</dd>
-          <dt>bfast</dt><dd>Breaks For Additive Season and Trend (Verbesselt et al., 2010). Detecta quiebres estructurales en series temporales.</dd>
+          <dt>BFAST</dt><dd>Breaks For Additive Season and Trend (Verbesselt et al., 2010). Detecta quiebres estructurales en series temporales.</dd>
           <dt>Random Forest</dt><dd>Clasificador supervisado de ensamble basado en árboles de decisión.</dd>
           <dt>z-score</dt><dd>Anomalía estandarizada respecto a la media histórica. z &lt; −2 = anomalía significativa.</dd>
           <dt>ENSO / ONI / SOI</dt><dd>El Niño-Southern Oscillation. Índices Oceanic Niño Index (NOAA, temperatura) y Southern Oscillation Index (presión atmosférica).</dd>
