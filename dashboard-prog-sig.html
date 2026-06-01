@@ -153,14 +153,14 @@
   <h1>Manglares de la <span class="a">Ciénaga Grande de Santa Marta</span> · Monitoreo 2013-2025</h1>
   <div class="sub">Proyecto de Programación SIG · Maestría en Geomática UNAL · Lina M. Quintero Fonseca · Docente: Alexys H. Rodríguez-Avellaneda PhD</div>
   <div class="meta">
-    <span><b>Sistema:</b> CGSM · 86 310 ha de manglar</span>
+    <span><b>Sistema:</b> Ramsar CGSM · AOI acotado 835 km²</span>
     <span><b>Período:</b> 12 años de imágenes satelitales</span>
     <span><b>Herramientas:</b> Python + R + Julia</span>
     <span><b>33 notebooks</b> · 50 tablas · 44 figuras</span>
     <span><b>Informe:</b> 29 pp Typst</span>
   </div>
   <nav class="tabs">
-    <div class="tab active" data-pane="resumen">Resumen ejecutivo</div>
+    <div class="tab active" data-pane="resumen">Resumen</div>
     <div class="tab" data-pane="contexto">1 · Contexto</div>
     <div class="tab" data-pane="problema">2 · Problema</div>
     <div class="tab" data-pane="estado">3 · Estado del arte</div>
@@ -289,8 +289,8 @@
 
   <div class="explain">
     <h4>¿Qué es la Ciénaga Grande de Santa Marta (CGSM)?</h4>
-    <p class="simple">Sistema lagunar costero más extenso de Colombia, ubicado en el Caribe (departamento del Magdalena). Cuenta con <b>86 310 hectáreas de manglar</b> (= 863 km², casi el doble de Bogotá). Designada <b>sitio Ramsar</b> desde 1998 y <b>Reserva de Biosfera UNESCO</b> desde 2000.</p>
-    <div class="why">es el manglar más grande del Caribe colombiano y está protegido por convenios internacionales.</div>
+    <p class="simple">Sistema lagunar costero más extenso de Colombia, en el departamento del Magdalena. Forma parte del <b>sitio Ramsar Sistema Delta Estuarino del Río Magdalena-CGSM</b> (Nº 562, desde 1998) y de la <b>Reserva de Biosfera UNESCO</b> (desde 2000). El análisis del proyecto se acota al <b>área protegida oficial</b> conformada por el Santuario de Fauna y Flora CGSM y la Vía Parque Isla de Salamanca (<b>835,3 km²</b>), donde la cobertura de manglar al cierre del periodo (2024-2025) es de <b>4.037 ha</b>.</p>
+    <div class="why">es uno de los manglares más extensos del Caribe colombiano y está protegido por convenios internacionales; las cifras del proyecto se reportan sobre el área protegida oficial.</div>
   </div>
 
   <h3>Servicios ecosistémicos del manglar CGSM</h3>
@@ -437,54 +437,72 @@
 <!-- ════════ 3 · ESTADO DEL ARTE ════════ -->
 <section id="pane-estado" class="pane">
   <h2>3 · Estado del arte</h2>
-  <p class="lead">Cuatro caminos confluyen en el marco teórico del proyecto. Cada uno aporta una pieza del rompecabezas metodológico.</p>
+  <p class="lead">Tres décadas de monitoreo satelital del manglar, organizadas en cuatro vertientes que alimentan el marco teórico del proyecto.</p>
 
-  <h3>Camino A · Mapas globales · visión amplia, baja frecuencia</h3>
+  <h3>Vertiente A · Inventarios globales con Landsat y SAR banda L</h3>
   <div class="explain">
-    <h4>Global Mangrove Watch · Bunting et al. (2022)</h4>
-    <p class="simple">Mapa global del manglar producido con Landsat, actualizado cada 5-10 años. Provee la línea base mundial. Limitación: granularidad temporal insuficiente para detectar ciclos rápidos.</p>
-    <div class="why">una foto satelital del planeta cada década; útil para tendencias largas, lenta para alertas tempranas.</div>
-  </div>
-
-  <h3>Camino B · Sentinel-2 + GEE · alta frecuencia, escala local</h3>
-  <div class="explain">
-    <h4>Google Earth Engine · Gorelick et al. (2017)</h4>
-    <p class="simple">Plataforma gratuita de Google que aloja todas las imágenes Landsat y Sentinel listas para usar en la nube, sin descarga local.</p>
-    <div class="why">acceso planetario a todos los satélites desde una hoja de cálculo en línea.</div>
+    <h4>Giri et al. (2011) · primeros inventarios modernos</h4>
+    <p class="simple">Mosaico Landsat circa 2000 con resolución de 30 m. Establece la línea base global de manglares.</p>
+    <div class="why">la primera fotografía mundial sistemática del manglar.</div>
   </div>
   <div class="explain">
-    <h4>Kotikot et al. (2024) · Mangrove RF en GEE</h4>
-    <p class="simple">Aplicación de Random Forest sobre Sentinel-2 para clasificar manglares en África del Este. Metodología replicada en la tarea de Percepción Remota del mismo semestre, con éxito en CGSM.</p>
-    <div class="why">receta de cocina aplicable a otros humedales con ajustes locales.</div>
+    <h4>Hamilton y Casey (2016) · CGMFC-21</h4>
+    <p class="simple">Serie anual continua de cobertura de manglar 2000-2012, derivada de Landsat. Aporta la primera trayectoria temporal anualizada a escala global.</p>
+    <div class="why">una serie de 13 fotos satelitales anuales como base de cambio interdécadal.</div>
   </div>
   <div class="explain">
-    <h4>Raza et al. (2024) · Series temporales Pakistán</h4>
-    <p class="simple">Estudio análogo asiático con 7 años de Sentinel-2. En este proyecto se extiende la idea a 12 años mediante la combinación con Landsat 8.</p>
-    <div class="why">la misma estrategia con una serie temporal más larga para capturar al menos un ciclo ENSO completo.</div>
+    <h4>Bunting et al. (2022) · Global Mangrove Watch v3.0 (JAXA)</h4>
+    <p class="simple">Referencia más completa para 1996-2020 mediante detección de cambios sobre series SAR en banda L. Granularidad temporal limitada para ciclos rápidos.</p>
+    <div class="why">la cartografía mundial más usada como ground truth; lenta para alertas tempranas.</div>
   </div>
 
-  <h3>Camino C · Inteligencia artificial generalista (SAM y derivados)</h3>
+  <h3>Vertiente B · Sentinel-2 + GEE · alta densidad temporal</h3>
   <div class="explain">
-    <h4>Segment Anything Model · Kirillov et al. (2023, Meta)</h4>
-    <p class="simple">Modelo de IA que segmenta automáticamente cualquier objeto en una imagen sin entrenamiento previo.</p>
-    <div class="why">un sistema que aprende dónde está el contorno del manglar sin ejemplos etiquetados manualmente.</div>
+    <h4>Raza et al. (2024) · NDVI Sentinel-2 en GEE</h4>
+    <p class="simple">Demuestra que la serie NDVI Sentinel-2 detecta tendencias de deterioro fisiológico aún cuando la extensión del bosque permanece estable. Justifica reportar condición además de cobertura.</p>
+    <div class="why">la cobertura por sí sola engaña; el vigor espectral revela degradación oculta.</div>
   </div>
   <div class="explain">
-    <h4>SamGeo · Wu Q.</h4>
-    <p class="simple">Adaptación de SAM para datos geoespaciales con coordenadas. Usado en el notebook 03 para extraer parches de manglar.</p>
-    <div class="why">la versión SAM que entiende coordenadas geográficas y proyecciones.</div>
+    <h4>Yancho et al. (2020) · GEEMMM Myanmar</h4>
+    <p class="simple">Google Earth Engine Mangrove Mapping Methodology, herramienta abierta para gestores costeros sin formación especializada. Arquitectura comparable a la adoptada en este proyecto.</p>
+    <div class="why">modelo de pipeline reproducible en GEE pensado para autoridades ambientales.</div>
+  </div>
+  <div class="explain">
+    <h4>Selvaraj y Gallego-Pérez (2023) · Pacífico colombiano</h4>
+    <p class="simple">Aplica GEE al mapeo del Pacífico colombiano integrando datos ópticos Landsat + SAR ALOS-2/PALSAR-2 con Random Forest. Referencia técnica directa para banda L en manglar tropical.</p>
+    <div class="why">el antecedente colombiano más cercano metodológicamente, en Pacífico no en Caribe.</div>
   </div>
 
-  <h3>Camino D · Antecedentes específicos de la CGSM</h3>
+  <h3>Vertiente C · Índices espectrales, atribución global y validación</h3>
+  <div class="explain">
+    <h4>Gupta et al. (2018) · CMRI = NDVI − NDWI</h4>
+    <p class="simple">Combined Mangrove Recognition Index. Alcanza exactitud del 73 % vs 56 % del NDVI estándar para discriminar manglar en ambientes estuarinos. Adoptado en el clasificador por umbrales.</p>
+    <div class="why">una resta entre dos índices clásicos mejora claramente la discriminación.</div>
+  </div>
+  <div class="explain">
+    <h4>Goldberg et al. (2020) · atribución global</h4>
+    <p class="simple">62 % de la pérdida mundial 2000-2016 asociada con cambios de uso del suelo, 80 % concentrado en seis países del sudeste asiático. El marco subestima la degradación gradual fuera de esos países.</p>
+    <div class="why">la causa dominante global no aplica para Colombia; aquí domina la degradación gradual.</div>
+  </div>
+  <div class="explain">
+    <h4>Olofsson et al. (2014) · marco de validación</h4>
+    <p class="simple">Recomendaciones de diseño de muestreo probabilístico, matriz de error en proporciones de área e intervalos de confianza para superficies de cambio. Marco metodológico de la validación del proyecto.</p>
+    <div class="why">la convención de oro para reportar la calidad de un mapa de cambio.</div>
+  </div>
+
+  <h3>Vertiente D · Antecedentes específicos de Colombia y CGSM</h3>
   <table>
-    <tr><th>Autor</th><th>Aporte</th></tr>
-    <tr><td>INVEMAR (2024)</td><td>Reporte oficial del manglar colombiano · 6 estaciones permanentes</td></tr>
-    <tr><td>Beltrán et al. (2022)</td><td>Datos CARICOMP 1995-2021 (estructura forestal in-situ)</td></tr>
-    <tr><td>Murillo-Sandoval et al. (2022)</td><td>Trayectoria 1984-2020 del manglar colombiano</td></tr>
-    <tr><td>Simard et al. (2008)</td><td>Mapeo 3D del manglar CGSM con SRTM + ICESat</td></tr>
-    <tr><td>Rivera-Monroy / Ibarra (2014)</td><td>Recuperación del bosque post-rehabilitación hidráulica</td></tr>
-    <tr><td>López-Rodríguez et al.</td><td>Efecto ENSO + rehabilitación sobre salinidad y manglar</td></tr>
+    <tr><th>Autor · año</th><th>Aporte</th></tr>
+    <tr><td><b>Vinasco et al. (2020)</b></td><td>Antecedente local más cercano: cambios de cobertura CGSM 2013-2018 con Landsat 8 + RF sobre clases CORINE. No aisló manglar como clase específica ni integró condición fisiológica, fragmentación, inundación bajo dosel y forzamientos hidroclimáticos.</td></tr>
+    <tr><td><b>Murillo-Sandoval et al. (2022)</b></td><td>36 años de cobertura de manglar en Colombia con LandTrendr. Pérdida total de 48.000 ha, de las cuales <b>38.469 ± 2.829 ha</b> corresponden a degradación interna (transiciones graduales) más que a conversión abrupta a usos antrópicos.</td></tr>
+    <tr><td><b>INVEMAR (2020)</b></td><td>Cartografía oficial colombiana del manglar a escala 1:25.000 mediante clasificación supervisada en GEE con datos ópticos y radar. Referencia de validación del proyecto.</td></tr>
+    <tr><td><b>ESA WorldCover v200</b></td><td>Producto global complementario de validación; junto con INVEMAR define el techo metodológico F1 = 0,833 que impone la discrepancia entre cartografías oficiales.</td></tr>
   </table>
+
+  <h3>Síntesis · vacío metodológico que aborda el proyecto</h3>
+  <div class="finding ok"><b>El vacío no es la ausencia de información sobre manglares en CGSM</b>, sino la falta de un flujo reproducible que articule en una misma arquitectura: observación óptica + radar, segmentación automática, métricas de fragmentación, análisis de quiebres temporales y forzamientos climático-hidrológicos.</div>
+  <div class="finding ok">La aparición de <b>SAM (Segment Anything Model)</b> y su adaptación geoespacial <b>SamGeo (Wu Q.)</b> abre la oportunidad de complementar las clasificaciones convencionales con segmentación guiada por prompts.</div>
+  <div class="finding ok">En paralelo, el concepto de <b>Gemelo Digital aplicado a humedales</b> ofrece un marco para integrar observación de la Tierra, modelos físicos, aprendizaje automático y alertas tempranas en la gestión adaptativa de ecosistemas. El proyecto se plantea como componente operativo inicial bajo ese enfoque.</div>
 </section>
 
 <!-- ════════ 4 · VACÍOS ════════ -->
@@ -497,7 +515,7 @@
     <tr><td>SamGeo agotó memoria a 10 m</td><td>El modelo SAM es pesado; se remuestreó RGB a 30 m</td><td>Documentado · trade-off aceptado</td></tr>
     <tr><td>Discontinuidad espectral L8 ↔ S2</td><td>Los sensores miden distinto; aparece salto artificial en 2017-2018</td><td>Reportado · armonización pendiente</td></tr>
     <tr><td>F1 umbrales = 0,548-0,583 vs F1 Selvaraj 0,80-0,90</td><td>Clasificador determinístico por umbrales vs Random Forest supervisado con SAR</td><td>Resuelto · benchmark RF alcanza F1 = 0,826 (INVEMAR) y 0,889 (WorldCover)</td></tr>
-    <tr><td>Sentinel-2 ciego en lluviosa</td><td>Cobertura de nubes saturada abril-noviembre</td><td>Pendiente Sentinel-1 SAR en la tesis</td></tr>
+    <tr><td>Sentinel-2 ciego en lluviosa</td><td>Cobertura de nubes saturada abril-noviembre</td><td>Resuelto · Sentinel-1 SAR-VH integrado (43,08 km² inundación bajo dosel sept 2020 + correlación SAR-VH↔NDVI ρ=+0,807 ANE, +0,731 LUN)</td></tr>
     <tr><td>Las 4 estaciones IDEAM no están sobre manglar</td><td>Quedan sobre cuerpos de agua</td><td>Se separaron por naturaleza espectral</td></tr>
     <tr><td>BFAST h=0.15 conservador</td><td>No detecta El Niño 2016</td><td>Se probó h=0.10 y reaparecen 7 quiebres</td></tr>
   </table>
@@ -541,12 +559,12 @@
 
   <h3>Trabajo futuro</h3>
   <ul style="font-size:var(--fs-sm);line-height:1.7;margin:0 0 0 22px">
-    <li>Armonizar Landsat 8 ↔ Sentinel-2 para eliminar la discontinuidad</li>
-    <li>Entrenar Random Forest con puntos GMW como referencia de etiqueta</li>
-    <li>Validar SamGeo contra cartografía INVEMAR 1:25 000</li>
-    <li>Integrar Sentinel-1 SAR para cubrir la temporada lluviosa</li>
-    <li>Publicar el datacube como STAC catalog con pystac</li>
-    <li>Unificar el conjunto de 8 estaciones BFAST con la clasificación espectral</li>
+    <li>Armonizar Landsat 8 ↔ Sentinel-2 para eliminar la discontinuidad espectral en 2017-2018</li>
+    <li>Benchmark sistemático SamGeo + MW-SAM vs Random Forest sobre extent + condition + flooding (línea base RF F1=0,826 ya establecida en PROG_SIG)</li>
+    <li>Integrar ALOS-2 PALSAR-2 banda L para resolver inundación bajo dosel y estructura del manglar donde la banda C alcanza su techo de sensibilidad</li>
+    <li>Publicar el datacube como STAC catalog con pystac para interoperabilidad</li>
+    <li>Unificar el conjunto de 8 estaciones PROG_SIG con las 5 estaciones CARICOMP del Informe 2 para análisis cruzado robusto (solo 2 coincidentes hoy)</li>
+    <li>Integrar BFAST Monitor multisensor (VH banda C + HV banda L + NDVI S2) como capa de alerta temprana del Digital Twin, con confirmación por física complementaria entre sensores</li>
   </ul>
 </section>
 
