@@ -421,7 +421,7 @@
   <h3>Por qué el monitoreo actual no alcanza</h3>
   <table>
     <tr><th>Limitación</th><th>Significado operativo</th></tr>
-    <tr><td>6 estaciones fijas</td><td>Cubren menos del 1% del sistema de 1 286 km². Imposible interpolar entre puntos.</td></tr>
+    <tr><td>8 estaciones de muestreo</td><td>Cubren menos del 1 % del AOI acotado (835 km², SFF CGSM + VPI Salamanca). Imposible interpolar entre puntos.</td></tr>
     <tr><td>Visitas periódicas</td><td>Ventanas largas entre mediciones; eventos rápidos pasan desapercibidos.</td></tr>
     <tr><td>Productos globales decadales</td><td>El Global Mangrove Watch se actualiza cada 5-10 años.</td></tr>
     <tr><td>Nubosidad persistente</td><td>Sentinel-2 queda saturado de nubes entre abril y noviembre.</td></tr>
@@ -822,9 +822,9 @@
   <div class="step" data-n="17"><h4>Notebook 06 · Dashboard 17 capas</h4>
     <div class="meta">06_dashboard.ipynb · outputs/maps/dashboard_CGSM_final.html</div>
     <p>HTML interactivo con Leaflet que integra todas las capas temáticas.</p></div>
-  <div class="step" data-n="18"><h4>docs/informe_final.qmd</h4>
-    <div class="meta">125 KB Quarto → 29 pp PDF</div>
-    <p>Informe completo con código embebido que reproduce todo el análisis.</p></div>
+  <div class="step" data-n="18"><h4>docs/informe_final.docx → .qmd Typst</h4>
+    <div class="meta">docx revisado → Typst → 29 pp PDF</div>
+    <p>Informe completo. Fuente de verdad en Word (docx revisado), regeneración de HTML/MD/PDF vía <code>scripts/update_from_docx.sh</code>.</p></div>
 </section>
 
 <!-- ════════ 8 · RESULTADOS ════════ -->
@@ -839,7 +839,7 @@
     <div class="stat"><div class="n">7/8 estaciones</div><div class="l">quiebre 2016 con BFAST h=0.10 · El Niño</div></div>
     <div class="stat"><div class="n">79 → 15</div><div class="l">parches degradación → actual · −81%</div></div>
     <div class="stat"><div class="n">1,10 → 2,39 km</div><div class="l">distancia entre vecinos NND · más aislamiento</div></div>
-    <div class="stat"><div class="n">+76 km²</div><div class="l">ganancia neta 2020 vs 2024-25</div></div>
+    <div class="stat"><div class="n">+76 km²</div><div class="l">balance SamGeo: -183,2 + 259,2 km² sobre base estable 690,9 km²</div></div>
     <div class="stat"><div class="n">F1=0,826 (RF)</div><div class="l">vs INVEMAR 1:25.000 · benchmark Random Forest</div></div>
   </div>
 
@@ -1010,7 +1010,7 @@
 
 <!-- ════════ 10 · NOTEBOOKS ════════ -->
 <section id="pane-notebooks" class="pane">
-  <h2>10 · Catálogo de notebooks · 29 archivos explicados</h2>
+  <h2>10 · Catálogo de notebooks · 33 archivos explicados</h2>
   <p class="lead">Filtrar por categoría para ver el subconjunto relevante.</p>
 
   <div class="filter-bar">
@@ -1045,7 +1045,7 @@
     <div class="nb" data-cat="clima"><div class="nb-id">12b</div><div><div class="nb-name">12b_caudal_ideam_elbanco.ipynb · 12c R version</div><div class="nb-what">Caudal mensual del Magdalena en El Banco (IDEAM-DHIME). Versión Python + R para cross-check.</div><div class="nb-out"><b>Entrega:</b> caudal_ideam_mensual.csv · correlacion_caudal_ndvi.csv · 2 figuras</div></div></div>
     <div class="nb" data-cat="validacion"><div class="nb-id">13</div><div><div class="nb-name">13_validacion_invemar.ipynb</div><div class="nb-what">Valida contra cartografía oficial colombiana del manglar (INVEMAR 1:25 000).</div><div class="nb-out"><b>Entrega:</b> validacion_invemar_acotado.csv</div></div></div>
     <div class="nb" data-cat="validacion"><div class="nb-id">14</div><div><div class="nb-name">14_validacion_trilingual.ipynb</div><div class="nb-what">Replica el mismo cálculo con Python, R y Julia. Verifica consistencia entre lenguajes.</div><div class="nb-out"><b>Entrega:</b> validacion_trilingual_resultados.csv · convergencia hasta el tercer decimal</div></div></div>
-    <div class="nb" data-cat="reporte"><div class="nb-id">aux</div><div><div class="nb-name">area_estudio.ipynb · crear_qmd.ipynb</div><div class="nb-what">Utilities: genera el mapa del área de estudio y arma el documento Quarto.</div><div class="nb-out"><b>Entrega:</b> docs/informe_final.qmd · 125 KB → 29 pp PDF</div></div></div>
+    <div class="nb" data-cat="reporte"><div class="nb-id">aux</div><div><div class="nb-name">area_estudio.ipynb · crear_qmd.ipynb</div><div class="nb-what">Utilities: genera el mapa del área de estudio y arma el documento.</div><div class="nb-out"><b>Entrega:</b> docs/informe_final.docx → 29 pp PDF (Typst)</div></div></div>
   </div>
 </section>
 
@@ -1055,7 +1055,7 @@
 
   <div class="finding ok"><b>La pipeline multilenguaje es viable y productiva.</b> Python + R + Julia se complementan: Python para satélites y SamGeo, R para BFAST y series ecohidrológicas, Julia para fragmentación y predicados DE-9IM con LibGEOS. Cuatro validaciones cruzadas formales confirman convergencia hasta el tercer decimal entre los tres lenguajes.</div>
 
-  <div class="finding"><b>La caracterización espaciotemporal cubre el periodo 2013-2025</b> integrando 929 registros mensuales NDVI combinados Landsat 8 + Sentinel-2, 18 anomalías significativas (sept 2020 La Niña), un quiebre estructural generalizado en 2016 (El Niño 2015-2016 en 7/8 estaciones con bfast h=0.10), y un análisis bfast unificado sobre las 4 estaciones de manglar denso que refina los eventos La Niña 2020, post-Niña 2022 y El Niño 2023-24.</div>
+  <div class="finding"><b>La caracterización espaciotemporal cubre el periodo 2013-2025</b> integrando 929 registros mensuales NDVI combinados Landsat 8 + Sentinel-2, 18 anomalías significativas (sept 2020 La Niña), un quiebre estructural generalizado en 2016 (El Niño 2015-2016 en 7/8 estaciones con BFAST h=0.10), y un análisis BFAST unificado sobre las 4 estaciones de manglar denso que refina los eventos La Niña 2020, post-Niña 2022 y El Niño 2023-24.</div>
 
   <div class="finding warn"><b>Cambio neto positivo +76 km² entre 2020 y 2025 — acompañado de fragmentación creciente.</b> La cobertura clasificada por umbrales no equivale a cobertura real: el mapa de cambio NDVI sobre el datacube trimestral CF-1.8 muestra ganancia de vigor sobre parches sobrevivientes y pérdida en bordes hipersalinos.</div>
 
@@ -1074,7 +1074,7 @@
     <li>Ampliar la red IDEAM más allá de El Banco y Ganadería Caribe ya integradas, incorporando los tributarios secundarios del bajo Magdalena (Fundación, Río Frío)</li>
     <li>Profundizar el análisis ENSO con métricas de eventos discretos (duración acumulada de fases La Niña) y el Atlantic Multidecadal Oscillation (AMO) que podría modular la dinámica de la cuenca Magdalena</li>
     <li>Refinar el clasificador supervisado bajando el umbral NDVI de 0,70 a 0,60-0,65 y combinándolo con CMRI para mejorar la Recall sin sacrificar Precisión</li>
-    <li>Extender el análisis bfast unificado al periodo 2013-2025 incorporando Landsat 8 sobre las cuatro estaciones de manglar denso</li>
+    <li>Extender el análisis BFAST unificado al periodo 2013-2025 incorporando Landsat 8 sobre las cuatro estaciones de manglar denso</li>
     <li>Ampliar la ventana del periodo "actual" a por lo menos dos ciclos anuales adicionales (julio 2025-junio 2027) para diferenciar fluctuación intermedia de tendencia estable</li>
     <li>Empaquetar el datacube como STAC catalog con pystac para interoperabilidad</li>
     <li>Armonizar espectralmente Landsat 8 ↔ Sentinel-2 para eliminar la discontinuidad de la serie alrededor de 2018</li>
