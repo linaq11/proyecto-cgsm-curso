@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>CGSM 2013-2025 · Pipeline multilenguaje · Lina M. Quintero Fonseca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --surface-0:#0a0d12; --surface-1:#11151c; --surface-2:#181d26;
+    --surface-3:#1f2530; --surface-4:#2a313e;
+    --border-subtle:#21262d; --border-default:#30363d; --border-strong:#484f58;
+    --text-1:#e6edf3; --text-2:#adb5bd; --text-3:#7a838e; --text-4:#4d555f;
+    --primary-300:#79c0ff; --primary-500:#4493f8;
+    --success:#3fb950; --warning:#d29922; --danger:#f85149; --info:#58a6ff;
+    --c-blue:#79c0ff; --c-purple:#d2a8ff; --c-amber:#ffa657; --c-green:#7ee787;
+    --c-pink:#ff9ec4; --c-red:#ff7b72; --c-teal:#56d4dd;
+    --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px;
+    --space-5:24px; --space-6:32px; --space-7:48px; --space-8:64px;
+    --font-sans:'Inter',system-ui,-apple-system,sans-serif;
+    --font-mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+    --fs-xs:11.5px; --fs-sm:12.5px; --fs-base:14px; --fs-md:15.5px;
+    --fs-lg:17.5px; --fs-xl:20px; --fs-2xl:24px; --fs-3xl:30px;
+    --radius-xs:4px; --radius-sm:6px; --radius-md:8px;
+    --radius-lg:12px; --radius-xl:16px; --radius-full:9999px;
+    --elev-1:0 1px 2px rgba(0,0,0,.4); --elev-2:0 2px 8px rgba(0,0,0,.5);
+    --elev-3:0 8px 24px rgba(0,0,0,.55);
+    --ease-out:cubic-bezier(0.16,1,0.3,1);
+    --dur-fast:150ms; --dur-base:240ms;
+    color-scheme:dark;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0;background:var(--surface-0);color:var(--text-1);
+    font-family:var(--font-sans);font-size:var(--fs-base);line-height:1.6;
+    font-feature-settings:'cv02','cv03','ss01';
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  :focus-visible{outline:2px solid var(--c-amber);outline-offset:2px;border-radius:var(--radius-xs);}
+  header{padding:var(--space-5) var(--space-6) 0;
+    background:color-mix(in srgb,var(--surface-1) 80%,transparent);
+    backdrop-filter:blur(12px) saturate(140%);
+    border-bottom:1px solid var(--border-subtle);position:sticky;top:0;z-index:10;}
+  h1{margin:0 0 var(--space-1);font-size:var(--fs-2xl);font-weight:700;letter-spacing:-0.02em;line-height:1.2;}
+  h1 .a{color:var(--c-amber);}
+  .sub{color:var(--text-2);font-size:var(--fs-base);max-width:80ch;}
+  .meta{display:flex;gap:var(--space-2) var(--space-5);flex-wrap:wrap;margin-top:var(--space-4);font-size:var(--fs-xs);color:var(--text-3);}
+  .meta b{color:var(--text-2);font-weight:500;}
+  nav.tabs{display:flex;gap:0;margin-top:var(--space-5);border-bottom:1px solid var(--border-subtle);overflow-x:auto;scrollbar-width:thin;}
+  .tab{padding:var(--space-3) var(--space-4);cursor:pointer;color:var(--text-3);border-bottom:2px solid transparent;font-weight:500;font-size:var(--fs-sm);white-space:nowrap;transition:all var(--dur-fast) var(--ease-out);user-select:none;}
+  .tab:hover{color:var(--text-1);}
+  .tab.active{color:var(--c-amber);border-bottom-color:var(--c-amber);}
+  main{padding:var(--space-6);max-width:1400px;margin:0 auto;}
+  section.pane{display:none;}
+  section.pane.active{display:block;animation:fade-in var(--dur-base) var(--ease-out);}
+  @keyframes fade-in{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  h2{font-size:var(--fs-xl);font-weight:600;margin:var(--space-3) 0 var(--space-4);letter-spacing:-0.01em;line-height:1.3;}
+  h3{font-size:var(--fs-md);font-weight:600;margin:var(--space-6) 0 var(--space-3);color:var(--text-1);display:flex;align-items:center;gap:var(--space-2);}
+  h3::before{content:"";flex:0 0 3px;height:18px;background:var(--c-amber);border-radius:var(--radius-xs);}
+  h4{font-size:var(--fs-base);font-weight:600;margin:var(--space-4) 0 var(--space-2);color:var(--text-1);}
+  p{margin:var(--space-2) 0;}
+  p.lead{color:var(--text-2);font-size:var(--fs-md);max-width:75ch;line-height:1.65;}
+  p.simple{font-size:var(--fs-base);line-height:1.7;color:var(--text-1);max-width:75ch;}
+  .grid{display:grid;gap:var(--space-3);grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}
+  .stat{background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:var(--space-4);transition:all var(--dur-fast) var(--ease-out);}
+  .stat:hover{transform:translateY(-2px);border-color:var(--border-default);box-shadow:var(--elev-2);}
+  .stat .n{font-size:var(--fs-xl);font-weight:700;color:var(--c-amber);letter-spacing:-0.025em;line-height:1.15;font-variant-numeric:tabular-nums;}
+  .stat .l{font-size:var(--fs-xs);color:var(--text-3);margin-top:var(--space-1);line-height:1.4;}
+  .card{background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);margin:var(--space-3) 0;transition:border-color var(--dur-fast) var(--ease-out);}
+  .card:hover{border-color:var(--border-default);}
+  .card.warn{border-left:3px solid var(--warning);}
+  .card.ok{border-left:3px solid var(--success);}
+  .card.bad{border-left:3px solid var(--danger);}
+  .card.accent{border-left:3px solid var(--c-amber);}
+  .finding{background:var(--surface-2);border:1px solid var(--border-subtle);border-left:3px solid var(--c-amber);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);margin:var(--space-2) 0;font-size:var(--fs-sm);line-height:1.65;}
+  .finding.bad{border-left-color:var(--danger);}
+  .finding.warn{border-left-color:var(--warning);}
+  .finding.ok{border-left-color:var(--success);}
+  table{width:100%;border-collapse:separate;border-spacing:0;margin:var(--space-3) 0;background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);overflow:hidden;font-size:var(--fs-sm);}
+  th,td{padding:var(--space-3) var(--space-4);text-align:left;border-bottom:1px solid var(--border-subtle);vertical-align:top;line-height:1.5;}
+  th{background:var(--surface-3);color:var(--text-2);font-weight:600;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:0.06em;}
+  td{font-variant-numeric:tabular-nums;}
+  tr:last-child td{border-bottom:none;}
+  tbody tr:hover td{background:color-mix(in srgb,var(--c-amber) 6%,transparent);}
+  code{background:var(--surface-3);padding:1px 6px;border-radius:var(--radius-xs);font-size:0.88em;font-family:var(--font-mono);color:var(--text-1);border:1px solid var(--border-subtle);}
+  .tag{display:inline-flex;align-items:center;font-size:var(--fs-xs);padding:2px 8px;border-radius:var(--radius-full);background:var(--surface-3);color:var(--text-2);border:1px solid var(--border-subtle);margin:2px 4px 2px 0;font-weight:500;}
+  .tag.ok{color:var(--success);border-color:color-mix(in srgb,var(--success) 50%,var(--border-subtle));background:color-mix(in srgb,var(--success) 8%,var(--surface-3));}
+  .tag.bad{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 50%,var(--border-subtle));background:color-mix(in srgb,var(--danger) 8%,var(--surface-3));}
+  .tag.warn{color:var(--warning);border-color:color-mix(in srgb,var(--warning) 50%,var(--border-subtle));background:color-mix(in srgb,var(--warning) 8%,var(--surface-3));}
+  .tag.py{color:var(--c-blue);border-color:color-mix(in srgb,var(--c-blue) 50%,var(--border-subtle));}
+  .tag.r{color:var(--c-purple);border-color:color-mix(in srgb,var(--c-purple) 50%,var(--border-subtle));}
+  .tag.jl{color:#a78bfa;border-color:#a78bfa;}
+  .explain{background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);margin:var(--space-3) 0;border-left:3px solid var(--c-blue);}
+  .explain h4{margin:0 0 var(--space-2);font-size:var(--fs-md);}
+  .explain .why{color:var(--text-2);font-size:var(--fs-sm);font-style:italic;margin-top:var(--space-2);padding-left:var(--space-3);border-left:2px solid var(--c-teal);}
+  .explain .why::before{content:"En términos simples — ";color:var(--c-teal);font-weight:600;font-style:normal;}
+  .nb{background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);margin:var(--space-2) 0;display:grid;grid-template-columns:auto 1fr;gap:var(--space-3);align-items:start;transition:all var(--dur-fast) var(--ease-out);}
+  .nb:hover{border-color:var(--border-default);box-shadow:var(--elev-1);}
+  .nb .nb-id{flex:0 0 auto;width:44px;height:44px;border-radius:var(--radius-md);background:var(--surface-3);border:1px solid var(--border-subtle);color:var(--c-amber);font-weight:700;text-align:center;line-height:42px;font-family:var(--font-mono);font-size:var(--fs-xs);}
+  .nb .nb-name{font-size:var(--fs-sm);font-weight:600;color:var(--text-1);margin-bottom:var(--space-1);font-family:var(--font-mono);}
+  .nb .nb-what{font-size:var(--fs-sm);color:var(--text-2);line-height:1.55;}
+  .nb .nb-out{font-size:var(--fs-xs);color:var(--text-3);margin-top:var(--space-2);}
+  .nb .nb-out b{color:var(--c-amber);font-weight:600;}
+  .fig{background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);margin:var(--space-2) 0;}
+  .fig .fig-name{font-family:var(--font-mono);font-size:var(--fs-xs);color:var(--c-amber);margin-bottom:var(--space-1);}
+  .fig .fig-desc{font-size:var(--fs-sm);color:var(--text-1);line-height:1.55;}
+  .fig .fig-read{font-size:var(--fs-xs);color:var(--text-3);font-style:italic;margin-top:var(--space-1);}
+  .fig .fig-read::before{content:"Lectura — ";color:var(--c-teal);font-style:normal;font-weight:600;}
+  .filter-bar{display:flex;gap:var(--space-2);flex-wrap:wrap;margin:var(--space-3) 0;}
+  .filter{background:var(--surface-2);border:1px solid var(--border-subtle);color:var(--text-2);padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);cursor:pointer;font-size:var(--fs-xs);font-weight:500;font-family:inherit;transition:all var(--dur-fast) var(--ease-out);}
+  .filter:hover{color:var(--text-1);border-color:var(--border-default);background:var(--surface-3);}
+  .filter.active{background:var(--c-amber);color:var(--surface-0);border-color:var(--c-amber);}
+  .step{background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4) var(--space-3) calc(var(--space-4) + 40px);margin:var(--space-2) 0;position:relative;font-size:var(--fs-sm);line-height:1.6;}
+  .step::before{content:attr(data-n);position:absolute;left:var(--space-3);top:var(--space-3);width:30px;height:30px;border-radius:var(--radius-full);background:var(--c-amber);color:var(--surface-0);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:var(--fs-xs);font-variant-numeric:tabular-nums;}
+  .step h4{margin:0 0 var(--space-1);font-size:var(--fs-sm);font-weight:600;}
+  .step .meta{font-size:var(--fs-xs);color:var(--text-3);font-family:var(--font-mono);margin-bottom:var(--space-1);}
+  .twocol{display:grid;gap:var(--space-4);grid-template-columns:1fr 1fr;}
+  @media(max-width:780px){.twocol{grid-template-columns:1fr;}}
+  .conn{background:linear-gradient(135deg,color-mix(in srgb,var(--c-amber) 6%,transparent),color-mix(in srgb,var(--c-purple) 3%,transparent));border:1px solid var(--border-subtle);border-left:3px solid var(--c-amber);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);margin:var(--space-3) 0;font-size:var(--fs-sm);line-height:1.65;}
+  footer{color:var(--text-3);font-size:var(--fs-xs);padding:var(--space-5) var(--space-6);border-top:1px solid var(--border-subtle);text-align:center;margin-top:var(--space-7);}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:var(--radius-full);border:2px solid var(--surface-1);}
+  ::selection{background:color-mix(in srgb,var(--c-amber) 35%,transparent);color:var(--text-1);}
+  .hero{background:linear-gradient(135deg,color-mix(in srgb,var(--c-amber) 10%,var(--surface-2)),color-mix(in srgb,var(--c-green) 4%,var(--surface-2)));border:1px solid var(--border-subtle);border-radius:var(--radius-xl);padding:var(--space-5) var(--space-6);margin:var(--space-4) 0;}
+  .hero h2{margin-top:0;}
+  .hero p{font-size:var(--fs-md);line-height:1.65;}
+  .key{background:var(--surface-3);padding:1px 8px;border-radius:var(--radius-xs);color:var(--c-amber);font-weight:600;border:1px solid color-mix(in srgb,var(--c-amber) 30%,var(--border-subtle));}
+
+  /* ── SVG Diagram wrappers ── */
+  .diagram-wrap{background:var(--surface-2);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);padding:var(--space-4);margin:var(--space-4) 0;box-shadow:var(--elev-1);}
+  .diagram-wrap svg{display:block;margin:0 auto;width:100%;height:auto;max-width:1100px;}
+  .dgm-title{color:var(--c-amber);font-size:var(--fs-xs);text-align:center;margin:var(--space-1) 0 var(--space-4);font-weight:600;letter-spacing:0.1em;text-transform:uppercase;}
+  .dgm-caption{color:var(--text-3);font-size:var(--fs-xs);text-align:center;margin-top:var(--space-3);line-height:1.5;max-width:80ch;margin-left:auto;margin-right:auto;}
+
+  /* SVG interactive nodes */
+  svg .node-box{cursor:pointer;transition:all var(--dur-base) var(--ease-out);}
+  svg .node-box:hover rect{filter:brightness(1.25) drop-shadow(0 0 6px currentColor);}
+  svg .node-box:hover text{font-weight:700;}
+  svg .timeline-event{cursor:pointer;transition:all var(--dur-base) var(--ease-out);}
+  svg .timeline-event:hover circle{r:9;filter:drop-shadow(0 0 8px currentColor);}
+  svg .bar-group{cursor:pointer;transition:all var(--dur-base) var(--ease-out);}
+  svg .bar-group:hover rect{filter:brightness(1.2);}
+
+  /* Animated dotted flow line */
+  @keyframes dash{to{stroke-dashoffset:-20;}}
+  svg .flow-arrow{stroke-dasharray:6 4;animation:dash 1.2s linear infinite;}
+
+  @media print{nav.tabs,footer{display:none;}section.pane{display:block !important;page-break-after:always;}body{background:#fff;color:#000;}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Manglares de la <span class="a">Ciénaga Grande de Santa Marta</span> · Monitoreo 2013-2025</h1>
+  <div class="sub">Proyecto de Programación SIG · Maestría en Geomática UNAL · Lina M. Quintero Fonseca · Docente: Alexys H. Rodríguez-Avellaneda PhD</div>
+  <div class="meta">
+    <span><b>Sistema:</b> CGSM · 86 310 ha de manglar</span>
+    <span><b>Período:</b> 12 años de imágenes satelitales</span>
+    <span><b>Herramientas:</b> Python + R + Julia</span>
+    <span><b>33 notebooks</b> · 50 tablas · 44 figuras</span>
+    <span><b>Informe:</b> 29 pp Typst</span>
+  </div>
+  <nav class="tabs">
+    <div class="tab active" data-pane="resumen">Resumen ejecutivo</div>
+    <div class="tab" data-pane="contexto">1 · Contexto</div>
+    <div class="tab" data-pane="problema">2 · Problema</div>
+    <div class="tab" data-pane="estado">3 · Estado del arte</div>
+    <div class="tab" data-pane="vacios">4 · Vacíos</div>
+    <div class="tab" data-pane="propuesta">5 · Propuesta</div>
+    <div class="tab" data-pane="objetivos">6 · Objetivos</div>
+    <div class="tab" data-pane="metodo">7 · Metodología</div>
+    <div class="tab" data-pane="resultados">8 · Resultados</div>
+    <div class="tab" data-pane="figuras">9 · Figuras</div>
+    <div class="tab" data-pane="notebooks">10 · Notebooks</div>
+    <div class="tab" data-pane="conclusiones">11 · Conclusiones</div>
+    <div class="tab" data-pane="tesis">12 · Conexión con tesis</div>
+  </nav>
+</header>
+
+<main>
+
+<!-- ════════ RESUMEN EJECUTIVO ════════ -->
+<section id="pane-resumen" class="pane active">
+  <div class="hero">
+    <h2>El proyecto en una frase</h2>
+    <p>Se construyó una pipeline reproducible que combina <span class="key">Python</span> + <span class="key">R</span> + <span class="key">Julia</span> para monitorear la dinámica del manglar de la Ciénaga Grande de Santa Marta durante <span class="key">12 años</span> (2013-2025) a partir de imágenes satelitales gratuitas, datos climáticos globales y mediciones in-situ.</p>
+  </div>
+
+  <h3>Hallazgos principales en cifras</h3>
+  <div class="grid">
+    <div class="stat"><div class="n">12 años</div><div class="l">de imágenes satelitales analizadas (2013-2025)</div></div>
+    <div class="stat"><div class="n">929</div><div class="l">mediciones mensuales de verdor del manglar</div></div>
+    <div class="stat"><div class="n">7 de 8</div><div class="l">estaciones con quiebre 2015-2016 (El Niño)</div></div>
+    <div class="stat"><div class="n">43 km²</div><div class="l">inundación bajo dosel detectada por SAR · sept 2020 (La Niña)</div></div>
+    <div class="stat"><div class="n">79 → 15</div><div class="l">menos parches y más grandes (consolidación)</div></div>
+    <div class="stat"><div class="n">+76 km²</div><div class="l">balance SamGeo: -183,2 + 259,2 km² sobre base estable de 690,9 km²</div></div>
+    <div class="stat"><div class="n">F1 = 0,826</div><div class="l">Random Forest vs cartografía oficial INVEMAR 1:25.000</div></div>
+    <div class="stat"><div class="n">4 / 4</div><div class="l">validaciones cruzadas Python · R · Julia coincidentes</div></div>
+  </div>
+
+  <h3>Diagrama del proyecto en una vista</h3>
+  <div class="diagram-wrap">
+    <div class="dgm-title">Visión general · 4 fuentes de datos → 6 fases → 4 productos</div>
+    <svg viewBox="0 0 1100 480" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad-amber" x1="0" x2="1">
+          <stop offset="0" stop-color="#ffa657" stop-opacity="0.3"/>
+          <stop offset="1" stop-color="#ffa657" stop-opacity="0.05"/>
+        </linearGradient>
+        <marker id="arr-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#ffa657"/>
+        </marker>
+      </defs>
+      <!-- INPUTS column -->
+      <g font-family="Inter" font-size="11" text-anchor="middle">
+        <text x="120" y="30" fill="#7a838e" font-size="10" letter-spacing="0.1em">FUENTES DE DATOS</text>
+        <g class="node-box"><rect x="30" y="50" width="180" height="50" rx="8" fill="#1f2530" stroke="#79c0ff" stroke-width="1.5"/><text x="120" y="72" fill="#79c0ff" font-weight="600">Sentinel-2 + Landsat 8</text><text x="120" y="88" fill="#adb5bd" font-size="10">Google Earth Engine</text></g>
+        <g class="node-box"><rect x="30" y="120" width="180" height="50" rx="8" fill="#1f2530" stroke="#79c0ff" stroke-width="1.5"/><text x="120" y="142" fill="#79c0ff" font-weight="600">ERA5-Land · CHIRPS</text><text x="120" y="158" fill="#adb5bd" font-size="10">Clima local + lluvia satelital</text></g>
+        <g class="node-box"><rect x="30" y="190" width="180" height="50" rx="8" fill="#1f2530" stroke="#79c0ff" stroke-width="1.5"/><text x="120" y="212" fill="#79c0ff" font-weight="600">ENSO ONI · SOI · NOAA</text><text x="120" y="228" fill="#adb5bd" font-size="10">Forzamiento climático global</text></g>
+        <g class="node-box"><rect x="30" y="260" width="180" height="50" rx="8" fill="#1f2530" stroke="#79c0ff" stroke-width="1.5"/><text x="120" y="282" fill="#79c0ff" font-weight="600">Caudal IDEAM · DHIME</text><text x="120" y="298" fill="#adb5bd" font-size="10">Río Magdalena · El Banco</text></g>
+        <g class="node-box"><rect x="30" y="330" width="180" height="50" rx="8" fill="#1f2530" stroke="#79c0ff" stroke-width="1.5"/><text x="120" y="352" fill="#79c0ff" font-weight="600">INVEMAR · GBIF</text><text x="120" y="368" fill="#adb5bd" font-size="10">Estaciones · cartografía oficial</text></g>
+      </g>
+      <!-- DATACUBE central -->
+      <g class="node-box">
+        <rect x="320" y="170" width="200" height="110" rx="12" fill="url(#grad-amber)" stroke="#ffa657" stroke-width="2.5"/>
+        <text x="420" y="200" text-anchor="middle" fill="#ffa657" font-family="Inter" font-weight="700" font-size="14">DATACUBE</text>
+        <text x="420" y="220" text-anchor="middle" fill="#e6edf3" font-family="Inter" font-size="11">NetCDF CF-1.8</text>
+        <text x="420" y="238" text-anchor="middle" fill="#e6edf3" font-family="Inter" font-size="11">EPSG:9377</text>
+        <text x="420" y="256" text-anchor="middle" fill="#adb5bd" font-family="Inter" font-size="10">2013-2025 · 10 m · 4 archivos</text>
+      </g>
+      <!-- arrows from inputs to datacube -->
+      <g fill="none" stroke="#79c0ff" stroke-width="1.5" opacity="0.55" marker-end="url(#arr-amber)">
+        <path d="M 210 75 C 270 75 280 210 320 210"/>
+        <path d="M 210 145 C 270 145 280 215 320 215"/>
+        <path d="M 210 215 Q 270 220 320 220"/>
+        <path d="M 210 285 C 270 285 280 235 320 235"/>
+        <path d="M 210 355 C 270 355 280 240 320 240"/>
+      </g>
+      <!-- PHASES (Python R Julia) -->
+      <g font-family="Inter" font-size="11" text-anchor="middle">
+        <text x="700" y="30" fill="#7a838e" font-size="10" letter-spacing="0.1em">PIPELINE · 3 LENGUAJES</text>
+        <g class="node-box"><rect x="600" y="50" width="200" height="50" rx="8" fill="#1f2530" stroke="#79c0ff" stroke-width="1.5"/><text x="700" y="72" fill="#79c0ff" font-weight="600">Python · Adquisición + IA</text><text x="700" y="88" fill="#adb5bd" font-size="10">geemap · samgeo · xarray</text></g>
+        <g class="node-box"><rect x="600" y="120" width="200" height="50" rx="8" fill="#1f2530" stroke="#d2a8ff" stroke-width="1.5"/><text x="700" y="142" fill="#d2a8ff" font-weight="600">R · Estadística + BFAST</text><text x="700" y="158" fill="#adb5bd" font-size="10">bfast · stars · sf · terra</text></g>
+        <g class="node-box"><rect x="600" y="190" width="200" height="50" rx="8" fill="#1f2530" stroke="#a78bfa" stroke-width="1.5"/><text x="700" y="212" fill="#a78bfa" font-weight="600">Julia · Fragmentación</text><text x="700" y="228" fill="#adb5bd" font-size="10">shoelace · NND · MSI</text></g>
+      </g>
+      <!-- arrows datacube to phases -->
+      <g fill="none" stroke="#ffa657" stroke-width="1.5" opacity="0.6" marker-end="url(#arr-amber)" class="flow-arrow">
+        <path d="M 520 200 C 560 200 570 75 600 75"/>
+        <path d="M 520 220 Q 560 220 600 145"/>
+        <path d="M 520 240 C 560 240 570 215 600 215"/>
+      </g>
+      <!-- OUTPUTS column -->
+      <g font-family="Inter" font-size="11" text-anchor="middle">
+        <text x="990" y="30" fill="#7a838e" font-size="10" letter-spacing="0.1em">PRODUCTOS</text>
+        <g class="node-box"><rect x="880" y="50" width="200" height="50" rx="8" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/><text x="980" y="72" fill="#7ee787" font-weight="600">Dashboard 17 capas</text><text x="980" y="88" fill="#adb5bd" font-size="10">HTML interactivo</text></g>
+        <g class="node-box"><rect x="880" y="120" width="200" height="50" rx="8" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/><text x="980" y="142" fill="#7ee787" font-weight="600">Informe Typst</text><text x="980" y="158" fill="#adb5bd" font-size="10">29 páginas · PDF</text></g>
+        <g class="node-box"><rect x="880" y="190" width="200" height="50" rx="8" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/><text x="980" y="212" fill="#7ee787" font-weight="600">50 tablas CSV</text><text x="980" y="228" fill="#adb5bd" font-size="10">Resultados numéricos</text></g>
+        <g class="node-box"><rect x="880" y="260" width="200" height="50" rx="8" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/><text x="980" y="282" fill="#7ee787" font-weight="600">44 figuras PNG</text><text x="980" y="298" fill="#adb5bd" font-size="10">Series · mapas · validación</text></g>
+        <g class="node-box"><rect x="880" y="330" width="200" height="50" rx="8" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/><text x="980" y="352" fill="#7ee787" font-weight="600">Repositorio GitHub</text><text x="980" y="368" fill="#adb5bd" font-size="10">Docker · reproducible</text></g>
+      </g>
+      <!-- arrows phases to outputs -->
+      <g fill="none" stroke="#a78bfa" stroke-width="1.5" opacity="0.5" marker-end="url(#arr-amber)">
+        <path d="M 800 75 C 840 75 850 75 880 75"/>
+        <path d="M 800 145 C 840 145 850 145 880 145"/>
+        <path d="M 800 215 C 840 215 850 215 880 215"/>
+        <path d="M 800 145 C 840 145 850 285 880 285"/>
+        <path d="M 800 215 C 840 215 850 355 880 355"/>
+      </g>
+      <!-- Legend bottom -->
+      <g font-family="Inter" font-size="10.5" fill="#7a838e">
+        <text x="120" y="430" text-anchor="middle">5 fuentes</text>
+        <text x="420" y="430" text-anchor="middle">Datacube unificado</text>
+        <text x="700" y="430" text-anchor="middle">3 lenguajes</text>
+        <text x="980" y="430" text-anchor="middle">5 productos abiertos</text>
+      </g>
+    </svg>
+    <div class="dgm-caption">Pase el cursor sobre cualquier bloque para destacarlo. El datacube CF-1.8 actúa como núcleo común que alimenta los tres lenguajes; los productos son completamente abiertos y reproducibles.</div>
+  </div>
+</section>
+
+<!-- ════════ 1 · CONTEXTO ════════ -->
+<section id="pane-contexto" class="pane">
+  <h2>1 · Contexto — por qué importa</h2>
+
+  <div class="explain">
+    <h4>¿Qué es un manglar?</h4>
+    <p class="simple">Bosque tropical que crece donde el río se encuentra con el mar. Los árboles tienen raíces adaptadas que toleran agua salada. Constituye uno de los ecosistemas más productivos del planeta.</p>
+    <div class="why">funciona como una esponja viva entre el río y el mar — filtra agua, frena olas y captura carbono.</div>
+  </div>
+
+  <div class="explain">
+    <h4>¿Qué es la Ciénaga Grande de Santa Marta (CGSM)?</h4>
+    <p class="simple">Sistema lagunar costero más extenso de Colombia, ubicado en el Caribe (departamento del Magdalena). Cuenta con <b>86 310 hectáreas de manglar</b> (= 863 km², casi el doble de Bogotá). Designada <b>sitio Ramsar</b> desde 1998 y <b>Reserva de Biosfera UNESCO</b> desde 2000.</p>
+    <div class="why">es el manglar más grande del Caribe colombiano y está protegido por convenios internacionales.</div>
+  </div>
+
+  <h3>Servicios ecosistémicos del manglar CGSM</h3>
+  <table>
+    <tr><th>Servicio</th><th>Magnitud documentada</th></tr>
+    <tr><td>Captura de carbono azul</td><td>3 a 5 veces más carbono por hectárea que un bosque amazónico</td></tr>
+    <tr><td>Protección costera</td><td>Reduce energía de oleaje y altura de marejada antes de la línea de costa</td></tr>
+    <tr><td>Sostén pesquero</td><td>Más de <b>30 000 personas ribereñas</b> dependen de la pesca artesanal</td></tr>
+    <tr><td>Regulación hídrica</td><td>Filtra y sedimenta antes de la entrega al Caribe</td></tr>
+    <tr><td>Biodiversidad</td><td>Hábitat de especies endémicas, aves migratorias, manatíes, caimanes</td></tr>
+  </table>
+
+  <h3>Las 4 especies dominantes</h3>
+  <div class="grid">
+    <div class="stat"><div class="n" style="font-size:14px"><i>Rhizophora mangle</i></div><div class="l">Mangle rojo · raíces zancudas · borde acuático</div></div>
+    <div class="stat"><div class="n" style="font-size:14px"><i>Avicennia germinans</i></div><div class="l">Mangle negro · neumatóforos · suelos salinos</div></div>
+    <div class="stat"><div class="n" style="font-size:14px"><i>Laguncularia racemosa</i></div><div class="l">Mangle blanco · zonas intermedias</div></div>
+    <div class="stat"><div class="n" style="font-size:14px"><i>Conocarpus erectus</i></div><div class="l">Mangle botoncillo · borde terrestre</div></div>
+  </div>
+</section>
+
+<!-- ════════ 2 · PROBLEMA ════════ -->
+<section id="pane-problema" class="pane">
+  <h2>2 · Planteamiento del problema</h2>
+
+  <div class="hero">
+    <h2 style="margin:0">En una frase</h2>
+    <p style="font-size:var(--fs-md)">El manglar de la CGSM <b>se degrada y se recupera en ciclos</b> que no se detectan a tiempo porque el monitoreo actual depende de pocas estaciones fijas, productos globales decadales e interpretación visual escena por escena.</p>
+  </div>
+
+  <h3>Cronología visual del problema (1950-2025)</h3>
+  <div class="diagram-wrap">
+    <div class="dgm-title">Línea de tiempo · 75 años de presión sobre el manglar CGSM</div>
+    <svg viewBox="0 0 1100 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- main timeline -->
+      <line x1="50" y1="160" x2="1050" y2="160" stroke="#30363d" stroke-width="2"/>
+      <!-- tick marks decades -->
+      <g font-family="Inter" font-size="10" fill="#7a838e" text-anchor="middle">
+        <line x1="80" y1="155" x2="80" y2="165" stroke="#7a838e"/><text x="80" y="180">1950</text>
+        <line x1="220" y1="155" x2="220" y2="165" stroke="#7a838e"/><text x="220" y="180">1970</text>
+        <line x1="360" y1="155" x2="360" y2="165" stroke="#7a838e"/><text x="360" y="180">1990</text>
+        <line x1="500" y1="155" x2="500" y2="165" stroke="#7a838e"/><text x="500" y="180">2000</text>
+        <line x1="640" y1="155" x2="640" y2="165" stroke="#7a838e"/><text x="640" y="180">2010</text>
+        <line x1="780" y1="155" x2="780" y2="165" stroke="#7a838e"/><text x="780" y="180">2015</text>
+        <line x1="920" y1="155" x2="920" y2="165" stroke="#7a838e"/><text x="920" y="180">2020</text>
+        <line x1="1040" y1="155" x2="1040" y2="165" stroke="#7a838e"/><text x="1040" y="180">2025</text>
+      </g>
+      <!-- Events above and below timeline -->
+      <g font-family="Inter" font-size="11" text-anchor="middle">
+        <!-- 1956 carretera -->
+        <g class="timeline-event">
+          <line x1="100" y1="160" x2="100" y2="80" stroke="#f85149" stroke-width="1" opacity="0.5"/>
+          <circle cx="100" cy="160" r="7" fill="#f85149"/>
+          <rect x="20" y="40" width="160" height="40" rx="6" fill="#1f2530" stroke="#f85149" stroke-width="1.5"/>
+          <text x="100" y="58" fill="#f85149" font-weight="600">1956</text>
+          <text x="100" y="73" fill="#e6edf3" font-size="10">Carretera Ciénaga-Bquilla</text>
+        </g>
+        <!-- 1980-90 muerte masiva -->
+        <g class="timeline-event">
+          <line x1="320" y1="160" x2="320" y2="220" stroke="#f85149" stroke-width="1" opacity="0.5"/>
+          <circle cx="320" cy="160" r="7" fill="#f85149"/>
+          <rect x="240" y="220" width="160" height="40" rx="6" fill="#1f2530" stroke="#f85149" stroke-width="1.5"/>
+          <text x="320" y="238" fill="#f85149" font-weight="600">1980-90</text>
+          <text x="320" y="253" fill="#e6edf3" font-size="10">Mortalidad 24 000 ha</text>
+        </g>
+        <!-- 1996-98 rehab -->
+        <g class="timeline-event">
+          <line x1="430" y1="160" x2="430" y2="80" stroke="#7ee787" stroke-width="1" opacity="0.5"/>
+          <circle cx="430" cy="160" r="7" fill="#7ee787"/>
+          <rect x="350" y="40" width="160" height="40" rx="6" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/>
+          <text x="430" y="58" fill="#7ee787" font-weight="600">1996-98</text>
+          <text x="430" y="73" fill="#e6edf3" font-size="10">Reapertura 5 canales</text>
+        </g>
+        <!-- 2013 Landsat 8 -->
+        <g class="timeline-event">
+          <line x1="700" y1="160" x2="700" y2="220" stroke="#79c0ff" stroke-width="1" opacity="0.5"/>
+          <circle cx="700" cy="160" r="7" fill="#79c0ff"/>
+          <rect x="620" y="220" width="160" height="40" rx="6" fill="#1f2530" stroke="#79c0ff" stroke-width="1.5"/>
+          <text x="700" y="238" fill="#79c0ff" font-weight="600">2013</text>
+          <text x="700" y="253" fill="#e6edf3" font-size="10">Inicio Landsat 8</text>
+        </g>
+        <!-- 2015-16 El Niño -->
+        <g class="timeline-event">
+          <line x1="800" y1="160" x2="800" y2="80" stroke="#ffa657" stroke-width="1" opacity="0.5"/>
+          <circle cx="800" cy="160" r="7" fill="#ffa657"/>
+          <rect x="720" y="40" width="160" height="40" rx="6" fill="#1f2530" stroke="#ffa657" stroke-width="1.5"/>
+          <text x="800" y="58" fill="#ffa657" font-weight="600">2015-16</text>
+          <text x="800" y="73" fill="#e6edf3" font-size="10">El Niño · quiebre BFAST</text>
+        </g>
+        <!-- 2018 Sentinel-2 -->
+        <g class="timeline-event">
+          <line x1="860" y1="160" x2="860" y2="220" stroke="#79c0ff" stroke-width="1" opacity="0.5"/>
+          <circle cx="860" cy="160" r="7" fill="#79c0ff"/>
+          <rect x="780" y="220" width="160" height="40" rx="6" fill="#1f2530" stroke="#79c0ff" stroke-width="1.5"/>
+          <text x="860" y="238" fill="#79c0ff" font-weight="600">2018</text>
+          <text x="860" y="253" fill="#e6edf3" font-size="10">Inicio Sentinel-2 (10 m)</text>
+        </g>
+        <!-- 2020 La Niña -->
+        <g class="timeline-event">
+          <line x1="920" y1="160" x2="920" y2="80" stroke="#f85149" stroke-width="1" opacity="0.5"/>
+          <circle cx="920" cy="160" r="7" fill="#f85149"/>
+          <rect x="840" y="40" width="160" height="40" rx="6" fill="#1f2530" stroke="#f85149" stroke-width="1.5"/>
+          <text x="920" y="58" fill="#f85149" font-weight="600">sept 2020</text>
+          <text x="920" y="73" fill="#e6edf3" font-size="10">La Niña · pico inundación</text>
+        </g>
+        <!-- 2024-25 actual -->
+        <g class="timeline-event">
+          <line x1="1020" y1="160" x2="1020" y2="220" stroke="#7ee787" stroke-width="1" opacity="0.5"/>
+          <circle cx="1020" cy="160" r="7" fill="#7ee787"/>
+          <rect x="940" y="220" width="160" height="40" rx="6" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/>
+          <text x="1020" y="238" fill="#7ee787" font-weight="600">2024-25</text>
+          <text x="1020" y="253" fill="#e6edf3" font-size="10">Estado actual</text>
+        </g>
+      </g>
+      <!-- Phase coloring on timeline -->
+      <rect x="50" y="155" width="270" height="10" fill="#f85149" opacity="0.15"/>
+      <rect x="430" y="155" width="370" height="10" fill="#ffa657" opacity="0.15"/>
+      <rect x="800" y="155" width="250" height="10" fill="#7ee787" opacity="0.15"/>
+      <g font-family="Inter" font-size="9.5" fill="#7a838e" text-anchor="middle">
+        <text x="185" y="135" fill="#f85149">degradación hidrológica</text>
+        <text x="615" y="135" fill="#ffa657">recuperación parcial · ciclos ENSO</text>
+        <text x="925" y="135" fill="#7ee787">monitoreo de alta resolución</text>
+      </g>
+    </svg>
+    <div class="dgm-caption">Los puntos rojos marcan eventos de degradación; los verdes, recuperación; los azules, inicio de la observación satelital de alta resolución. Las anomalías z &lt; -2 detectadas en este proyecto se concentran alrededor de 2015-2016 (El Niño) y 2020 (La Niña).</div>
+  </div>
+
+  <h3>Por qué el monitoreo actual no alcanza</h3>
+  <table>
+    <tr><th>Limitación</th><th>Significado operativo</th></tr>
+    <tr><td>6 estaciones fijas</td><td>Cubren menos del 1% del sistema de 1 286 km². Imposible interpolar entre puntos.</td></tr>
+    <tr><td>Visitas periódicas</td><td>Ventanas largas entre mediciones; eventos rápidos pasan desapercibidos.</td></tr>
+    <tr><td>Productos globales decadales</td><td>El Global Mangrove Watch se actualiza cada 5-10 años.</td></tr>
+    <tr><td>Nubosidad persistente</td><td>Sentinel-2 queda saturado de nubes entre abril y noviembre.</td></tr>
+    <tr><td>Sin pipeline reproducible</td><td>Cada estudio reinventa el procesamiento.</td></tr>
+  </table>
+
+  <h3>Pregunta de investigación</h3>
+  <div class="conn">
+    <p style="font-style:italic;font-size:var(--fs-md)"><b>¿Cómo articular una pipeline multilenguaje (Python + R + Julia) que integre imágenes satelitales gratuitas con datos climáticos e in-situ públicos para caracterizar la dinámica espaciotemporal del manglar de la CGSM durante 2013-2025, detectando anomalías, quiebres estructurales, fragmentación, transiciones de cobertura y acoplamiento con el forzamiento ENSO?</b></p>
+  </div>
+</section>
+
+<!-- ════════ 3 · ESTADO DEL ARTE ════════ -->
+<section id="pane-estado" class="pane">
+  <h2>3 · Estado del arte</h2>
+  <p class="lead">Cuatro caminos confluyen en el marco teórico del proyecto. Cada uno aporta una pieza del rompecabezas metodológico.</p>
+
+  <h3>Camino A · Mapas globales · visión amplia, baja frecuencia</h3>
+  <div class="explain">
+    <h4>Global Mangrove Watch · Bunting et al. (2022)</h4>
+    <p class="simple">Mapa global del manglar producido con Landsat, actualizado cada 5-10 años. Provee la línea base mundial. Limitación: granularidad temporal insuficiente para detectar ciclos rápidos.</p>
+    <div class="why">una foto satelital del planeta cada década; útil para tendencias largas, lenta para alertas tempranas.</div>
+  </div>
+
+  <h3>Camino B · Sentinel-2 + GEE · alta frecuencia, escala local</h3>
+  <div class="explain">
+    <h4>Google Earth Engine · Gorelick et al. (2017)</h4>
+    <p class="simple">Plataforma gratuita de Google que aloja todas las imágenes Landsat y Sentinel listas para usar en la nube, sin descarga local.</p>
+    <div class="why">acceso planetario a todos los satélites desde una hoja de cálculo en línea.</div>
+  </div>
+  <div class="explain">
+    <h4>Kotikot et al. (2024) · Mangrove RF en GEE</h4>
+    <p class="simple">Aplicación de Random Forest sobre Sentinel-2 para clasificar manglares en África del Este. Metodología replicada en la tarea de Percepción Remota del mismo semestre, con éxito en CGSM.</p>
+    <div class="why">receta de cocina aplicable a otros humedales con ajustes locales.</div>
+  </div>
+  <div class="explain">
+    <h4>Raza et al. (2024) · Series temporales Pakistán</h4>
+    <p class="simple">Estudio análogo asiático con 7 años de Sentinel-2. En este proyecto se extiende la idea a 12 años mediante la combinación con Landsat 8.</p>
+    <div class="why">la misma estrategia con una serie temporal más larga para capturar al menos un ciclo ENSO completo.</div>
+  </div>
+
+  <h3>Camino C · Inteligencia artificial generalista (SAM y derivados)</h3>
+  <div class="explain">
+    <h4>Segment Anything Model · Kirillov et al. (2023, Meta)</h4>
+    <p class="simple">Modelo de IA que segmenta automáticamente cualquier objeto en una imagen sin entrenamiento previo.</p>
+    <div class="why">un sistema que aprende dónde está el contorno del manglar sin ejemplos etiquetados manualmente.</div>
+  </div>
+  <div class="explain">
+    <h4>SamGeo · Wu Q.</h4>
+    <p class="simple">Adaptación de SAM para datos geoespaciales con coordenadas. Usado en el notebook 03 para extraer parches de manglar.</p>
+    <div class="why">la versión SAM que entiende coordenadas geográficas y proyecciones.</div>
+  </div>
+
+  <h3>Camino D · Antecedentes específicos de la CGSM</h3>
+  <table>
+    <tr><th>Autor</th><th>Aporte</th></tr>
+    <tr><td>INVEMAR (2024)</td><td>Reporte oficial del manglar colombiano · 6 estaciones permanentes</td></tr>
+    <tr><td>Beltrán et al. (2022)</td><td>Datos CARICOMP 1995-2021 (estructura forestal in-situ)</td></tr>
+    <tr><td>Murillo-Sandoval et al. (2022)</td><td>Trayectoria 1984-2020 del manglar colombiano</td></tr>
+    <tr><td>Simard et al. (2008)</td><td>Mapeo 3D del manglar CGSM con SRTM + ICESat</td></tr>
+    <tr><td>Rivera-Monroy / Ibarra (2014)</td><td>Recuperación del bosque post-rehabilitación hidráulica</td></tr>
+    <tr><td>López-Rodríguez et al.</td><td>Efecto ENSO + rehabilitación sobre salinidad y manglar</td></tr>
+  </table>
+</section>
+
+<!-- ════════ 4 · VACÍOS ════════ -->
+<section id="pane-vacios" class="pane">
+  <h2>4 · Vacíos · limitaciones · oportunidades</h2>
+
+  <h3>Limitaciones técnicas identificadas</h3>
+  <table>
+    <tr><th>Limitación</th><th>Significado</th><th>Manejo</th></tr>
+    <tr><td>SamGeo agotó memoria a 10 m</td><td>El modelo SAM es pesado; se remuestreó RGB a 30 m</td><td>Documentado · trade-off aceptado</td></tr>
+    <tr><td>Discontinuidad espectral L8 ↔ S2</td><td>Los sensores miden distinto; aparece salto artificial en 2017-2018</td><td>Reportado · armonización pendiente</td></tr>
+    <tr><td>F1 umbrales = 0,548-0,583 vs F1 Selvaraj 0,80-0,90</td><td>Clasificador determinístico por umbrales vs Random Forest supervisado con SAR</td><td>Resuelto · benchmark RF alcanza F1 = 0,826 (INVEMAR) y 0,889 (WorldCover)</td></tr>
+    <tr><td>Sentinel-2 ciego en lluviosa</td><td>Cobertura de nubes saturada abril-noviembre</td><td>Pendiente Sentinel-1 SAR en la tesis</td></tr>
+    <tr><td>Las 4 estaciones IDEAM no están sobre manglar</td><td>Quedan sobre cuerpos de agua</td><td>Se separaron por naturaleza espectral</td></tr>
+    <tr><td>BFAST h=0.15 conservador</td><td>No detecta El Niño 2016</td><td>Se probó h=0.10 y reaparecen 7 quiebres</td></tr>
+  </table>
+
+  <h3>Vacíos cerrados por el proyecto</h3>
+  <div class="twocol">
+    <div>
+      <div class="card warn">
+        <h4>Vacío 1 · Pipeline reproducible</h4>
+        <p class="simple">No existía un sistema abierto que combinara Python + R + Julia para manglar tropical.</p>
+        <span class="tag warn">Resuelto</span>
+      </div>
+      <div class="card warn">
+        <h4>Vacío 2 · Sistema oficial EPSG:9377</h4>
+        <p class="simple">La mayoría de productos usa EPSG:4326. Aquí se reproyecta todo a MAGNA-SIRGAS Origen Nacional, cumpliendo la Resolución IGAC 471 de 2020.</p>
+        <span class="tag warn">Resuelto</span>
+      </div>
+      <div class="card warn">
+        <h4>Vacío 3 · Doble fragmentación Julia vs Python</h4>
+        <p class="simple">Se comparan dos implementaciones del algoritmo de fragmentación. Ambas válidas, responden preguntas distintas (Anexo D).</p>
+        <span class="tag warn">Resuelto</span>
+      </div>
+    </div>
+    <div>
+      <div class="card warn">
+        <h4>Vacío 4 · Correlación clima desagregada</h4>
+        <p class="simple">Estudios previos promedian estaciones y enmascaran la señal. Aquí se desagregan en limnológicas vs manglar y la correlación aparece.</p>
+        <span class="tag warn">Resuelto</span>
+      </div>
+      <div class="card warn">
+        <h4>Vacío 5 · Forzamientos múltiples integrados</h4>
+        <p class="simple">Se cruzan en un mismo análisis ERA5 + ONI/SOI + caudal IDEAM + CHIRPS.</p>
+        <span class="tag warn">Resuelto</span>
+      </div>
+      <div class="card ok">
+        <h4>Oportunidad → tesis</h4>
+        <p class="simple">El proyecto se convierte en la infraestructura base del Digital Twin propuesto en la tesis.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Trabajo futuro</h3>
+  <ul style="font-size:var(--fs-sm);line-height:1.7;margin:0 0 0 22px">
+    <li>Armonizar Landsat 8 ↔ Sentinel-2 para eliminar la discontinuidad</li>
+    <li>Entrenar Random Forest con puntos GMW como referencia de etiqueta</li>
+    <li>Validar SamGeo contra cartografía INVEMAR 1:25 000</li>
+    <li>Integrar Sentinel-1 SAR para cubrir la temporada lluviosa</li>
+    <li>Publicar el datacube como STAC catalog con pystac</li>
+    <li>Unificar el conjunto de 8 estaciones BFAST con la clasificación espectral</li>
+  </ul>
+</section>
+
+<!-- ════════ 5 · PROPUESTA ════════ -->
+<section id="pane-propuesta" class="pane">
+  <h2>5 · Propuesta</h2>
+
+  <div class="hero">
+    <h2 style="margin:0">Frase-gancho</h2>
+    <p style="font-size:var(--fs-md)"><b>Una pipeline abierta y reproducible que articula tres lenguajes complementarios</b> — Python para satélites e IA, R para estadística rigurosa, Julia para cómputo numérico — y monitorea el manglar de la CGSM como un sistema dinámico, no como una foto estática.</p>
+  </div>
+
+  <h3>Justificación de los tres lenguajes</h3>
+  <table>
+    <tr><th>Lenguaje</th><th>Fortaleza</th><th>Rol en el proyecto</th></tr>
+    <tr><td><span class="tag py">Python</span></td><td>Conexión con Google Earth Engine, procesamiento de imágenes, modelos de IA</td><td>Descarga · datacube · SamGeo · validación · dashboard</td></tr>
+    <tr><td><span class="tag r">R</span></td><td>Estadística rigurosa, BFAST, ecosistema científico maduro</td><td>Detección de quiebres en series · cubo stars</td></tr>
+    <tr><td><span class="tag jl">Julia</span></td><td>Cálculo numérico de alta velocidad con sintaxis sencilla</td><td>Fragmentación del paisaje · algoritmos geométricos</td></tr>
+  </table>
+
+  <h3>Las 6 fases del pipeline · diagrama</h3>
+  <div class="diagram-wrap">
+    <div class="dgm-title">Flujo de trabajo · 6 fases secuenciales con validación cruzada</div>
+    <svg viewBox="0 0 1100 360" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr-flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#ffa657"/>
+        </marker>
+      </defs>
+      <!-- Phase boxes -->
+      <g font-family="Inter" font-size="11.5" text-anchor="middle">
+        <!-- Fase 1 -->
+        <g class="node-box">
+          <rect x="40" y="60" width="160" height="80" rx="10" fill="#1f2530" stroke="#79c0ff" stroke-width="2"/>
+          <circle cx="60" cy="80" r="11" fill="#79c0ff"/><text x="60" y="84" fill="#0a0d12" font-weight="700" font-size="11">1</text>
+          <text x="120" y="86" fill="#79c0ff" font-weight="700">Datacube</text>
+          <text x="120" y="102" fill="#e6edf3" font-size="10">Sentinel-2 + Landsat</text>
+          <text x="120" y="118" fill="#adb5bd" font-size="10">geemap · xarray · CF-1.8</text>
+          <text x="120" y="132" fill="#7a838e" font-size="9">Notebooks 01 · 09</text>
+        </g>
+        <!-- Fase 2 -->
+        <g class="node-box">
+          <rect x="220" y="60" width="160" height="80" rx="10" fill="#1f2530" stroke="#d2a8ff" stroke-width="2"/>
+          <circle cx="240" cy="80" r="11" fill="#d2a8ff"/><text x="240" y="84" fill="#0a0d12" font-weight="700" font-size="11">2</text>
+          <text x="300" y="86" fill="#d2a8ff" font-weight="700">Series + BFAST</text>
+          <text x="300" y="102" fill="#e6edf3" font-size="10">NDVI mensual · z-score</text>
+          <text x="300" y="118" fill="#adb5bd" font-size="10">Python + R · bfast</text>
+          <text x="300" y="132" fill="#7a838e" font-size="9">Notebooks 02 · 02b · 02c</text>
+        </g>
+        <!-- Fase 3 -->
+        <g class="node-box">
+          <rect x="400" y="60" width="160" height="80" rx="10" fill="#1f2530" stroke="#ff9ec4" stroke-width="2"/>
+          <circle cx="420" cy="80" r="11" fill="#ff9ec4"/><text x="420" y="84" fill="#0a0d12" font-weight="700" font-size="11">3</text>
+          <text x="480" y="86" fill="#ff9ec4" font-weight="700">Segmentación</text>
+          <text x="480" y="102" fill="#e6edf3" font-size="10">SamGeo · 3 RGB S2</text>
+          <text x="480" y="118" fill="#adb5bd" font-size="10">Topología DE-9IM</text>
+          <text x="480" y="132" fill="#7a838e" font-size="9">Notebooks 03 · 04b · 04c</text>
+        </g>
+        <!-- Fase 4 -->
+        <g class="node-box">
+          <rect x="580" y="60" width="160" height="80" rx="10" fill="#1f2530" stroke="#a78bfa" stroke-width="2"/>
+          <circle cx="600" cy="80" r="11" fill="#a78bfa"/><text x="600" y="84" fill="#0a0d12" font-weight="700" font-size="11">4</text>
+          <text x="660" y="86" fill="#a78bfa" font-weight="700">Fragmentación</text>
+          <text x="660" y="102" fill="#e6edf3" font-size="10">Julia · shoelace</text>
+          <text x="660" y="118" fill="#adb5bd" font-size="10">NND · MSI · área</text>
+          <text x="660" y="132" fill="#7a838e" font-size="9">Notebook 04</text>
+        </g>
+        <!-- Fase 5 -->
+        <g class="node-box">
+          <rect x="760" y="60" width="160" height="80" rx="10" fill="#1f2530" stroke="#7ee787" stroke-width="2"/>
+          <circle cx="780" cy="80" r="11" fill="#7ee787"/><text x="780" y="84" fill="#0a0d12" font-weight="700" font-size="11">5</text>
+          <text x="840" y="86" fill="#7ee787" font-weight="700">Clima · ENSO</text>
+          <text x="840" y="102" fill="#e6edf3" font-size="10">ERA5 · ONI · CHIRPS</text>
+          <text x="840" y="118" fill="#adb5bd" font-size="10">Caudal IDEAM</text>
+          <text x="840" y="132" fill="#7a838e" font-size="9">07 · 11 · 12</text>
+        </g>
+        <!-- Fase 6 -->
+        <g class="node-box">
+          <rect x="940" y="60" width="120" height="80" rx="10" fill="#1f2530" stroke="#ffa657" stroke-width="2"/>
+          <circle cx="960" cy="80" r="11" fill="#ffa657"/><text x="960" y="84" fill="#0a0d12" font-weight="700" font-size="11">6</text>
+          <text x="1000" y="86" fill="#ffa657" font-weight="700">Validación</text>
+          <text x="1000" y="102" fill="#e6edf3" font-size="10">GMW · INVEMAR</text>
+          <text x="1000" y="118" fill="#adb5bd" font-size="10">NASA SAR</text>
+          <text x="1000" y="132" fill="#7a838e" font-size="9">05 · 10 · 13 · 14</text>
+        </g>
+      </g>
+      <!-- Arrows between phases -->
+      <g fill="none" stroke="#ffa657" stroke-width="2" marker-end="url(#arr-flow)">
+        <line x1="200" y1="100" x2="220" y2="100"/>
+        <line x1="380" y1="100" x2="400" y2="100"/>
+        <line x1="560" y1="100" x2="580" y2="100"/>
+        <line x1="740" y1="100" x2="760" y2="100"/>
+        <line x1="920" y1="100" x2="940" y2="100"/>
+      </g>
+      <!-- Outputs bottom row -->
+      <g font-family="Inter" font-size="11" text-anchor="middle">
+        <text x="550" y="195" fill="#7a838e" font-size="10" letter-spacing="0.1em">SALIDAS UNIFICADAS</text>
+        <g class="node-box">
+          <rect x="60" y="220" width="180" height="60" rx="8" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/>
+          <text x="150" y="244" fill="#7ee787" font-weight="600">33 notebooks</text>
+          <text x="150" y="262" fill="#adb5bd" font-size="10">.ipynb numerados · reproducibles</text>
+        </g>
+        <g class="node-box">
+          <rect x="260" y="220" width="180" height="60" rx="8" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/>
+          <text x="350" y="244" fill="#7ee787" font-weight="600">50 tablas CSV</text>
+          <text x="350" y="262" fill="#adb5bd" font-size="10">Resultados numéricos</text>
+        </g>
+        <g class="node-box">
+          <rect x="460" y="220" width="180" height="60" rx="8" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/>
+          <text x="550" y="244" fill="#7ee787" font-weight="600">44 figuras PNG</text>
+          <text x="550" y="262" fill="#adb5bd" font-size="10">Mapas · series · correlaciones</text>
+        </g>
+        <g class="node-box">
+          <rect x="660" y="220" width="180" height="60" rx="8" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/>
+          <text x="750" y="244" fill="#7ee787" font-weight="600">Dashboard 17 capas</text>
+          <text x="750" y="262" fill="#adb5bd" font-size="10">HTML interactivo Leaflet</text>
+        </g>
+        <g class="node-box">
+          <rect x="860" y="220" width="180" height="60" rx="8" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/>
+          <text x="950" y="244" fill="#7ee787" font-weight="600">Informe Typst 29 pp</text>
+          <text x="950" y="262" fill="#adb5bd" font-size="10">PDF reproducible</text>
+        </g>
+      </g>
+      <!-- vertical arrows from phases to outputs -->
+      <g fill="none" stroke="#ffa657" stroke-width="1.2" opacity="0.4" marker-end="url(#arr-flow)">
+        <line x1="120" y1="140" x2="150" y2="220"/>
+        <line x1="300" y1="140" x2="350" y2="220"/>
+        <line x1="480" y1="140" x2="550" y2="220"/>
+        <line x1="660" y1="140" x2="750" y2="220"/>
+        <line x1="840" y1="140" x2="950" y2="220"/>
+      </g>
+      <!-- Docker base -->
+      <g class="node-box">
+        <rect x="350" y="310" width="400" height="40" rx="8" fill="#1f2530" stroke="#56d4dd" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <text x="550" y="335" text-anchor="middle" fill="#56d4dd" font-family="Inter" font-weight="700" font-size="12">Contenedor Docker sig_unal v1.11 · base reproducible</text>
+      </g>
+    </svg>
+    <div class="dgm-caption">Las 6 fases corren secuencialmente pero comparten outputs. Toda la pipeline está dentro de un contenedor Docker para garantizar reproducibilidad bit-a-bit en cualquier máquina.</div>
+  </div>
+</section>
+
+<!-- ════════ 6 · OBJETIVOS ════════ -->
+<section id="pane-objetivos" class="pane">
+  <h2>6 · Objetivos</h2>
+
+  <div class="hero">
+    <h2 style="margin:0">Objetivo general</h2>
+    <p style="font-size:var(--fs-md)"><b>Caracterizar la dinámica espaciotemporal del manglar de la Ciénaga Grande de Santa Marta entre 2013 y 2025</b> mediante una pipeline reproducible que integre Python, R y Julia con datos satelitales, climáticos e in-situ.</p>
+  </div>
+
+  <h3>Los 8 objetivos específicos · cada uno mapeado a notebooks</h3>
+
+  <div class="card accent">
+    <h4>OE1 · Construir el datacube multitemporal</h4>
+    <p class="simple">Adquirir Sentinel-2 + Landsat 8 (2013-2025) vía GEE sobre AOI acotado (835 km²), aplicar máscaras de nubes, generar composites trimestrales y persistir en NetCDF CF-1.8 sobre EPSG:9377.</p>
+    <span class="tag">Notebook 01</span><span class="tag">Notebook 09</span><span class="tag py">Python</span>
+  </div>
+  <div class="card accent">
+    <h4>OE2 · Analizar series temporales y detectar quiebres</h4>
+    <p class="simple">Extraer 929 registros mensuales NDVI en 8 estaciones, calcular z-scores, identificar anomalías y aplicar BFAST en R para detectar quiebres estructurales.</p>
+    <span class="tag">02</span><span class="tag">02b</span><span class="tag">02c</span><span class="tag py">Python</span><span class="tag r">R</span>
+  </div>
+  <div class="card accent">
+    <h4>OE3 · Segmentar parches con SamGeo y topología</h4>
+    <p class="simple">Aplicar SAM sobre 3 RGB Sentinel-2 representativos. Reproyectar a 9377. Computar predicados topológicos DE-9IM en Python y Julia.</p>
+    <span class="tag">03</span><span class="tag">04b</span><span class="tag">04c</span><span class="tag py">Python</span><span class="tag jl">Julia</span>
+  </div>
+  <div class="card accent">
+    <h4>OE4 · Medir fragmentación del paisaje en Julia</h4>
+    <p class="simple">Implementar el algoritmo shoelace. Reportar parches, área media, MSI y NND para los tres periodos.</p>
+    <span class="tag">04</span><span class="tag jl">Julia</span>
+  </div>
+  <div class="card accent">
+    <h4>OE5 · Acoplar forzamientos climáticos</h4>
+    <p class="simple">Cruzar NDVI con ERA5-Land (clima local), ONI/SOI (ENSO global), CHIRPS (lluvia) y caudal IDEAM (ríos aportantes).</p>
+    <span class="tag">07</span><span class="tag">11</span><span class="tag">11b</span><span class="tag">12</span><span class="tag">12b</span><span class="tag">12c</span><span class="tag py">Python</span><span class="tag r">R</span>
+  </div>
+  <div class="card accent">
+    <h4>OE6 · Validar contra cartografía y NASA</h4>
+    <p class="simple">Comparar contra INVEMAR 1:25.000 y ESA WorldCover v200. Benchmark Random Forest vs umbrales. Detectar inundación con Sentinel-1 SAR + GFD + JRC.</p>
+    <span class="tag">05</span><span class="tag">10</span><span class="tag">11</span><span class="tag">13</span>
+  </div>
+  <div class="card accent">
+    <h4>OE7 · Validación cruzada trilingüe</h4>
+    <p class="simple">Replicar el mismo análisis con los tres lenguajes y verificar convergencia. Las cuatro pruebas cruzadas (NDVI, caudal-NDVI, DE-9IM y ENSO) coinciden hasta el tercer decimal.</p>
+    <span class="tag">08</span><span class="tag">14</span><span class="tag py">Python</span><span class="tag r">R</span><span class="tag jl">Julia</span>
+  </div>
+  <div class="card accent">
+    <h4>OE8 · Dashboard + informe Quarto + artículo journal</h4>
+    <p class="simple">HTML con 17 capas temáticas. Informe de 29 páginas (Typst) que documenta cada decisión. Artículo journal condensado (~5.300 palabras) para revista indexada.</p>
+    <span class="tag">06</span><span class="tag">docs/informe_final.qmd</span><span class="tag">docs/cgsm_version_acotada.qmd</span>
+  </div>
+</section>
+
+<!-- ════════ 7 · METODOLOGÍA ════════ -->
+<section id="pane-metodo" class="pane">
+  <h2>7 · Metodología paso a paso</h2>
+  <p class="lead">33 notebooks numerados. Cada uno conecta con el siguiente. La pipeline completa corre en Docker con un comando.</p>
+
+  <h3>Conceptos básicos</h3>
+  <div class="explain">
+    <h4>Satélite multiespectral (Sentinel-2)</h4>
+    <p class="simple">Satélite gratuito de la ESA que toma fotos cada 5 días en 13 colores diferentes, varios invisibles al ojo (infrarrojo, infrarrojo de onda corta). Resolución 10 m por píxel.</p>
+    <div class="why">una cámara con superpoderes para ver salud vegetal y cuerpos de agua.</div>
+  </div>
+  <div class="explain">
+    <h4>NDVI · Índice de Vegetación de Diferencia Normalizada</h4>
+    <p class="simple">Valor entre -1 y +1 que indica qué tan verde y sano está cada píxel. Se calcula combinando la banda roja con la infrarroja cercana.</p>
+    <div class="why">un termómetro de salud vegetal · 0.7 = manglar denso · 0.3 = degradado.</div>
+  </div>
+  <div class="explain">
+    <h4>BFAST · Breaks For Additive Season and Trend</h4>
+    <p class="simple">Algoritmo en R que analiza una serie temporal NDVI e identifica momentos donde hubo cambios bruscos que no se explican por la estacionalidad normal.</p>
+    <div class="why">detector de cambios bruscos en el ritmo cardíaco del bosque.</div>
+  </div>
+  <div class="explain">
+    <h4>Datacube</h4>
+    <p class="simple">Estructura de datos tridimensional (x, y, tiempo) que almacena todas las imágenes del mismo lugar en distintas fechas.</p>
+    <div class="why">disco duro súper-ordenado de fotos del mismo sitio en miles de momentos.</div>
+  </div>
+  <div class="explain">
+    <h4>EPSG:9377</h4>
+    <p class="simple">Sistema oficial de coordenadas de Colombia (MAGNA-SIRGAS Origen Nacional). Lo exige la Resolución IGAC 471/2020.</p>
+    <div class="why">formato obligatorio de coordenadas para productos cartográficos colombianos.</div>
+  </div>
+
+  <h3>Fase 1 · Construcción del datacube · Python + GEE</h3>
+  <div class="step" data-n="01"><h4>Notebook 01 · Adquisición GEE</h4>
+    <div class="meta">01_gee_acquisition.ipynb · geemap</div>
+    <p>Conexión con Google Earth Engine. Filtrado de Sentinel-2 + Landsat 8 sobre AOI acotado (SFF CGSM + VPI Salamanca, 835 km²). Aplicación de cloud masking. Generación de composites trimestrales y exportación a Drive.</p></div>
+  <div class="step" data-n="02"><h4>Notebook 09 · Datacube NetCDF CF-1.8</h4>
+    <div class="meta">09_datacube_netcdf.ipynb + 09b extendido</div>
+    <p>Los TIFs descargados se empaquetan en 4 archivos NetCDF CF-1.8 sobre EPSG:9377. Soporta acceso perezoso (xarray) e interoperabilidad con stars (R), CDO y NCO.</p></div>
+
+  <h3>Fase 2 · Series temporales · Python + R</h3>
+  <div class="step" data-n="03"><h4>Notebook 02 · Series en Python</h4>
+    <div class="meta">02_time_series.ipynb</div>
+    <p>Extracción de NDVI mensual en buffer de 150 m alrededor de 8 estaciones. Combinación de 345 registros Landsat 8 + 584 Sentinel-2 = 929 registros. Cálculo de z-scores y filtrado de anomalías.</p></div>
+  <div class="step" data-n="04"><h4>Notebook 02b · BFAST clásico en R</h4>
+    <div class="meta">02b_bfast_ndvi.R.ipynb · kernel R</div>
+    <p>Aplicación de BFAST con h=0.15 sobre la serie combinada. Detección de quiebres de tendencia y estacionalidad por estación.</p></div>
+  <div class="step" data-n="05"><h4>Notebook 02c · BFAST unificado h=0.10 vs h=0.15</h4>
+    <div class="meta">02c_bfast_manglar_unificado.ipynb</div>
+    <p>Reanálisis sobre las 4 estaciones que efectivamente están en manglar real. Comparación de h=0.10 (más sensible) vs h=0.15 (más conservador).</p></div>
+
+  <h3>Fase 3 · Segmentación SamGeo</h3>
+  <div class="step" data-n="06"><h4>Notebook 03 · SAM sobre Sentinel-2 RGB</h4>
+    <div class="meta">03_segmentation.ipynb + 03_segmentation_acotado.ipynb</div>
+    <p>Aplicación de SamGeo sobre 3 RGB Sentinel-2 representativos (degradación 2020, recuperación 2022, actual 2024-25). Generación de máscaras + GeoJSON 4326 + 9377.</p></div>
+  <div class="step" data-n="07"><h4>Notebook 04b/04c · Topología DE-9IM</h4>
+    <div class="meta">04b_topologia.ipynb + 04c_topologia_julia.ipynb</div>
+    <p>Cálculo de predicados topológicos (intersects, contains) entre parches y AOI/estaciones. Versión Python + versión Julia para validación cruzada.</p></div>
+
+  <h3>Fase 4 · Fragmentación Julia</h3>
+  <div class="step" data-n="08"><h4>Notebook 04 · Métricas FRAGSTATS en Julia</h4>
+    <div class="meta">04_fragmentation.ipynb · src/julia/04_fragmentacion.jl</div>
+    <p>Implementación del algoritmo shoelace en Julia. Cálculo de parches, área total/media, densidad, MSI (shape index) y NND (nearest neighbor distance).</p></div>
+
+  <h3>Fase 5 · Forzamientos climáticos</h3>
+  <div class="step" data-n="09"><h4>Notebook 07 · ERA5-Land local</h4>
+    <div class="meta">07_era5_clima.ipynb</div>
+    <p>Descarga de ERA5-Land mensual (precipitación, temperatura) sobre la región. Clasificación de las 8 estaciones por naturaleza espectral. Cálculo de correlación clima-NDVI desagregada con lag 2 meses.</p></div>
+  <div class="step" data-n="10"><h4>Notebook 11 + 11b · ENSO ONI/SOI de NOAA</h4>
+    <div class="meta">11_indices_enso_noaa.ipynb (Python) + 11b R version</div>
+    <p>Descarga del Oceanic Niño Index y del Southern Oscillation Index. Cruce con NDVI para cuantificar el efecto El Niño / La Niña.</p></div>
+  <div class="step" data-n="11"><h4>Notebook 12 · Lluvia CHIRPS sobre cuencas</h4>
+    <div class="meta">12_chirps_cuenca_magdalena.ipynb</div>
+    <p>CHIRPS satelital sobre las cuencas aportantes (Magdalena + Sierra Nevada). Triangulación con NDVI.</p></div>
+  <div class="step" data-n="12"><h4>Notebook 12b + 12c · Caudal IDEAM El Banco</h4>
+    <div class="meta">12b_caudal_ideam_elbanco.ipynb (Python) + 12c R version</div>
+    <p>Caudal mensual del Magdalena en El Banco (IDEAM-DHIME). Variable física más cercana al fenómeno de hipersalinización.</p></div>
+
+  <h3>Fase 6 · Validación</h3>
+  <div class="step" data-n="13"><h4>Notebook 05 · NASA SAR + GFD + JRC</h4>
+    <div class="meta">05_flooding_nasa.ipynb + 05_flooding_nasa_acotado.ipynb</div>
+    <p>Detección del evento de inundación de septiembre 2020 con NASA SAR. Cruce con Global Flood Database y JRC Global Surface Water.</p></div>
+  <div class="step" data-n="14"><h4>Notebook 10 · Validación extendida</h4>
+    <div class="meta">10_validacion_extendida.ipynb</div>
+    <p>Comparación contra GMW v3.0 y ESA WorldCover v200. Reporte de F1, OA, PA, UA.</p></div>
+  <div class="step" data-n="15"><h4>Notebook 13 · Validación INVEMAR 1:25 000</h4>
+    <div class="meta">13_validacion_invemar.ipynb</div>
+    <p>Validación contra la cartografía oficial colombiana del manglar.</p></div>
+  <div class="step" data-n="16"><h4>Notebook 14 · Validación trilingual</h4>
+    <div class="meta">14_validacion_trilingual.ipynb</div>
+    <p>Replicación del mismo cálculo con Python, R y Julia. Cuatro validaciones cruzadas con convergencia hasta el tercer decimal.</p></div>
+
+  <h3>Fase 7 · Reporte + Dashboard</h3>
+  <div class="step" data-n="17"><h4>Notebook 06 · Dashboard 17 capas</h4>
+    <div class="meta">06_dashboard.ipynb · outputs/maps/dashboard_CGSM_final.html</div>
+    <p>HTML interactivo con Leaflet que integra todas las capas temáticas.</p></div>
+  <div class="step" data-n="18"><h4>docs/informe_final.qmd</h4>
+    <div class="meta">125 KB Quarto → 29 pp PDF</div>
+    <p>Informe completo con código embebido que reproduce todo el análisis.</p></div>
+</section>
+
+<!-- ════════ 8 · RESULTADOS ════════ -->
+<section id="pane-resultados" class="pane">
+  <h2>8 · Resultados</h2>
+
+  <h3>Síntesis cuantitativa</h3>
+  <div class="grid">
+    <div class="stat"><div class="n">929</div><div class="l">registros NDVI mensual 2013-2025</div></div>
+    <div class="stat"><div class="n">18 anomalías</div><div class="l">eventos con z &lt; -2 (más negativos = más severos)</div></div>
+    <div class="stat"><div class="n">43,08 km²</div><div class="l">inundación bajo dosel sept 2020 · SAR-VH</div></div>
+    <div class="stat"><div class="n">7/8 estaciones</div><div class="l">quiebre 2016 con BFAST h=0.10 · El Niño</div></div>
+    <div class="stat"><div class="n">79 → 15</div><div class="l">parches degradación → actual · −81%</div></div>
+    <div class="stat"><div class="n">1,10 → 2,39 km</div><div class="l">distancia entre vecinos NND · más aislamiento</div></div>
+    <div class="stat"><div class="n">+76 km²</div><div class="l">ganancia neta 2020 vs 2024-25</div></div>
+    <div class="stat"><div class="n">F1=0,826 (RF)</div><div class="l">vs INVEMAR 1:25.000 · benchmark Random Forest</div></div>
+  </div>
+
+  <h3>Fragmentación · gráfica de barras</h3>
+  <div class="diagram-wrap">
+    <div class="dgm-title">Evolución de la fragmentación · AOI acotado (835 km²) · 3 periodos</div>
+    <svg viewBox="0 0 1100 360" xmlns="http://www.w3.org/2000/svg">
+      <g font-family="Inter" font-size="11" text-anchor="middle">
+        <!-- Parches: 79 / 38 / 15 (max 79 → altura proporcional sobre 180px) -->
+        <text x="180" y="40" fill="#7a838e" font-size="10" letter-spacing="0.1em">NÚMERO DE PARCHES</text>
+        <g class="bar-group">
+          <rect x="80" y="80" width="60" height="180" rx="4" fill="#f85149" opacity="0.85"/>
+          <text x="110" y="75" fill="#e6edf3" font-weight="700" font-size="14">79</text>
+          <text x="110" y="280" fill="#7a838e" font-size="10">Degrad.</text>
+          <text x="110" y="295" fill="#7a838e" font-size="9">2020</text>
+        </g>
+        <g class="bar-group">
+          <rect x="155" y="173" width="60" height="87" rx="4" fill="#ffa657" opacity="0.85"/>
+          <text x="185" y="168" fill="#e6edf3" font-weight="700" font-size="14">38</text>
+          <text x="185" y="280" fill="#7a838e" font-size="10">Recup.</text>
+          <text x="185" y="295" fill="#7a838e" font-size="9">2022</text>
+        </g>
+        <g class="bar-group">
+          <rect x="230" y="226" width="60" height="34" rx="4" fill="#7ee787" opacity="0.85"/>
+          <text x="260" y="221" fill="#e6edf3" font-weight="700" font-size="14">15</text>
+          <text x="260" y="280" fill="#7a838e" font-size="10">Actual</text>
+          <text x="260" y="295" fill="#7a838e" font-size="9">2024-25</text>
+        </g>
+        <text x="180" y="320" fill="#f85149" font-size="10" font-style="italic">↓ 81%</text>
+
+        <!-- NND: 1,10 / 1,99 / 2,39 km (max 2,39 → 180px) -->
+        <text x="490" y="40" fill="#7a838e" font-size="10" letter-spacing="0.1em">DISTANCIA NND (km)</text>
+        <g class="bar-group">
+          <rect x="390" y="177" width="60" height="83" rx="4" fill="#f85149" opacity="0.85"/>
+          <text x="420" y="172" fill="#e6edf3" font-weight="700" font-size="14">1,10</text>
+          <text x="420" y="280" fill="#7a838e" font-size="10">2020</text>
+        </g>
+        <g class="bar-group">
+          <rect x="465" y="110" width="60" height="150" rx="4" fill="#ffa657" opacity="0.85"/>
+          <text x="495" y="105" fill="#e6edf3" font-weight="700" font-size="14">1,99</text>
+          <text x="495" y="280" fill="#7a838e" font-size="10">2022</text>
+        </g>
+        <g class="bar-group">
+          <rect x="540" y="80" width="60" height="180" rx="4" fill="#7ee787" opacity="0.85"/>
+          <text x="570" y="75" fill="#e6edf3" font-weight="700" font-size="14">2,39</text>
+          <text x="570" y="280" fill="#7a838e" font-size="10">2024-25</text>
+        </g>
+        <text x="490" y="320" fill="#ffa657" font-size="10" font-style="italic">↑ 2,2×</text>
+
+        <!-- MSI: 0,51 / 1,01 / 1,46 (max 1,46 → 180px) -->
+        <text x="800" y="40" fill="#7a838e" font-size="10" letter-spacing="0.1em">MSI · COMPLEJIDAD DE FORMA</text>
+        <g class="bar-group">
+          <rect x="700" y="197" width="60" height="63" rx="4" fill="#f85149" opacity="0.85"/>
+          <text x="730" y="192" fill="#e6edf3" font-weight="700" font-size="14">0,51</text>
+          <text x="730" y="280" fill="#7a838e" font-size="10">2020</text>
+        </g>
+        <g class="bar-group">
+          <rect x="775" y="135" width="60" height="125" rx="4" fill="#ffa657" opacity="0.85"/>
+          <text x="805" y="130" fill="#e6edf3" font-weight="700" font-size="14">1,01</text>
+          <text x="805" y="280" fill="#7a838e" font-size="10">2022</text>
+        </g>
+        <g class="bar-group">
+          <rect x="850" y="80" width="60" height="180" rx="4" fill="#7ee787" opacity="0.85"/>
+          <text x="880" y="75" fill="#e6edf3" font-weight="700" font-size="14">1,46</text>
+          <text x="880" y="280" fill="#7a838e" font-size="10">2024-25</text>
+        </g>
+        <text x="800" y="320" fill="#ffa657" font-size="10" font-style="italic">↑ 2,9×</text>
+
+        <!-- Área media: 157 / 228 / 269 ha (max 269 → 180px) -->
+        <text x="1020" y="40" fill="#7a838e" font-size="10" letter-spacing="0.1em">ÁREA MEDIA (ha)</text>
+        <g class="bar-group">
+          <rect x="920" y="155" width="50" height="105" rx="4" fill="#f85149" opacity="0.85"/>
+          <text x="945" y="150" fill="#e6edf3" font-weight="700" font-size="13">157</text>
+          <text x="945" y="280" fill="#7a838e" font-size="10">2020</text>
+        </g>
+        <g class="bar-group">
+          <rect x="980" y="108" width="50" height="152" rx="4" fill="#ffa657" opacity="0.85"/>
+          <text x="1005" y="103" fill="#e6edf3" font-weight="700" font-size="13">228</text>
+          <text x="1005" y="280" fill="#7a838e" font-size="10">2022</text>
+        </g>
+        <g class="bar-group">
+          <rect x="1040" y="80" width="50" height="180" rx="4" fill="#7ee787" opacity="0.85"/>
+          <text x="1065" y="75" fill="#e6edf3" font-weight="700" font-size="13">269</text>
+          <text x="1065" y="280" fill="#7a838e" font-size="10">2024-25</text>
+        </g>
+        <text x="1020" y="320" fill="#7ee787" font-size="10" font-style="italic">↑ 1,7×</text>
+      </g>
+      <!-- baseline -->
+      <line x1="50" y1="260" x2="1090" y2="260" stroke="#30363d" stroke-width="1"/>
+    </svg>
+    <div class="dgm-caption">Lectura conjunta sobre el AOI acotado (835 km²): el manglar pasa de muchos parches medianos (79 × 157 ha en 2020) a pocos parches grandes (15 × 269 ha en 2024-25). La distancia entre parches se duplica y la forma se vuelve casi tres veces más compleja. Proceso de consolidación estructural, no de recuperación homogénea.</div>
+  </div>
+
+  <h3>Cambio neto 2020 → 2024-2025</h3>
+  <div class="grid">
+    <div class="stat"><div class="n" style="color:var(--danger)">183 km²</div><div class="l">Pérdida total</div></div>
+    <div class="stat"><div class="n" style="color:var(--success)">259 km²</div><div class="l">Ganancia total</div></div>
+    <div class="stat"><div class="n" style="color:var(--text-2)">691 km²</div><div class="l">Estable</div></div>
+    <div class="stat"><div class="n" style="color:var(--success)">+76 km²</div><div class="l">Cambio neto positivo</div></div>
+  </div>
+  <div class="finding ok">El balance neto es positivo, pero la mayor parte de la ganancia corresponde a densificación de parches sobrevivientes, no a expansión espacial.</div>
+
+  <h3>Acoplamiento clima-NDVI desagregado por naturaleza espectral</h3>
+  <table>
+    <tr><th>Fuente · lag óptimo</th><th>Manglar denso</th><th>Limnológica</th><th>Interpretación</th></tr>
+    <tr><td>ERA5 precipitación local · lag 2</td><td>ρ = <b style="color:var(--danger)">−0,123</b></td><td>ρ = <b style="color:var(--success)">+0,292</b></td><td>Lluvia local intensa → inundación bajo dosel; el agua responde directamente</td></tr>
+    <tr><td>ENSO SOI (NOAA) · lag 1-2</td><td>ρ = <b style="color:var(--success)">+0,146 a +0,198</b></td><td>ρ = +0,135 a +0,201</td><td>Régimen ENSO regional favorable al dosel y al cuerpo de agua</td></tr>
+    <tr><td>Caudal Magdalena (El Banco) · lag 3</td><td>ρ = <b style="color:var(--success)">+0,256</b></td><td>ρ = +0,050</td><td>Aporte fluvial sostenido contrarresta hipersalinización</td></tr>
+    <tr><td>Caudal Aracataca (Ganadería Caribe) · lag 1</td><td>ρ = <b style="color:var(--success)">+0,224</b></td><td>ρ = +0,263</td><td>Vertiente Sierra Nevada también aporta beneficio neto</td></tr>
+    <tr><td>CHIRPS cuenca Magdalena · lag 3</td><td>ρ = <b style="color:var(--success)">+0,252</b></td><td>ρ = +0,268</td><td>Convergencia con IDEAM · doble validación independiente</td></tr>
+    <tr><td>CHIRPS Sierra Nevada oeste · lag 3</td><td>ρ = <b style="color:var(--success)">+0,281</b></td><td>ρ = +0,359</td><td>Refuerza el patrón regional positivo</td></tr>
+    <tr><td>Promedio simple sin desagregar</td><td colspan="2" style="text-align:center">ρ ≈ 0 (|ρ| &lt; 0,12)</td><td>Habría enmascarado las dos señales opuestas</td></tr>
+  </table>
+
+  <h3>Validación contra cartografía oficial y global · benchmark Random Forest</h3>
+  <table>
+    <tr><th>Método</th><th>F1 vs INVEMAR 1:25.000</th><th>F1 vs ESA WorldCover v200</th><th>Significado</th></tr>
+    <tr><td>Umbrales NDVI/CMRI</td><td>0,583</td><td>0,548</td><td>Clasificador determinístico · Recall sostenida en 0,43-0,45</td></tr>
+    <tr><td><b>Random Forest (100 árboles)</b></td><td><b style="color:var(--success)">0,826</b></td><td><b style="color:var(--success)">0,889</b></td><td>Mejora del 42 % vs INVEMAR y 62 % vs WorldCover · bandas SWIR son las más discriminantes</td></tr>
+    <tr><td>Techo metodológico INVEMAR ↔ WorldCover</td><td colspan="2" style="text-align:center">F1 = 0,833</td><td>Cota superior realista impuesta por las discrepancias entre cartografías oficiales</td></tr>
+  </table>
+
+  <h3>Hallazgos cualitativos</h3>
+  <div class="finding">Las 18 anomalías significativas se concentran en 2015-2016 (El Niño) y 2020 (La Niña). El bfast unificado sobre las cuatro estaciones de manglar denso refina la atribución del episodio La Niña 2020-2021 con quiebres específicos en Caño Palos (jul-2020), Caño Clarín (feb-2020 + abr-2021), CP Aguas Negras (abr-2022) y CP Luna (ene-2022).</div>
+  <div class="finding ok">El SAR Sentinel-1 separa por primera vez los dos mecanismos del evento sept 2020: 15,93 km² de agua abierta + 43,08 km² de inundación bajo dosel (scattering doble rebote agua-tronco) = 7,1 % del AOI acotado.</div>
+  <div class="finding ok">La serie continua SAR-VH 2018-2025 confirma la firma estructural del manglar denso: CP Aguas Negras ρ = +0,807 y CP Luna ρ = +0,731 con NDVI (p &lt; 0,001), ambas independientes del óptico.</div>
+  <div class="finding ok">Los cuatro forzamientos climáticos (ERA5 + ENSO + caudal + CHIRPS) reformulan la cadena causal en cuatro pasos: La Niña → caudal sostenido (positivo para manglar) → evento puntual de inundación local 2020 → quiebres bfast de mediano plazo en 2022.</div>
+  <div class="finding ok">El módulo de alertas tempranas (Nivel 2 Digital Twin) sobre el corte 2024-12 a 2025-12 reporta 5 estaciones estables, 3 en alerta (Río Sevilla, Punta Chino, Caño Clarín) y 0 críticas.</div>
+</section>
+
+<!-- ════════ 9 · FIGURAS ════════ -->
+<section id="pane-figuras" class="pane">
+  <h2>9 · Galería de figuras · 44 PNG explicadas</h2>
+  <p class="lead">Cada figura del proyecto con explicación de qué muestra y cómo leerla.</p>
+
+  <h3>Mapas del área de estudio</h3>
+  <div class="fig"><div class="fig-name">mapa_area_estudio.png · 11.8 MB</div><div class="fig-desc">Localización completa de CGSM en el Caribe colombiano. AOI acotado (835 km²) vs envolvente (5 073 km²). Ubicación de las 8 estaciones de muestreo.</div><div class="fig-read">los polígonos rojos delimitan el área de estudio · el pequeño corresponde a la figura legal de protección donde se concentra el análisis vigente.</div></div>
+  <div class="fig"><div class="fig-name">ndvi_mediano_manglar_acotado.png</div><div class="fig-desc">NDVI mediano del manglar dentro del AOI acotado.</div><div class="fig-read">verde intenso = manglar denso · amarillo = degradado · zonas amarillas en bordes hipersalinos del Vía Parque indican estrés permanente.</div></div>
+
+  <h3>Series temporales NDVI · 3 versiones</h3>
+  <div class="fig"><div class="fig-name">serie_temporal_ndvi.png</div><div class="fig-desc">Serie cruda 2013-2025 por estación.</div><div class="fig-read">cada línea es una estación · el zig-zag es la estacionalidad seca/lluviosa · las caídas grandes son eventos.</div></div>
+  <div class="fig"><div class="fig-name">serie_temporal_ndvi_definitiva.png</div><div class="fig-desc">Versión final con armonización L8 + S2.</div><div class="fig-read">buscar la discontinuidad alrededor de 2017-2018 al cambiar de sensor.</div></div>
+  <div class="fig"><div class="fig-name">serie_temporal_ndvi_invemar.png</div><div class="fig-desc">Serie restringida a las 4 estaciones INVEMAR de manglar real.</div><div class="fig-read">más limpia que la anterior · separar por naturaleza espectral mejora la señal.</div></div>
+
+  <h3>BFAST por estación · 8 figuras h=0.15</h3>
+  <div class="fig"><div class="fig-name">bfast_Cano_Clarin · _Cano_Palos · _CP_Aguas_Negras · _CP_Luna · _Isla_Boqueron · _Punta_Cerro · _Punta_Chino · _Rio_Sevilla</div><div class="fig-desc">Una figura por estación con 4 paneles: serie observada, tendencia, estacionalidad, residuos. Líneas verticales rojas = quiebres BFAST.</div><div class="fig-read">con h=0.15 (conservador) la mayoría reporta 0 quiebres · solo aparecen con h=0.10.</div></div>
+
+  <h3>BFAST unificado h=0.10 vs h=0.15 · 8 figuras</h3>
+  <div class="fig"><div class="fig-name">bfast_manglar_unif_*_h10.png + _h15.png · 4 estaciones × 2 parámetros</div><div class="fig-desc">Comparación directa entre las dos sensibilidades del parámetro h.</div><div class="fig-read">si h=0.10 muestra una línea vertical donde h=0.15 no, hay un quiebre real pero sutil que el filtro conservador escondió.</div></div>
+  <div class="fig"><div class="fig-name">bfast_punta_cerro_h010_ggplot.png · 306 KB</div><div class="fig-desc">Visualización ggplot2 cuidada de Punta Cerro con h=0.10.</div><div class="fig-read">las bandas grises son intervalos de confianza · los breakpoints están precisamente localizados.</div></div>
+
+  <h3>Cambio temporal y datacube</h3>
+  <div class="fig"><div class="fig-name">ndvi_3_periodos_cubo.png · 753 KB</div><div class="fig-desc">Tres mapas NDVI en una figura: degradación 2020 · recuperación 2022 · actual 2024-25.</div><div class="fig-read">comparar las tres ventanas · zonas donde el verde se intensificó (recuperación) vs zonas amarillas (estrés sostenido).</div></div>
+  <div class="fig"><div class="fig-name">ndvi_cambio_cubo.png · 1.1 MB</div><div class="fig-desc">Mapa diferencia NDVI: actual menos degradación.</div><div class="fig-read">azul = mejora · rojo = pérdida · el centro de la ciénaga está mayormente azul (recuperación) · los bordes hipersalinos del Vía Parque están rojos.</div></div>
+
+  <h3>Forzamientos climáticos · 12 figuras</h3>
+  <div class="fig"><div class="fig-name">clima_vs_ndvi_2018_2025.png</div><div class="fig-desc">ERA5-Land vs NDVI · serie multivariable.</div><div class="fig-read">buscar el desfase · el manglar reacciona 1-3 meses después del pico de lluvia o sequía.</div></div>
+  <div class="fig"><div class="fig-name">enso_serie_2013_2025.png + _R.png</div><div class="fig-desc">Series ONI y SOI de NOAA · 12 años · misma figura en Python y R como validación cruzada.</div><div class="fig-read">banda roja = El Niño · banda azul = La Niña · comparar con anomalías NDVI.</div></div>
+  <div class="fig"><div class="fig-name">enso_vs_ndvi_correlacion.png + _R.png</div><div class="fig-desc">Scatter ENSO vs NDVI con regresión.</div><div class="fig-read">pendiente negativa = NDVI cae cuando El Niño sube.</div></div>
+  <div class="fig"><div class="fig-name">caudal_ideam_series_2013_2025.png</div><div class="fig-desc">Caudal del Magdalena en El Banco · IDEAM-DHIME.</div><div class="fig-read">pico sept-2020 = La Niña extrema con caudal récord.</div></div>
+  <div class="fig"><div class="fig-name">caudal_vs_ndvi_correlacion.png + _R.png</div><div class="fig-desc">Caudal vs NDVI · hipótesis: más caudal → menos sal → más manglar.</div><div class="fig-read">confirmación parcial · correlación positiva moderada con lag.</div></div>
+  <div class="fig"><div class="fig-name">chirps_serie_cuencas_2013_2025.png</div><div class="fig-desc">Lluvia CHIRPS sobre cuencas aportantes.</div><div class="fig-read">CHIRPS llena huecos donde no hay pluviómetros.</div></div>
+  <div class="fig"><div class="fig-name">chirps_vs_ndvi_correlacion.png</div><div class="fig-desc">CHIRPS vs NDVI · triangulación con caudal + ERA5.</div><div class="fig-read">tres fuentes climáticas independientes apuntan al mismo patrón.</div></div>
+
+  <h3>Validación cruzada trilingual</h3>
+  <div class="fig"><div class="fig-name">validacion_trilingual_correlacion.png</div><div class="fig-desc">Comparación de las mismas correlaciones con Python, R y Julia.</div><div class="fig-read">los tres lenguajes coinciden con convergencia hasta el tercer decimal · pipeline consistente.</div></div>
+</section>
+
+<!-- ════════ 10 · NOTEBOOKS ════════ -->
+<section id="pane-notebooks" class="pane">
+  <h2>10 · Catálogo de notebooks · 29 archivos explicados</h2>
+  <p class="lead">Filtrar por categoría para ver el subconjunto relevante.</p>
+
+  <div class="filter-bar">
+    <span class="filter active" data-cat="all">Todos</span>
+    <span class="filter" data-cat="datacube">Datacube</span>
+    <span class="filter" data-cat="series">Series temporales</span>
+    <span class="filter" data-cat="sam">Segmentación</span>
+    <span class="filter" data-cat="frag">Fragmentación</span>
+    <span class="filter" data-cat="clima">Clima</span>
+    <span class="filter" data-cat="validacion">Validación</span>
+    <span class="filter" data-cat="reporte">Reporte</span>
+  </div>
+
+  <div id="nb-list">
+    <div class="nb" data-cat="datacube"><div class="nb-id">01</div><div><div class="nb-name">01_gee_acquisition.ipynb</div><div class="nb-what">Conecta con Google Earth Engine, descarga Sentinel-2 + Landsat 8 sobre AOI acotado (835 km²) con cloud masking, exporta a Drive en composites trimestrales.</div><div class="nb-out"><b>Entrega:</b> ~14 TIFs por año/sensor</div></div></div>
+    <div class="nb" data-cat="series"><div class="nb-id">02</div><div><div class="nb-name">02_time_series.ipynb</div><div class="nb-what">Extrae NDVI mensual en buffer 150 m alrededor de 8 estaciones. Combina 345 Landsat 8 + 584 Sentinel-2 = 929 registros. Calcula z-scores y detecta anomalías.</div><div class="nb-out"><b>Entrega:</b> ndvi_combinado_2013_2025.csv · serie_ndvi_zscore_definitiva.csv · periodos_criticos.csv</div></div></div>
+    <div class="nb" data-cat="series"><div class="nb-id">02b</div><div><div class="nb-name">02b_bfast_ndvi.R.ipynb · kernel R</div><div class="nb-what">Aplica BFAST clásico con h=0.15 sobre las 8 estaciones. Detecta quiebres de tendencia y estacionalidad.</div><div class="nb-out"><b>Entrega:</b> 8 PNGs + bfast_resumen.csv</div></div></div>
+    <div class="nb" data-cat="series"><div class="nb-id">02c</div><div><div class="nb-name">02c_bfast_manglar_unificado.ipynb</div><div class="nb-what">Reanálisis BFAST sobre las 4 estaciones que efectivamente están en manglar. Compara h=0.10 vs h=0.15.</div><div class="nb-out"><b>Entrega:</b> 8 figuras + bfast_manglar_unificado.csv</div></div></div>
+    <div class="nb" data-cat="sam"><div class="nb-id">03</div><div><div class="nb-name">03_segmentation.ipynb · 03_segmentation_acotado.ipynb</div><div class="nb-what">Aplica SamGeo sobre 3 RGB Sentinel-2 representativos. Genera máscaras + GeoJSON 4326 + 9377.</div><div class="nb-out"><b>Entrega:</b> data/processed/samgeo_acotado/</div></div></div>
+    <div class="nb" data-cat="frag"><div class="nb-id">04</div><div><div class="nb-name">04_fragmentation.ipynb · 04_fragmentation_acotado.ipynb</div><div class="nb-what">Métricas FRAGSTATS en Julia con shoelace: parches, área, densidad, MSI, NND.</div><div class="nb-out"><b>Entrega:</b> metricas_fragmentacion.csv · areas_9377.csv</div></div></div>
+    <div class="nb" data-cat="sam"><div class="nb-id">04b</div><div><div class="nb-name">04b_topologia.ipynb · 04b_topologia_acotado.ipynb</div><div class="nb-what">Predicados topológicos DE-9IM (intersects, contains) entre parches y AOI + estaciones.</div><div class="nb-out"><b>Entrega:</b> parches_topologia.csv</div></div></div>
+    <div class="nb" data-cat="sam"><div class="nb-id">04c</div><div><div class="nb-name">04c_topologia_julia.ipynb</div><div class="nb-what">Versión Julia de los mismos predicados topológicos para comparar implementaciones.</div><div class="nb-out"><b>Entrega:</b> parches_topologia_julia.csv</div></div></div>
+    <div class="nb" data-cat="validacion"><div class="nb-id">05</div><div><div class="nb-name">05_flooding_nasa.ipynb · 05_flooding_nasa_acotado.ipynb</div><div class="nb-what">Detecta inundación con NASA SAR + Global Flood Database + JRC sobre evento sept-2020.</div><div class="nb-out"><b>Entrega:</b> inundacion_sar_sept2020.csv · gfd_eventos_cgsm.csv · jrc_transiciones_cgsm.csv</div></div></div>
+    <div class="nb" data-cat="reporte"><div class="nb-id">06</div><div><div class="nb-name">06_dashboard.ipynb</div><div class="nb-what">Construye el dashboard HTML interactivo con 17 capas temáticas usando Leaflet.</div><div class="nb-out"><b>Entrega:</b> outputs/maps/dashboard_CGSM_final.html</div></div></div>
+    <div class="nb" data-cat="clima"><div class="nb-id">06g</div><div><div class="nb-name">06_gpboost_humedales_bita.ipynb</div><div class="nb-what">Aplicación complementaria de GPBoost sobre humedales del Bita · ejercicio de transferencia metodológica.</div><div class="nb-out"><b>Entrega:</b> notebook exploratorio fuera de CGSM</div></div></div>
+    <div class="nb" data-cat="clima"><div class="nb-id">07</div><div><div class="nb-name">07_era5_clima.ipynb</div><div class="nb-what">Descarga ERA5-Land mensual. Clasifica las 8 estaciones por naturaleza espectral. Correlación clima-NDVI desagregada con lag 2 meses.</div><div class="nb-out"><b>Entrega:</b> era5_anomalias_mensuales.csv · correlacion_clima_ndvi_desagregada.csv</div></div></div>
+    <div class="nb" data-cat="validacion"><div class="nb-id">08</div><div><div class="nb-name">08_validacion_multilingual.ipynb</div><div class="nb-what">Compara series extraídas con Python+GEE vs R+stars sobre los mismos TIFs.</div><div class="nb-out"><b>Entrega:</b> convergencia hasta el tercer decimal documentadas</div></div></div>
+    <div class="nb" data-cat="datacube"><div class="nb-id">09</div><div><div class="nb-name">09_datacube_netcdf.ipynb · 09b_datacube_extendido.ipynb</div><div class="nb-what">Construye 4 datacubes NetCDF CF-1.8 sobre EPSG:9377 con acceso perezoso.</div><div class="nb-out"><b>Entrega:</b> data/processed/cubo/*.nc (~500 MB)</div></div></div>
+    <div class="nb" data-cat="validacion"><div class="nb-id">10</div><div><div class="nb-name">10_validacion_extendida.ipynb</div><div class="nb-what">Valida contra GMW v3.0 + ESA WorldCover v200. Reporta OA, F1, PA, UA.</div><div class="nb-out"><b>Entrega:</b> validacion_gmw_final.csv · F1=0,826 (RF vs INVEMAR)</div></div></div>
+    <div class="nb" data-cat="clima"><div class="nb-id">11</div><div><div class="nb-name">11_indices_enso_noaa.ipynb · 11b_indices_enso_noaa_R.ipynb</div><div class="nb-what">Descarga ONI y SOI de NOAA. Cruce con NDVI. Misma análisis en Python y R como validación cruzada.</div><div class="nb-out"><b>Entrega:</b> indices_enso_mensual.csv · correlacion_enso_ndvi.csv · 4 figuras</div></div></div>
+    <div class="nb" data-cat="clima"><div class="nb-id">12</div><div><div class="nb-name">12_chirps_cuenca_magdalena.ipynb</div><div class="nb-what">Lluvia satelital CHIRPS sobre cuencas aportantes. Triangulación con NDVI.</div><div class="nb-out"><b>Entrega:</b> chirps_cuencas_mensual.csv · correlacion_chirps_ndvi.csv</div></div></div>
+    <div class="nb" data-cat="clima"><div class="nb-id">12b</div><div><div class="nb-name">12b_caudal_ideam_elbanco.ipynb · 12c R version</div><div class="nb-what">Caudal mensual del Magdalena en El Banco (IDEAM-DHIME). Versión Python + R para cross-check.</div><div class="nb-out"><b>Entrega:</b> caudal_ideam_mensual.csv · correlacion_caudal_ndvi.csv · 2 figuras</div></div></div>
+    <div class="nb" data-cat="validacion"><div class="nb-id">13</div><div><div class="nb-name">13_validacion_invemar.ipynb</div><div class="nb-what">Valida contra cartografía oficial colombiana del manglar (INVEMAR 1:25 000).</div><div class="nb-out"><b>Entrega:</b> validacion_invemar_acotado.csv</div></div></div>
+    <div class="nb" data-cat="validacion"><div class="nb-id">14</div><div><div class="nb-name">14_validacion_trilingual.ipynb</div><div class="nb-what">Replica el mismo cálculo con Python, R y Julia. Verifica consistencia entre lenguajes.</div><div class="nb-out"><b>Entrega:</b> validacion_trilingual_resultados.csv · convergencia hasta el tercer decimal</div></div></div>
+    <div class="nb" data-cat="reporte"><div class="nb-id">aux</div><div><div class="nb-name">area_estudio.ipynb · crear_qmd.ipynb</div><div class="nb-what">Utilities: genera el mapa del área de estudio y arma el documento Quarto.</div><div class="nb-out"><b>Entrega:</b> docs/informe_final.qmd · 125 KB → 29 pp PDF</div></div></div>
+  </div>
+</section>
+
+<!-- ════════ 11 · CONCLUSIONES ════════ -->
+<section id="pane-conclusiones" class="pane">
+  <h2>11 · Conclusiones</h2>
+
+  <div class="finding ok"><b>La pipeline multilenguaje es viable y productiva.</b> Python + R + Julia se complementan: Python para satélites y SamGeo, R para BFAST y series ecohidrológicas, Julia para fragmentación y predicados DE-9IM con LibGEOS. Cuatro validaciones cruzadas formales confirman convergencia hasta el tercer decimal entre los tres lenguajes.</div>
+
+  <div class="finding"><b>La caracterización espaciotemporal cubre el periodo 2013-2025</b> integrando 929 registros mensuales NDVI combinados Landsat 8 + Sentinel-2, 18 anomalías significativas (sept 2020 La Niña), un quiebre estructural generalizado en 2016 (El Niño 2015-2016 en 7/8 estaciones con bfast h=0.10), y un análisis bfast unificado sobre las 4 estaciones de manglar denso que refina los eventos La Niña 2020, post-Niña 2022 y El Niño 2023-24.</div>
+
+  <div class="finding warn"><b>Cambio neto positivo +76 km² entre 2020 y 2025 — acompañado de fragmentación creciente.</b> La cobertura clasificada por umbrales no equivale a cobertura real: el mapa de cambio NDVI sobre el datacube trimestral CF-1.8 muestra ganancia de vigor sobre parches sobrevivientes y pérdida en bordes hipersalinos.</div>
+
+  <div class="finding"><b>El sistema se consolida en menos parches pero más densos y aislados.</b> Sobre el AOI acotado (835 km²) pasa de 79 parches en 2020 a 15 en 2024-2025 (−81 %), con NND 1,10 → 2,39 km, MSI 0,51 → 1,46 y área media 157 → 269 ha. Consolidación estructural, no recuperación homogénea.</div>
+
+  <div class="finding ok"><b>Validación doble F1 = 0,583 (INVEMAR) y 0,548 (WorldCover) para umbrales; F1 = 0,826 y 0,889 para Random Forest.</b> El benchmark Random Forest cierra la brecha frente al techo metodológico de F1 = 0,833 que imponen las discrepancias entre las dos cartografías oficiales; las bandas SWIR (B11, B12) y la distancia al agua emergen como las variables más discriminantes para el manglar de la CGSM.</div>
+
+  <div class="finding ok"><b>La serie continua Sentinel-1 SAR-VH 2018-2025 valida la firma estructural del manglar denso.</b> Las cuatro estaciones del Complejo de Pajarales arrojan correlaciones positivas altamente significativas entre SAR-VH y NDVI (CP Aguas Negras ρ = +0,807; CP Luna ρ = +0,731; p &lt; 0,001), mientras las cuatro estaciones limnológicas arrojan |ρ| &lt; 0,20.</div>
+
+  <div class="finding ok"><b>El módulo de alertas tempranas materializa el Nivel 2 del paradigma Digital Twin.</b> Sobre el corte 2024-12 a 2025-12 reporta 5 estaciones estables (incluidas las 4 de manglar denso), 3 en alerta (Río Sevilla, Punta Chino, Caño Clarín) y 0 críticas. Ejecutable mensualmente al ingreso de nuevos composites Sentinel-2 y Sentinel-1.</div>
+
+  <div class="finding ok"><b>El proyecto sienta las bases para la tesis de Maestría.</b> El datacube CF-1.8, SamGeo operativo, fragmentación Julia, validación cruzada multilingüe, benchmark Random Forest y módulo de alertas tempranas constituyen infraestructura directamente reutilizable para el GeoAI-based Digital Twin propuesto en la tesis.</div>
+
+  <h3>Recomendaciones para trabajo futuro</h3>
+  <ul style="font-size:var(--fs-sm);line-height:1.7;margin:0 0 0 22px">
+    <li>Ampliar la red IDEAM más allá de El Banco y Ganadería Caribe ya integradas, incorporando los tributarios secundarios del bajo Magdalena (Fundación, Río Frío)</li>
+    <li>Profundizar el análisis ENSO con métricas de eventos discretos (duración acumulada de fases La Niña) y el Atlantic Multidecadal Oscillation (AMO) que podría modular la dinámica de la cuenca Magdalena</li>
+    <li>Refinar el clasificador supervisado bajando el umbral NDVI de 0,70 a 0,60-0,65 y combinándolo con CMRI para mejorar la Recall sin sacrificar Precisión</li>
+    <li>Extender el análisis bfast unificado al periodo 2013-2025 incorporando Landsat 8 sobre las cuatro estaciones de manglar denso</li>
+    <li>Ampliar la ventana del periodo "actual" a por lo menos dos ciclos anuales adicionales (julio 2025-junio 2027) para diferenciar fluctuación intermedia de tendencia estable</li>
+    <li>Empaquetar el datacube como STAC catalog con pystac para interoperabilidad</li>
+    <li>Armonizar espectralmente Landsat 8 ↔ Sentinel-2 para eliminar la discontinuidad de la serie alrededor de 2018</li>
+    <li>Avanzar hacia un Nivel 3 del Digital Twin con modelos predictivos de tendencia y simulación de escenarios climáticos prospectivos</li>
+  </ul>
+</section>
+
+<!-- ════════ 12 · TESIS ════════ -->
+<section id="pane-tesis" class="pane">
+  <h2>12 · Conexión con la Tesis de Maestría</h2>
+  <p class="lead">El proyecto PROG_SIG no es un fin: constituye el prototipo de infraestructura para el Digital Twin GeoAI propuesto en la tesis.</p>
+
+  <div class="hero">
+    <h2 style="margin:0">La tesis en una frase</h2>
+    <p style="font-size:var(--fs-md)"><b>Un Digital Twin basado en GeoAI</b> para monitoreo dinámico del manglar de la CGSM bajo nubes persistentes y variabilidad hidroclimática · integra Sentinel-2 + Sentinel-1 + ALOS-2 + SAM/MW-SAM en una arquitectura transferible a otros humedales tropicales.</p>
+  </div>
+
+  <h3>Diagrama de aportes a la tesis</h3>
+  <div class="diagram-wrap">
+    <div class="dgm-title">Cómo confluyen Percepción Remota + PROG_SIG en los 3 objetivos de la tesis</div>
+    <svg viewBox="0 0 1100 460" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr-pr3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#79c0ff"/>
+        </marker>
+        <marker id="arr-ps3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#ffa657"/>
+        </marker>
+      </defs>
+      <rect x="20" y="40" width="320" height="400" rx="12" fill="#181d26" stroke="#79c0ff" stroke-width="1.5" stroke-opacity="0.4"/>
+      <rect x="380" y="40" width="320" height="400" rx="12" fill="#181d26" stroke="#ffa657" stroke-width="1.5" stroke-opacity="0.4"/>
+      <rect x="740" y="40" width="340" height="400" rx="12" fill="#181d26" stroke="#7ee787" stroke-width="1.5" stroke-opacity="0.4"/>
+      <g font-family="Inter" text-anchor="middle">
+        <text x="180" y="25" fill="#79c0ff" font-size="14" font-weight="700">PERCEPCIÓN REMOTA</text>
+        <text x="540" y="25" fill="#ffa657" font-size="14" font-weight="700">PROGRAMACIÓN SIG</text>
+        <text x="910" y="25" fill="#7ee787" font-size="14" font-weight="700">TESIS · 3 OBJETIVOS</text>
+      </g>
+      <g font-family="Inter" text-anchor="middle">
+        <g class="node-box"><rect x="50" y="60" width="260" height="55" rx="8" fill="#1f2530" stroke="#79c0ff" stroke-width="1.5"/><text x="180" y="80" fill="#79c0ff" font-weight="700" font-size="11.5">Informe 1 · RF + S2 seca</text><text x="180" y="96" fill="#e6edf3" font-size="10">acc 98.5% · κ 0.978</text><text x="180" y="110" fill="#7a838e" font-size="9">Replica Kotikot 2024</text></g>
+        <g class="node-box"><rect x="50" y="135" width="260" height="80" rx="8" fill="#1f2530" stroke="#79c0ff" stroke-width="1.5"/><text x="180" y="155" fill="#79c0ff" font-weight="700" font-size="11.5">Informe 2 · SAR + CARICOMP</text><text x="180" y="171" fill="#e6edf3" font-size="10">S1 lluviosa · BFAST en R</text><text x="180" y="185" fill="#e6edf3" font-size="10">Luna AB ↓67% · Km22 ↓92%</text><text x="180" y="199" fill="#7a838e" font-size="9">Breakpoints Feb-May 2022</text></g>
+        <g class="node-box"><rect x="50" y="235" width="260" height="65" rx="8" fill="#1f2530" stroke="#79c0ff" stroke-width="1.5"/><text x="180" y="255" fill="#79c0ff" font-weight="700" font-size="11.5">Ejercicio AGB</text><text x="180" y="271" fill="#e6edf3" font-size="10">Banda L vs C · empate</text><text x="180" y="285" fill="#7a838e" font-size="9">RMSE 42.87 Mg/Ha</text></g>
+        <g class="node-box"><rect x="50" y="320" width="260" height="48" rx="8" fill="#0a0d12" stroke="#79c0ff" stroke-width="1.5" stroke-dasharray="5 3"/><text x="180" y="338" fill="#79c0ff" font-weight="700" font-size="11">Aporta a la tesis</text><text x="180" y="354" fill="#e6edf3" font-size="9.5">RF baseline · validación CARICOMP · banda L</text></g>
+      </g>
+      <g font-family="Inter" text-anchor="middle">
+        <g class="node-box"><rect x="410" y="60" width="260" height="48" rx="8" fill="#1f2530" stroke="#ffa657" stroke-width="1.5"/><text x="540" y="80" fill="#ffa657" font-weight="700" font-size="11.5">Datacube CF-1.8</text><text x="540" y="96" fill="#e6edf3" font-size="10">EPSG:9377 · 10 m · trimestral</text></g>
+        <g class="node-box"><rect x="410" y="118" width="260" height="48" rx="8" fill="#1f2530" stroke="#ffa657" stroke-width="1.5"/><text x="540" y="138" fill="#ffa657" font-weight="700" font-size="11.5">SamGeo + topología</text><text x="540" y="154" fill="#e6edf3" font-size="10">3 RGB · GeoJSON 9377</text></g>
+        <g class="node-box"><rect x="410" y="176" width="260" height="48" rx="8" fill="#1f2530" stroke="#ffa657" stroke-width="1.5"/><text x="540" y="196" fill="#ffa657" font-weight="700" font-size="11.5">Fragmentación Julia</text><text x="540" y="212" fill="#e6edf3" font-size="10">79 → 15 parches</text></g>
+        <g class="node-box"><rect x="410" y="234" width="260" height="48" rx="8" fill="#1f2530" stroke="#ffa657" stroke-width="1.5"/><text x="540" y="254" fill="#ffa657" font-weight="700" font-size="11.5">Clima · ENSO · caudal</text><text x="540" y="270" fill="#e6edf3" font-size="10">ERA5 + ONI + CHIRPS + IDEAM</text></g>
+        <g class="node-box"><rect x="410" y="292" width="260" height="48" rx="8" fill="#1f2530" stroke="#ffa657" stroke-width="1.5"/><text x="540" y="312" fill="#ffa657" font-weight="700" font-size="11.5">Dashboard 17 capas · GMW</text><text x="540" y="328" fill="#e6edf3" font-size="10">F1=0,826 (RF vs INVEMAR)</text></g>
+        <g class="node-box"><rect x="410" y="360" width="260" height="48" rx="8" fill="#0a0d12" stroke="#ffa657" stroke-width="1.5" stroke-dasharray="5 3"/><text x="540" y="378" fill="#ffa657" font-weight="700" font-size="11">Aporta a la tesis</text><text x="540" y="394" fill="#e6edf3" font-size="9.5">Datacube · SamGeo · pipeline 3-leng</text></g>
+      </g>
+      <g font-family="Inter" text-anchor="middle">
+        <g class="node-box"><rect x="770" y="60" width="290" height="100" rx="10" fill="#1f2530" stroke="#7ee787" stroke-width="2"/><text x="915" y="82" fill="#7ee787" font-weight="700" font-size="13">Obj. 1 · Datacube ARD</text><text x="915" y="100" fill="#e6edf3" font-size="10.5">S2 + S1 + ALOS-2 + DEM + ERA5</text><text x="915" y="116" fill="#e6edf3" font-size="10.5">Gap-free · CF-1.8 · EPSG:9377</text><text x="915" y="132" fill="#e6edf3" font-size="10.5">2015-2025 · 10 m anual</text><text x="915" y="150" fill="#7a838e" font-size="9.5">→ composites cloud-mitigated</text></g>
+        <g class="node-box"><rect x="770" y="180" width="290" height="110" rx="10" fill="#1f2530" stroke="#7ee787" stroke-width="2"/><text x="915" y="202" fill="#7ee787" font-weight="700" font-size="13">Obj. 2 · GeoAI vs RF</text><text x="915" y="220" fill="#e6edf3" font-size="10.5">RF Kotikot baseline</text><text x="915" y="236" fill="#e6edf3" font-size="10.5">vs SAM · SamGeo · MW-SAM</text><text x="915" y="252" fill="#e6edf3" font-size="10.5">single vs multi-sensor</text><text x="915" y="268" fill="#e6edf3" font-size="10.5">3 clases · extent · condition</text><text x="915" y="284" fill="#7a838e" font-size="9.5">→ benchmark sistemático</text></g>
+        <g class="node-box"><rect x="770" y="310" width="290" height="110" rx="10" fill="#1f2530" stroke="#7ee787" stroke-width="2"/><text x="915" y="332" fill="#7ee787" font-weight="700" font-size="13">Obj. 3 · Digital Twin</text><text x="915" y="350" fill="#e6edf3" font-size="10.5">Python + R + Julia monorepo</text><text x="915" y="366" fill="#e6edf3" font-size="10.5">Dashboard · GitHub público</text><text x="915" y="382" fill="#e6edf3" font-size="10.5">Lu et al. · Nivel 1-2</text><text x="915" y="398" fill="#e6edf3" font-size="10.5">Transferible humedales tropicales</text><text x="915" y="414" fill="#7a838e" font-size="9.5">→ INVEMAR · Ramsar · paper</text></g>
+      </g>
+      <!-- arrows PR → tesis -->
+      <g fill="none" stroke="#79c0ff" stroke-width="1.8" opacity="0.75" marker-end="url(#arr-pr3)">
+        <path d="M 310 87 C 500 87 620 240 770 240"/>
+        <path d="M 310 175 C 600 175 700 260 770 260"/>
+        <path d="M 310 267 C 500 267 620 120 770 120"/>
+      </g>
+      <!-- arrows PROG_SIG → tesis -->
+      <g fill="none" stroke="#ffa657" stroke-width="1.8" opacity="0.75" marker-end="url(#arr-ps3)">
+        <path d="M 670 84 C 720 84 740 100 770 100"/>
+        <path d="M 670 142 C 720 142 740 240 770 240"/>
+        <path d="M 670 200 C 720 200 740 270 770 270"/>
+        <path d="M 670 258 C 720 258 740 140 770 140"/>
+        <path d="M 670 316 C 720 316 740 360 770 360"/>
+      </g>
+    </svg>
+    <div class="dgm-caption">Las flechas azules sintetizan el aporte de Percepción Remota (RF baseline, validación CARICOMP, decisión banda L). Las naranjas, los productos de PROG_SIG (datacube, SamGeo, pipeline trilingual, dashboard). Ambos cursos confluyen en los 3 objetivos específicos de la tesis.</div>
+  </div>
+
+  <h3>Aportes específicos por objetivo de tesis</h3>
+  <table>
+    <tr><th>Objetivo tesis</th><th>Aporte PROG_SIG</th><th>Estado</th></tr>
+    <tr><td><b>OE 1 · Datacube ARD multisensor</b></td><td>NetCDF CF-1.8 sobre EPSG:9377 · pipeline geemap · 4 archivos · composites trimestrales 2013-2025 · MAGNA-SIRGAS Origen Nacional</td><td><span class="tag ok">Prototipo listo</span></td></tr>
+    <tr><td><b>OE 2 · GeoAI vs RF benchmark</b></td><td>SamGeo operativo sobre 3 RGB Sentinel-2 · validación GMW + WorldCover · fragmentación FRAGSTATS Julia · BFAST R</td><td><span class="tag warn">Parcial · falta RF benchmark</span></td></tr>
+    <tr><td><b>OE 3 · Digital Twin prototype</b></td><td>Pipeline Python+R+Julia · Docker · Quarto · dashboard 17 capas · informe 29 pp + artículo journal</td><td><span class="tag ok">Nivel 1-2 alcanzado</span></td></tr>
+  </table>
+
+  <h3>Brechas que la tesis debe cerrar</h3>
+  <div class="finding warn">PROG_SIG y Percepción Remota usan conjuntos distintos de estaciones (8 + 5 = 13, solo 2 coincidentes). La tesis debe unificar los conjuntos para análisis cruzado robusto.</div>
+  <div class="finding warn">PROG_SIG no integró Sentinel-1 SAR en producción · solo se exploró en Percepción Remota. La tesis lo incorpora en el datacube del Obj. 1.</div>
+  <div class="finding warn">PROG_SIG no integró ALOS-2 banda L. La tesis lo agrega para resolver inundación sub-canopy donde la banda C es insuficiente.</div>
+  <div class="finding warn">PROG_SIG usa SamGeo sin benchmark sistemático contra RF. La tesis hará la comparación formal con métricas de área, condition y flooding.</div>
+  <div class="finding ok">PROG_SIG llega a Nivel 1-2 de Digital Twin · la tesis avanza a Nivel 2-3 con detección dinámica + alerta basada en breakpoints.</div>
+</section>
+
+</main>
+
+<footer>Dashboard generado <span id="now"></span> · <code>C:\LINA\UNAL 2626-1\PROG_SIG\Docker_1\proyecto-cgsm\dashboard-prog-sig.html</code> · Open Design tokens</footer>
+
+<script>
+  document.querySelectorAll('nav.tabs .tab').forEach(t=>{
+    t.onclick=()=>{
+      document.querySelectorAll('nav.tabs .tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      document.querySelectorAll('section.pane').forEach(p=>p.classList.remove('active'));
+      document.getElementById('pane-'+t.dataset.pane).classList.add('active');
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
+  });
+  document.querySelectorAll('.filter-bar .filter').forEach(f=>{
+    f.onclick=()=>{
+      document.querySelectorAll('.filter-bar .filter').forEach(x=>x.classList.remove('active'));
+      f.classList.add('active');
+      const cat=f.dataset.cat;
+      document.querySelectorAll('#nb-list .nb').forEach(n=>{
+        n.style.display=(cat==='all'||n.dataset.cat===cat)?'':'none';
+      });
+    };
+  });
+  document.getElementById('now').textContent=new Date().toLocaleString('es-CO');
+</script>
+</body>
+</html>
