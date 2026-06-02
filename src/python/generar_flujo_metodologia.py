@@ -29,7 +29,7 @@ BOX_W, BOX_H = 2.20, 1.30  # caja de fase
 PHASES = [
     {'n': '1', 'color': '#0d47a1', 'title': 'Datacube',
      'lines': ['Sentinel-2 + Landsat', 'geemap · xarray · CF-1.8',
-               'Notebooks 01 · 09']},
+               'Notebooks 01 · 09b']},
     {'n': '2', 'color': '#4527a0', 'title': 'Series + bfast',
      'lines': ['NDVI mensual · z-score', 'Python + R · bfast',
                'Notebooks 02 · 02b · 02c']},
@@ -39,12 +39,12 @@ PHASES = [
     {'n': '4', 'color': '#311b92', 'title': 'Fragmentación',
      'lines': ['Julia · LibGEOS', 'NP · MSI · NND · área',
                'Notebook 04']},
-    {'n': '5', 'color': '#1b5e20', 'title': 'Clima · SAR',
-     'lines': ['ERA5 · ENSO · CHIRPS', 'Caudal · S1 SAR-VH',
-               'Notebooks 07 · 08 · 12']},
+    {'n': '5', 'color': '#1b5e20', 'title': 'Forzamiento clima',
+     'lines': ['ERA5 · ENSO · CHIRPS', 'Caudal IDEAM · SAR-VH',
+               'Notebooks 07 · 11 · 12']},
     {'n': '6', 'color': '#bf360c', 'title': 'Validación + RF',
-     'lines': ['INVEMAR · WorldCover', 'Random Forest · alertas',
-               'Notebooks 05 · 10 · 11']},
+     'lines': ['INVEMAR · WorldCover', 'Inundación · Random Forest',
+               'Notebooks 05 · 10 · 13 · 14']},
 ]
 
 # ---- Render ----

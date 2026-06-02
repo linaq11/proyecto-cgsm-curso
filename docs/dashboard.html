@@ -1121,7 +1121,7 @@ a:focus-visible, button:focus-visible {
       <div class="card-head"><h2 class="card-title">Flujo de la metodología · de la imagen al indicador</h2></div>
       <div class="card-body figure">
         <img src="outputs/figures/flujo_metodologia.png" alt="Flujo de metodología">
-        <p class="caption">Flujo metodológico en seis fases secuenciales: ingesta GEE, construcción del datacube, análisis de series BFAST, segmentación SamGeo + Random Forest, métricas de fragmentación Julia, validación cruzada SAR + INVEMAR. Validación entre Python, R y Julia en cada fase. Toda la cadena se ejecuta dentro de un contenedor Docker que garantiza reproducibilidad bit a bit.</p>
+        <p class="caption">Flujo metodológico en seis fases secuenciales: ingesta GEE, construcción del datacube, análisis de series con BFAST, segmentación SamGeo con métricas topológicas DE-9IM, fragmentación en Julia, forzamiento climático e hidrológico, y validación cartográfica frente a INVEMAR 1:25.000 y ESA WorldCover. Pruebas cruzadas Python ↔ R ↔ Julia verifican la convergencia numérica entre implementaciones. Toda la cadena corre dentro de un contenedor Docker reproducible.</p>
       </div>
     </div>
 
