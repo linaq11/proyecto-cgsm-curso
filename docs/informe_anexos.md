@@ -1,33 +1,31 @@
-# Tabla de contenidos {#tabla-de-contenidos .TOC-Heading}
-
 # Presentación
 
-Este documento complementario reúne cinco anexos técnicos del proyecto **Pipeline multilenguaje GeoAI para el monitoreo del manglar en la Ciénaga Grande de Santa Marta (2013--2025)**. Cada anexo desarrolla material de soporte que sustenta las decisiones metodológicas, la reproducibilidad técnica y la trazabilidad de los resultados reportados en el informe principal (`informe_final.pdf`):
+Este documento complementario reúne cinco anexos técnicos del proyecto Pipeline multilenguaje GeoAI para el monitoreo del manglar en la Ciénaga Grande de Santa Marta (2013--2025). Cada anexo desarrolla material de soporte que sustenta las decisiones metodológicas, la reproducibilidad técnica y la trazabilidad de los resultados reportados en el informe principal (informe_final_revisado.docx):
 
 -   **Anexo A** documenta la configuración del entorno Docker `sig_unal v1.11` con los paquetes adicionales de Python, R y Julia.
 -   **Anexo B** describe la estructura del repositorio GitHub con la serie vigente y la legacy de notebooks.
--   **Anexo C** explica la discrepancia metodológica en el conteo de parches entre las implementaciones de Julia y Python.
+-   **Anexo C explica la discrepancia metodológica en el conteo de parches entre las implementaciones de Julia y Python.**
 -   **Anexo E** contiene los fragmentos de código que materializan cada fase del pipeline.
 -   **Anexo F** reúne las tablas de detalle movidas desde el cuerpo del informe.
 
-(La letra D queda sin usar; el análisis de sensibilidad caudal máximo vs medio que ocupaba esa posición se sintetiza ahora en el cuerpo del informe principal y los datos detallados quedan en `outputs/tables/caudal_comparacion_max_medio.csv`.)
+(Nota: el Anexo D se conserva sin contenido para mantener la correspondencia con versiones previas y evitar modificar las referencias internas.)
 
-# Anexo A: Configuracion del entorno Docker
+# Anexo A: Configuración del entorno Docker
 
 El proyecto se ejecuta sobre el contenedor Docker sig_unal v1.11 proporcionado para la asignatura, con las siguientes modificaciones:
 
-    # Librerias Python adicionales instaladas
+    # Librerías Python adicionales instaladas
     pip install earthengine-api geemap segment-geospatial leafmap
     pip install rasterio geopandas xarray shapely folium rasterstats
     pip install matplotlib pandas numpy scikit-learn contextily
     pip install cdsapi netCDF4              # descarga ERA5-Land desde CDS
 
-    # Autenticacion Google Earth Engine
+    # Autenticación Google Earth Engine
     earthengine authenticate --auth_mode=notebook
 
-    # Autenticacion Climate Data Store (ECMWF) — para ERA5-Land
+    # Autenticación Climate Data Store (ECMWF) — para ERA5-Land
     # 1) Crear cuenta en https://cds.climate.copernicus.eu/
-    # 2) Aceptar terminos del conjunto de datos reanalysis-era5-land-monthly-means
+    # 2) Aceptar términos del conjunto de datos reanalysis-era5-land-monthly-means
     # 3) Crear archivo ~/.cdsapirc con la URL y la API key personales
     # Paquetes R adicionales
     install.packages(c("bfast", "terra", "sf", "ggplot2", "tseries",
@@ -36,63 +34,66 @@ El proyecto se ejecuta sobre el contenedor Docker sig_unal v1.11 proporcionado p
     using Pkg
     Pkg.add(["GeoJSON", "DataFrames", "CSV", "Statistics"])
 
-La autenticación con GEE se realiza mediante el flujo gcloud auth application-default login con quota project configurado, que genera credenciales almacenadas en \~/.config/gcloud/application_default_credentials.json. El contenedor requiere un mínimo de 8 GB de RAM asignados en Docker Desktop para ejecutar SamGeo con el backbone vit_b; con vit_h se requieren al menos 12 GB. Las composiciones RGB se remuestrean de 10 a 30 metros antes de la segmentación para reducir el consumo de memoria.````
+La autenticación con GEE se realiza mediante el flujo gcloud auth application-default login con quota project configurado, que genera credenciales almacenadas en \~/.config/gcloud/application_default_credentials.json. El contenedor requiere un mínimo de 8 GB de RAM asignados en Docker Desktop para ejecutar SamGeo con el backbone vit_b; con vit_h se requieren al menos 12 GB. Las composiciones RGB se remuestrean de 10 a 30 metros antes de la segmentación para reducir el consumo de memoria.
 
 # Anexo B: Estructura del repositorio GitHub
 
 El repositorio público está disponible en bajo licencia MIT. La versión anterior del proyecto (línea base marzo 2026 sobre AOI preliminar de 5.073 km²) permanece archivada en para fines de comparación histórica.<https://github.com/linaq11/proyecto-cgsm-curso><https://github.com/LinaQuinteroF/proyecto-cgsm>
 
-    proyecto-cgsm-curso/├── notebooks/        29 notebooks numerados (vigente 01-12 + legacy 03_…14)│                     orden de ejecución: 01 → 02 → 02b → 03_acotado →│                     04_acotado → 04b_acotado → 05_acotado → 07 → 08 →│                     09b → 10 → 11 → 11b → 12 → 12b → 12c → 13 → 14├── src/│   ├── python/       utils.py (9377 + DE-9IM), aoi_acotado.py, build_cubos.py,│   │                 make_dashboard_html.py, alertas_manglar.py, merge_cubo.py│   ├── R/            03_bfast_ndvi.R, 05_stars_cubo.R, 06_bfast_manglar_unificado.R,│   │                 08_correlacion_trilingual.R│   └── julia/        04_fragmentación.jl (4326 legado + 9377 vigente),│                     05_correlacion_trilingual.jl├── data/│   ├── raw/          AOI preliminar y acotado, RUNAP SFF + VPI, INVEMAR GBIF,│   │                 IDEAM El Banco / Ganadería Caribe│   └── processed/│       ├── cubo/     3 datacubes NetCDF CF-1.8 (40 / 275 / 119 MB)│       └── samgeo/   máscaras y GeoJSON por periodo (degradación / recuperación / actual)├── outputs/│   ├── tables/       47 CSV con resultados numéricos│   ├── figures/      35 PNG (mapas, series, correlaciones, validación, alertas)│   └── maps/         dashboard_CGSM_final.html (autocontenido, ~80 KB)└── docs/             informe_final.{qmd,html,pdf}, informe_anexos.{qmd,html,pdf},                      dashboard.html (Pages), outputs/{figures,maps}/ (Pages)
+    proyecto-cgsm-curso/
+    ├── notebooks/        29 notebooks: 22 serie principal + 7 legacy (trazabilidad)
+    │                     orden de ejecución: 01 → 02 → 02b → 03_acotado →
+    │                     04_acotado → 04b_acotado → 05_acotado → 07 → 08 →
+    │                     09b → 10 → 11 → 11b → 12 → 12b → 12c → 13 → 14
+    ├── src/
+    │   ├── python/       utils.py (9377 + DE-9IM), aoi_acotado.py, build_cubos.py,
+    │   │                 make_dashboard_html.py, alertas_manglar.py, merge_cubo.py
+    │   ├── R/            03_bfast_ndvi.R, 05_stars_cubo.R, 06_bfast_manglar_unificado.R,
+    │   │                 08_correlacion_trilingual.R
+    │   └── julia/        04_fragmentacion.jl (4326 legacy + 9377 vigente),
+    │                     05_correlacion_trilingual.jl
+    ├── data/
+    │   ├── raw/          AOI preliminar y acotado, RUNAP SFF + VPI, INVEMAR GBIF,
+    │   │                 IDEAM El Banco / Ganadería Caribe
+    │   └── processed/
+    │       ├── cubo/     3 datacubes NetCDF CF-1.8 (40 / 275 / 119 MB)
+    │       └── samgeo/   máscaras y GeoJSON por periodo
+    ├── outputs/
+    │   ├── tables/       47 CSV con resultados numéricos
+    │   ├── figures/      35 PNG (mapas, series, correlaciones, alertas)
+    │   └── maps/         dashboard_CGSM_final.html
+    └── docs/             informe_final.{qmd,html,pdf}, informe_anexos.{qmd,html,pdf}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-La serie vigente (notebooks 01--12 + 02b, 04b/c_acotado, 09b, 11b, 12b/c, 14) reproduce las cifras del cuerpo del informe sobre el AOI acotado de 835 km². La serie legacy (03, 04, 04b, 05, 06, 09 sin sufijo \_acotado) opera sobre el AOI preliminar de 5.073 km² y se conserva sólo por trazabilidad histórica; no sostiene ninguna conclusión del informe. La guía de ejecución por etapa con dependencias entre notebooks se documenta en notebooks/README.md. Las composiciones trimestrales y anuales en GeoTIFF y los NetCDF de mayor tamaño no se versionan por restricciones de tamaño de GitHub: se regeneran ejecutando los notebooks en orden secuencial con acceso autenticado a GEE.``
+La serie vigente (notebooks 01--12 + 02b, 04b/c_acotado, 09b, 11b, 12b/c, 14) reproduce las cifras del cuerpo del informe sobre el AOI acotado de 835 km². La serie legacy (03, 04, 04b, 05, 06, 09 sin sufijo \_acotado) opera sobre el AOI preliminar de 5.073 km² y se conserva sólo por trazabilidad histórica; no sostiene ninguna conclusión del informe. La guía de ejecución por etapa con dependencias entre notebooks se documenta en notebooks/README.md. Las composiciones trimestrales y anuales en GeoTIFF y los NetCDF de mayor tamaño no se versionan por restricciones de tamaño de GitHub: se regeneran ejecutando los notebooks en orden secuencial con acceso autenticado a GEE.
 
 # Anexo C: Nota metodológica sobre el conteo de parches (Julia vs Python)
 
-Las cifras de fragmentación sobre el AOI acotado se reportan en dos implementaciones independientes que arrojan conteos distintos del mismo conjunto de GeoJSON. En Julia, mediante el algoritmo del shoelace aplicado al anillo exterior de cada polígono (Tabla `tbl-fragmentación-acotado`), se contabilizan 79, 38 y 15 parches para los periodos de degradación, recuperación y actual respectivamente, en tanto que en Python con `geopandas` usando el atributo `geometry.area` (Tabla `tbl-topológia-acotado`), se contabilizan 17, 17 y 15. La discrepancia obedece a una diferencia metodológica especifica en el calculo del área por parche cuando los polígonos contienen anillos interiores.
+La diferencia entre los conteos de parches en Julia y Python se debe al tratamiento geométrico de polígonos con anillos interiores y geometrías multipartes. Mientras geopandas calcula el área neta descontando huecos internos, la implementación en Julia se utilizó para caracterizar unidades geométricas de paisaje y métricas de conectividad. Por esta razón, el informe distingue explícitamente entre conteos derivados de Julia (Tabla 5 del cuerpo del informe) para métricas de forma y aislamiento, y salidas geopandas (en outputs/tables/parches_geopandas.csv del repositorio) para indicadores de superficie efectiva.
 
-Cuando SamGeo segmenta un parche grande de manglar atravesado por un canal hidráulico --como el Caño Clarín o el Caño Aguas Negras--, el GeoJSON resultante exporta ese parche como un polígono con un anillo exterior que delimita la cobertura y uno o más anillos interiores que representan el canal. La implementacion en `geopandas` calcula el área neta restando los huecos --siguiendo la definición estándar del Simple Features Access para `Polygon.area`-- mientras que la implementacion Julia, al iterar sobre `ring = geom.coordinates[1]`, solo procesa el anillo exterior y reporta el área bruta del envolvente externo sin descontar los canales. En consecuencia, parches con grandes huecos internos quedan clasificados en el rango filtrado 1--5.000 ha por Julia pero por debajo del umbral inferior por `geopandas`, lo que infla el conteo de parches Julia en periodos donde la dinámica hídrica produce huecos detectables --2020 (degradación) y 2022 (recuperación), cuando los canales atraviesan manglar fragmentado por La Niña y la rehabilitación hidráulica-- y coincide en el periodo actual (2024-2025) donde los parches sobrevivientes son más compactos sin canales internos visibles.
+# Anexo E: Fragmentos abreviados de código
 
-Ambas mediciones tienen validez metodológica diferenciada. La versión `geopandas` reporta el área efectiva de cobertura de manglar, descontando agua interior, y es apropiada para indicadores de superficie y validación contra cartografía de referencia como GMW. La versión Julia reporta el área del envolvente del parche y es apropiada para indicadores de extensión del paisaje fragmentado y para calculos de conectividad mediante distancia entre envolventes. Para evitar confusion en el informe, en la Tabla `tbl-fragmentación-acotado` se reporta el conteo Julia con la columna explicita "Parches (Julia)" y se utiliza para indicadores de forma --MSI-- y aislamiento --NND--, mientras que en la Tabla `tbl-topológia-acotado` se reporta el conteo `geopandas` y se utiliza para indicadores de superficie y para el cruce con la frontera del AOI mediante predicados DE-9IM.
+Para mantener el cuerpo del informe centrado en la interpretación de resultados, los fragmentos de código que materializan cada fase del pipeline se documentan en este anexo, organizados temáticamente en cuatro apartados que reproducen el orden lógico de la cadena de procesamiento: datacube y series temporales (E.1), reproyección y topología sobre parches segmentados (E.2), forzamiento climático y detección SAR (E.3), y métricas de fragmentación del paisaje en Julia (E.4). Los conceptos técnicos invocados aquí ,datacube, z-score, bfast, SamGeo, predicado DE-9IM, Random Forest, backscatter SAR, dispersión de doble rebote, F1-score, se introducen y explican funcionalmente en el cuerpo del `informe_final_revisado.docx`; este anexo se concentra en la implementación operativa y supone que el lector conoce ya su significado conceptual.
 
-# Anexo E: Fragmentos de código complementaríos
-
-Para mantener el cuerpo del informe centrado en la interpretación de resultados, los fragmentos de código que materializan cada fase del pipeline se documentan en este anexo, organizados temáticamente en cuatro apartados que reproducen el orden lógico de la cadena de procesamiento: datacube y series temporales (E.1), reproyección y topología sobre parches segmentados (E.2), forzamiento climático y detección SAR (E.3), y métricas de fragmentación del paisaje en Julia (E.4). Los conceptos técnicos invocados aquí ,datacube, z-score, bfast, SamGeo, predicado DE-9IM, Random Forest, backscatter SAR, dispersión de doble rebote, F1-score, se introducen y explican funcionalmente en el cuerpo del `informe_final.pdf`; este anexo se concentra en la implementación operativa y supone que el lector conoce ya su significado conceptual.
+*Nota: los fragmentos incluidos son extractos abreviados para documentación metodológica. La versión ejecutable completa se encuentra en los notebooks y scripts del repositorio.*
 
 ## E.1 Datacube multitemporal y series de tiempo
 
 ### E.1.a Lectura perezosa del datacube NetCDF con xarray
 
-El datacube trimestral materializado como NetCDF CF-1.8 se abre con evaluación perezosa mediante `xarray.open_conjunto de datos` con argumento `chunks`, de modo que las operaciones de selección y reducción se planifican como un grafo de cómputo dask y solo se materializan los píxeles necesaríos al invocar `.compute()`. Este patrón resulta indispensable para los tres archivos del proyecto (40 MB, 275 MB y 119 MB) cuando se trabaja sobre la totalidad de las 31 láminas trimestrales sin saturar la memoria del contenedor.
+El datacube trimestral materializado como NetCDF CF-1.8 se abre con evaluación perezosa mediante xarray.open_dataset con argumento chunks, de modo que las operaciones de selección y reducción se planifican como un grafo de cómputo dask y solo se materializan los píxeles necesarios al invocar .compute(). Este patrón resulta indispensable para los tres archivos del proyecto (40 MB, 275 MB y 119 MB) cuando se trabaja sobre la totalidad de las 31 láminas trimestrales sin saturar la memoria del contenedor.
 
     import xarray as xr
-    ds = xr.open_conjunto de datos('data/processed/cubo/cgsm_datacube_trimestral.nc',
+
+    ds = xr.open_dataset('data/processed/cubo/cgsm_datacube_trimestral.nc',
                          chunks={'time': 1, 'x': 512, 'y': 512})
+
     # Atributos CF-1.8: Conventions, institution, creator_name, crs_origen, ...
     # Acceso perezoso por chunks; .compute() materializa cuando es necesario
     ndvi_serie = ds['reflectance'].sel(band_idx='NDVI').median(dim=['x','y']).compute()
 
 ### E.1.b Z-scores y detección de anomalías NDVI en Python
 
-Sobre la serie combinada Landsat 8 + Sentinel-2 (929 observaciónes mensuales) se calcula el z-score temporal por estación mediante `groupby().transform()`, lo que permite identificar las anomalías pronunciadas como aquellas con $z < - 2$. El resultado alimenta tanto la tabla de eventos de mortandad reportados en la Fase 2 como la lógica del módulo de alertas tempranas del Nivel 2 del Digital Twin.
+Sobre la serie combinada Landsat 8 + Sentinel-2 se calcula el z-score temporal por estación mediante groupby().transform(), lo que permite identificar anomalías pronunciadas como aquellas con z_score \< −2. El resultado alimenta tanto la tabla de eventos de mortandad como la lógica del módulo de alertas tempranas.
 
     # Z-scores y detección de anomalias por estación
     df['z_score'] = df.groupby('estación')['ndvi'].transform(
@@ -168,7 +169,7 @@ La segmentación automática de las composiciones RGB de los tres periodos de re
     from samgeo import SamGeo
 
     # Modelo base vit_b para ajustarse a la RAM del contenedor
-    sam = SamGeo(model_type='vit_b', automátic=True)
+    sam = SamGeo(model_type='vit_b', automatic=True)
 
     for periodo in ['degradación', 'recuperación', 'actual']:
         rgb  = f'{res_dir}/CGSM_RGB_{periodo}_30m.tif'
@@ -181,23 +182,27 @@ La segmentación automática de las composiciones RGB de los tres periodos de re
 
 ### E.3.a Descarga ERA5-Land mediante cdsapi y cálculo de anomalías mensuales
 
-La descarga del reanálisis ERA5-Land del ECMWF se realiza con `cdsapi` directamente desde el Climate Data Store, solicitando precipitación total y temperatura a dos metros sobre un bounding box que envuelve la CGSM con buffer; los datos se reciben en NetCDF con convenciones CF y se cargan con `xarray.open_conjunto de datos(chunks=...)` aplicando un patrón perezoso, calculando la climatología mensual y la anomalía respecto a ella para los rezagos cero a tres meses.
+La descarga del reanálisis ERA5-Land del ECMWF se realiza con cdsapi directamente desde el Climate Data Store, solicitando precipitación total y temperatura a dos metros sobre un bounding box que envuelve la CGSM con buffer; los datos se reciben en NetCDF con convenciones CF y se cargan con xarray.open_dataset(chunks=\...) aplicando un patrón perezoso, calculando la climatología mensual y la anomalía respecto a ella para los rezagos cero a tres meses.
 
     import cdsapi, xarray as xr
+
     c = cdsapi.Client()
     c.retrieve('reanalysis-era5-land-monthly-means', {
         'product_type': 'monthly_averaged_reanalysis',
         'variable': ['total_precipitation', '2m_temperature'],
         'year': [str(y) for y in range(2018, 2026)],
         'month': [f'{m:02d}' for m in range(1, 13)],
-        'time': '00:00', 'area': [11.20, -75.05, 10.30, -74.05],
-        'format': 'netcdf'}, 'data/raw/era5_land_cgsm_monthly.nc')
-    ds = xr.open_conjunto de datos('data/raw/era5_land_cgsm_monthly.nc', chunks={'time': 12})
+        'time': '00:00',
+        'area': [11.20, -75.05, 10.30, -74.05],
+        'format': 'netcdf'
+    }, 'data/raw/era5_land_cgsm_monthly.nc')
+
+    ds = xr.open_dataset('data/raw/era5_land_cgsm_monthly.nc', chunks={'time': 12})
     anom = ds.groupby('time.month') - ds.groupby('time.month').mean('time')
 
 ### E.3.b Detección de inundación Sentinel-1 SAR para el evento de septiembre 2020
 
-Para el evento de septiembre 2020 se realiza una detección de inundación mediante Sentinel-1 SAR (banda VH, modo IW), comparando el backscatter medio del periodo seco de referencia (enero--marzo 2020, 49 imágenes) contra el periodo de inundación (septiembre--octubre 2020, 36 imágenes). Se aplica un umbral de 3 dB para inundación en agua abierta y se identifica inundación bajo dosel de manglar mediante valores negativos de diferencia SAR ---donde el aumento del backscatter refleja la dispersión de doble rebote característica de la interacción agua--tronco---.
+Para el evento de septiembre de 2020 se realizó una detección de inundación mediante Sentinel-1 SAR, banda VH y modo IW, comparando el backscatter medio del periodo seco de referencia, enero-marzo de 2020, con el periodo de inundación, septiembre-octubre de 2020. En el código, la diferencia se definió como SAR diff = seco − inundación. Bajo esta convención, se identificó agua abierta cuando SAR diff fue superior a +3 dB, asociada con disminución del backscatter durante la inundación por reflexión especular, y manglar inundado bajo dosel cuando SAR diff fue inferior a −2 dB, asociado con aumento del backscatter durante la inundación por dispersión de doble rebote agua-tronco.
 
     s1_dry = ee.ImageCollection('COPERNICUS/S1_GRD') \
         .filterDate('2020-01-01','2020-03-31').select('VH').median()
@@ -239,376 +244,386 @@ La función `compute_metrics` agrega los parches segmentados de cada periodo, ca
 
 Para mantener el cuerpo del informe centrado en la narrativa de los hallazgos, dos tablas de detalle metodológico se reubican en este anexo: el cruce estación por estación entre la señal SAR de septiembre 2020, la anomalía NDVI y la frecuencia de inundación histórica de la Global Flood Database (referida en la sección de Validación con datos NASA), y las nueve transiciones de superficie del JRC Global Surface Water 1984--2021 (referida en la sección de Dinámica hídrica).
 
+**Nota de homologación de estaciones complementarias.** En la serie legacy desarrollada sobre el AOI preliminar de 5.073 km², dos estaciones complementarias del Complejo de Pajarales fueron registradas con la nomenclatura CP Pajarales y VIPIS. Durante la depuración metodológica hacia el AOI acotado de 835,3 km², estas estaciones fueron homologadas y reubicadas sobre cobertura de manglar denso verificada mediante NDVI \> 0,4 en composiciones Sentinel-2 de 2024. En la nomenclatura vigente del informe principal, CP Pajarales corresponde a CP Aguas Negras y VIPIS corresponde a CP Luna. Esta homologación no representa únicamente un cambio de etiqueta, sino también un ajuste espacial de coordenadas para garantizar consistencia con el AOI acotado y con la cobertura efectiva de manglar analizada. Las tablas de este anexo reportan la nomenclatura vigente y conservan la equivalencia legacy únicamente como nota de trazabilidad.
+
+  ------------------- -------------------- -----------------------------------------------------------------------------------------
+  **Nombre legacy**   **Nombre vigente**   **Observación**
+
+  CP Pajarales        CP Aguas Negras      Reubicada hacia manglar denso del sector Aguas Negras, dentro del Complejo de Pajarales
+
+  VIPIS               CP Luna              Reubicada hacia manglar denso del sector CP Luna, dentro del Complejo de Pajarales
+  ------------------- -------------------- -----------------------------------------------------------------------------------------
+
 ## F.1 Cruce SAR + NDVI + GFD por estación
 
-+:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:+
-| Tabla 1: Cruce de señal SAR, NDVI y frecuencia de inundación histórica por estación, restringido al AOI acotado SFF + VPI Salamanca.                                                         |
-|                                                                                                                                                                                              |
-|   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-|   **Estación**    **Naturaleza**   **Dentro AOI acotado**   **SAR diff (dB)**   **NDVI sept-2020**   **Eventos GFD**   **Interpretación**                                                    |
-|   --------------- ---------------- ------------------------ ------------------- -------------------- ----------------- --------------------------------------------------------------------- |
-|   Isla Boquerón   Limnológica      No                       N/A                 -0,018               10 de 16          Fuera del AOI: sobre lámina de agua del complejo lagunar central      |
-|                                                                                                                                                                                              |
-|   Punta Cerro     Limnológica      No                       N/A                 -0,078               10 de 16          Fuera del AOI: sobre lámina de agua del complejo lagunar central      |
-|                                                                                                                                                                                              |
-|   Punta Chino     Limnológica      No                       N/A                 0,200                9 de 16           Fuera del AOI: sobre lámina de agua del complejo lagunar central      |
-|                                                                                                                                                                                              |
-|   Río Sevilla     Limnológica      No                       N/A                 0,050                10 de 16          Fuera del AOI: sobre lámina de agua del complejo lagunar central      |
-|                                                                                                                                                                                              |
-|   Caño Palos      Manglar          Sí                       +0,15               0,400                2 de 16           Sin afectación SAR mayor                                              |
-|                                                                                                                                                                                              |
-|   CP Pajarales    Manglar          No                       N/A                 0,300                9 de 16           Fuera del AOI: oeste del SFF, en zona riberana                        |
-|                                                                                                                                                                                              |
-|   Caño Clarín     Manglar          No                       N/A                 0,500                1 de 16           Fuera del AOI: sur del SFF, sobre zona de rehabilitación hidráulica   |
-|                                                                                                                                                                                              |
-|   VIPIS           Manglar          Sí                       +0,12               0,350                9 de 16           Sin afectación SAR mayor                                              |
-|   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Tabla 1: Cruce de señal SAR, NDVI y frecuencia de inundación histórica por estación, restringido al AOI acotado SFF + VPI Salamanca.                                                                                  |
+|                                                                                                                                                                                                                       |
+|   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|                 **Estación**                **Naturaleza**   **Dentro AOI acotado**   **SAR diff (dB)**   **NDVI sept-2020**   **Eventos GFD**                           **Interpretación**                           |
+|   ---------------------------------------- ---------------- ------------------------ ------------------- -------------------- ----------------- --------------------------------------------------------------------- |
+|                Isla Boquerón                 Limnológica               No                    N/A                -0,018            10 de 16        Fuera del AOI: sobre lámina de agua del complejo lagunar central    |
+|                                                                                                                                                                                                                       |
+|                 Punta Cerro                  Limnológica               No                    N/A                -0,078            10 de 16        Fuera del AOI: sobre lámina de agua del complejo lagunar central    |
+|                                                                                                                                                                                                                       |
+|                 Punta Chino                  Limnológica               No                    N/A                0,200              9 de 16        Fuera del AOI: sobre lámina de agua del complejo lagunar central    |
+|                                                                                                                                                                                                                       |
+|                 Río Sevilla                  Limnológica               No                    N/A                0,050             10 de 16        Fuera del AOI: sobre lámina de agua del complejo lagunar central    |
+|                                                                                                                                                                                                                       |
+|                  Caño Palos                    Manglar                 Sí                   +0,15               0,400              2 de 16                            Sin afectación SAR mayor                        |
+|                                                                                                                                                                                                                       |
+|    CP Aguas Negras (legacy: CP Pajarales)      Manglar                 No                    N/A                0,300              9 de 16                 Fuera del AOI: oeste del SFF, en zona riberana             |
+|                                                                                                                                                                                                                       |
+|                 Caño Clarín                    Manglar                 No                    N/A                0,500              1 de 16       Fuera del AOI: sur del SFF, sobre zona de rehabilitación hidráulica  |
+|                                                                                                                                                                                                                       |
+|           CP Luna (legacy: VIPIS)              Manglar                 Sí                   +0,12               0,350              9 de 16                            Sin afectación SAR mayor                        |
+|   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## F.2 Transiciones JRC Global Surface Water 1984--2021
 
-+:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:+
++:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Tabla 2: Transiciones JRC Global Surface Water (1984--2021) dentro del AOI acotado SFF + VPI Salamanca. El AOI contiene 385,3 km² de agua permanente (\>75 % del tiempo) y 44,1 km² estacional (25--75 %), de modo que casi la mitad del polígono protegido es lámina de agua. |
 |                                                                                                                                                                                                                                                                                |
 |   ------------------------------------------------------------------------------------------------------------                                                                                                                                                                 |
-|   **Transición JRC dentro del AOI acotado**   **Área (km²)**   **Interpretación**                                                                                                                                                                                              |
+|    **Transición JRC dentro del AOI acotado**   **Área (km²)**                **Interpretación**                                                                                                                                                                                |
 |   ------------------------------------------- ---------------- -----------------------------------------------                                                                                                                                                                 |
-|   Permanente                                  377,75           Lámina de agua estable                                                                                                                                                                                          |
+|                   Permanente                       377,75                  Lámina de agua estable                                                                                                                                                                              |
 |                                                                                                                                                                                                                                                                                |
-|   Nuevo permanente                            23,55            Cuerpos nuevos consolidados                                                                                                                                                                                     |
+|                Nuevo permanente                    23,55                 Cuerpos nuevos consolidados                                                                                                                                                                           |
 |                                                                                                                                                                                                                                                                                |
-|   Permanente perdido                          18,55            Cuerpos de agua secados                                                                                                                                                                                         |
+|               Permanente perdido                   18,55                   Cuerpos de agua secados                                                                                                                                                                             |
 |                                                                                                                                                                                                                                                                                |
-|   Estacional                                  17,98            Zonas con régimen estacional estable                                                                                                                                                                            |
+|                   Estacional                       17,98            Zonas con régimen estacional estable                                                                                                                                                                       |
 |                                                                                                                                                                                                                                                                                |
-|   Nuevo estacional                            31,31            Nuevas áreas de inundación estacional                                                                                                                                                                           |
+|                Nuevo estacional                    31,31            Nuevas áreas de inundación estacional                                                                                                                                                                      |
 |                                                                                                                                                                                                                                                                                |
-|   Estacional perdido                          29,38            Zonas que dejaron de inundarse                                                                                                                                                                                  |
+|               Estacional perdido                   29,38               Zonas que dejaron de inundarse                                                                                                                                                                          |
 |                                                                                                                                                                                                                                                                                |
-|   Permanente a estacional                     18,54            Retroceso parcial de lámina permanente                                                                                                                                                                          |
+|             Permanente a estacional                18,54           Retroceso parcial de lámina permanente                                                                                                                                                                      |
 |                                                                                                                                                                                                                                                                                |
-|   Efímero estacional                          49,30            Inundación intermitente sin patrón estacional                                                                                                                                                                   |
+|               Efímero estacional                   49,30        Inundación intermitente sin patrón estacional                                                                                                                                                                  |
 |                                                                                                                                                                                                                                                                                |
-|   Efímero permanente                          1,74             Agua intermitente persistente                                                                                                                                                                                   |
+|               Efímero permanente                    1,74                Agua intermitente persistente                                                                                                                                                                          |
 |   ------------------------------------------------------------------------------------------------------------                                                                                                                                                                 |
 +--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## F.3 Entorno de ejecución (runtime Docker)
 
-+:---------------------------------------------------------------------------------------------:+
++:----------------------------------------------------------------------------------------------+
 | Tabla 3: Entorno de ejecución completo del proyecto.                                          |
 |                                                                                               |
 |   ------------------------------------------------------------------------------------------- |
-|   **Componente**                      **Especificación**                                      |
+|             **Componente**                              **Especificación**                    |
 |   ----------------------------------- ------------------------------------------------------- |
-|   Contenedor                          Docker sig_unal v1.11 (Ubuntu + RStudio Server)         |
+|               Contenedor                  Docker sig_unal v1.11 (Ubuntu + RStudio Server)     |
 |                                                                                               |
-|   Python                              3.12.3 + geemap, samgeo, leafmap, rasterio, geopandas   |
+|                 Python                 3.12.3 + geemap, samgeo, leafmap, rasterio, geopandas  |
 |                                                                                               |
-|   R                                   4.3.3 + terra, sf, tidyverse, bfast, tmap               |
+|                    R                         4.3.3 + terra, sf, tidyverse, bfast, tmap        |
 |                                                                                               |
-|   Julia                               1.11.3 + DataFrames, CSV, GeoJSON, Statistics           |
+|                  Julia                     1.11.3 + DataFrames, CSV, GeoJSON, Statistics      |
 |                                                                                               |
-|   Quarto                              1.4.550 (informe reproducible)                          |
+|                 Quarto                            1.4.550 (informe reproducible)              |
 |                                                                                               |
-|   Control de versiones                Git + GitHub                                            |
+|          Control de versiones                              Git + GitHub                       |
 |                                                                                               |
-|   Análisis geoespacial en la nube     Google Earth Engine (API Python)                        |
+|     Análisis geoespacial en la nube              Google Earth Engine (API Python)             |
 |   ------------------------------------------------------------------------------------------- |
 +-----------------------------------------------------------------------------------------------+
 
-## F.4 Quiebres bfast sobre las ocho estaciones del proyecto
+## F.4 Quiebres BFAST sobre las ocho estaciones del proyecto
 
-+:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:+
-| Tabla 4: Quiebres estructurales detectados por bfast sobre las ocho estaciones del proyecto en la serie combinada Landsat 8 + Sentinel-2 (2013--2025). El análisis refinado sobre las cuatro estaciones de manglar denso se reporta en la tabla **?@tbl-bfast-unificado** del informe principal. |
-|                                                                                                                                                                                                                                                                                                  |
-|   ------------------------------------------------------------------------------------------------------------------------                                                                                                                                                                       |
-|   **Estación**    **Quiebres (h=0,15)**   **Fecha principal**   **Quiebres (h=0,10)**   **Evento asociado**                                                                                                                                                                                      |
-|   --------------- ----------------------- --------------------- ----------------------- ----------------------------------                                                                                                                                                                       |
-|   CP Pajarales    1                       2016-10               1                       El Niño 2015--2016                                                                                                                                                                                       |
-|                                                                                                                                                                                                                                                                                                  |
-|   Caño Clarín     1                       2016-09               1                       El Niño 2015--2016                                                                                                                                                                                       |
-|                                                                                                                                                                                                                                                                                                  |
-|   Caño Palos      1                       2015-06               error                   El Niño (inicio)                                                                                                                                                                                         |
-|                                                                                                                                                                                                                                                                                                  |
-|   Isla Boqueron   2                       2016-04, 2018-05      2                       El Niño + transicion                                                                                                                                                                                     |
-|                                                                                                                                                                                                                                                                                                  |
-|   Punta Cerro     1                       2016-11               3                       El Niño + La Niña + recuperación                                                                                                                                                                         |
-|                                                                                                                                                                                                                                                                                                  |
-|   Punta Chino     1                       2016-05               2                       El Niño 2015--2016                                                                                                                                                                                       |
-|                                                                                                                                                                                                                                                                                                  |
-|   Río Sevilla     1                       2016-12               1                       El Niño 2015--2016                                                                                                                                                                                       |
-|                                                                                                                                                                                                                                                                                                  |
-|   VIPIS           2                       2016-04, 2022-03      2                       El Niño + recuperación                                                                                                                                                                                   |
-|   ------------------------------------------------------------------------------------------------------------------------                                                                                                                                                                       |
-+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Tabla 4: Quiebres estructurales detectados por BFAST sobre las ocho estaciones del proyecto en la serie combinada Landsat 8 + Sentinel-2 (2013--2025). El análisis refinado sobre las cuatro estaciones de manglar denso se reporta en la Tabla 5 del cuerpo del informe principal. |
+|                                                                                                                                                                                                                                                                                     |
+|   -------------------------------------------------------------------------------------------------------------------------------------------------                                                                                                                                 |
+|                 **Estación**                **Quiebres (h=0,15)**   **Fecha principal**   **Quiebres (h=0,10)**         **Evento asociado**                                                                                                                                         |
+|   ---------------------------------------- ----------------------- --------------------- ----------------------- ----------------------------------                                                                                                                                 |
+|    CP Aguas Negras (legacy: CP Pajarales)             1                   2016-10                   1                    El Niño 2015--2016                                                                                                                                         |
+|                                                                                                                                                                                                                                                                                     |
+|                 Caño Clarín                           1                   2016-09                   1                    El Niño 2015--2016                                                                                                                                         |
+|                                                                                                                                                                                                                                                                                     |
+|                  Caño Palos                           1                   2015-06              No estimado                El Niño (inicio)                                                                                                                                          |
+|                                                                                                                                                                                                                                                                                     |
+|                Isla Boquerón                          2              2016-04, 2018-05               2                   El Niño + transición                                                                                                                                        |
+|                                                                                                                                                                                                                                                                                     |
+|                 Punta Cerro                           1                   2016-11                   3             El Niño + La Niña + recuperación                                                                                                                                  |
+|                                                                                                                                                                                                                                                                                     |
+|                 Punta Chino                           1                   2016-05                   2                    El Niño 2015--2016                                                                                                                                         |
+|                                                                                                                                                                                                                                                                                     |
+|                 Río Sevilla                           1                   2016-12                   1                    El Niño 2015--2016                                                                                                                                         |
+|                                                                                                                                                                                                                                                                                     |
+|           CP Luna (legacy: VIPIS)                     2              2016-04, 2022-03               2                  El Niño + recuperación                                                                                                                                       |
+|   -------------------------------------------------------------------------------------------------------------------------------------------------                                                                                                                                 |
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## F.5 Parches de manglar truncados por la frontera del AOI
 
-+:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:+
++:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Tabla 5: Parches de manglar truncados por la frontera del AOI acotado (predicado DE-9IM `intersects` con tolerancia de 30 m). Los parches se cuentan agregados como features completos en `geopandas`. |
 |                                                                                                                                                                                                        |
 |   -------------------------------------------------------------------------------------------------------                                                                                              |
-|   **Periodo**              **Parches**   **Parches en borde**   **% en borde**   **Área en borde (ha)**                                                                                                |
+|         **Periodo**         **Parches**   **Parches en borde**   **% en borde**   **Área en borde (ha)**                                                                                               |
 |   ------------------------ ------------- ---------------------- ---------------- ------------------------                                                                                              |
-|   Degradación (2020-S2)    17            6                      35,3             5.104,3                                                                                                               |
+|    Degradación (2020-S2)        17                 6                  35,3               5.104,3                                                                                                       |
 |                                                                                                                                                                                                        |
-|   Recuperación (2022-S1)   17            8                      47,1             8.325,7                                                                                                               |
+|    Recuperación (2022-S1)       17                 8                  47,1               8.325,7                                                                                                       |
 |                                                                                                                                                                                                        |
-|   Actual (2024--2025)      15            8                      53,3             5.237,9                                                                                                               |
+|     Actual (2024--2025)         15                 8                  53,3               5.237,9                                                                                                       |
 |   -------------------------------------------------------------------------------------------------------                                                                                              |
 +--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-## F.6 Listado completo de las 18 anomalías NDVI (z \< −2)
+## F.6 Principales anomalías NDVI (z \< −2)
 
-+:--------------------------------------------------------------------------------------------------------------------------:+
-| Tabla 6: Anomalias significativas de NDVI ($z < - 2$) en la serie combinada 2013--2025, ordenadas por z-score decreciente. |
-|                                                                                                                            |
-|   ---------------------------------------------------------------------------                                              |
-|   **Estación**    **Fecha**      **NDVI**       **z-score**    **Sensor**                                                  |
-|   --------------- -------------- -------------- -------------- --------------                                              |
-|   Isla Boqueron   2020-09        -0,018         -3,36          Sentinel-2                                                  |
-|                                                                                                                            |
-|   Caño Clarín     2018-03        0,166          -3,15          Sentinel-2                                                  |
-|                                                                                                                            |
-|   VIPIS           2016-04        -0,291         -2,93          Landsat 8                                                   |
-|                                                                                                                            |
-|   Caño Clarín     2025-03        0,223          -2,77          Sentinel-2                                                  |
-|                                                                                                                            |
-|   Caño Palos      2024-09        0,272          -2,66          Sentinel-2                                                  |
-|                                                                                                                            |
-|   CP Pajarales    2018-03        0,203          -2,50          Sentinel-2                                                  |
-|                                                                                                                            |
-|   Punta Cerro     2020-09        -0,078         -2,46          Sentinel-2                                                  |
-|                                                                                                                            |
-|   CP Pajarales    2022-09        0,217          -2,40          Sentinel-2                                                  |
-|   ---------------------------------------------------------------------------                                              |
-+----------------------------------------------------------------------------------------------------------------------------+
++:-----------------------------------------------------------------------------------------------------------------------+
+| Tabla 6: Anomalías significativas de NDVI (z\<−2) en la serie combinada 2013--2025, ordenadas por z-score decreciente. |
+|                                                                                                                        |
+|   ----------------------------------------------------------------------------------------------------                 |
+|                 **Estación**                 **Fecha**       **NDVI**     **z-score**     **Sensor**                   |
+|   ---------------------------------------- -------------- -------------- -------------- --------------                 |
+|                Isla Boquerón                  2020-09         -0,018         -3,36        Sentinel-2                   |
+|                                                                                                                        |
+|                 Caño Clarín                   2018-03         0,166          -3,15        Sentinel-2                   |
+|                                                                                                                        |
+|           CP Luna (legacy: VIPIS)             2016-04         -0,291         -2,93        Landsat 8                    |
+|                                                                                                                        |
+|                 Caño Clarín                   2025-03         0,223          -2,77        Sentinel-2                   |
+|                                                                                                                        |
+|                  Caño Palos                   2024-09         0,272          -2,66        Sentinel-2                   |
+|                                                                                                                        |
+|    CP Aguas Negras (legacy: CP Pajarales)     2018-03         0,203          -2,50        Sentinel-2                   |
+|                                                                                                                        |
+|                 Punta Cerro                   2020-09         -0,078         -2,46        Sentinel-2                   |
+|                                                                                                                        |
+|    CP Aguas Negras (legacy: CP Pajarales)     2022-09         0,217          -2,40        Sentinel-2                   |
+|   ----------------------------------------------------------------------------------------------------                 |
++------------------------------------------------------------------------------------------------------------------------+
 
 ## F.7 Flujo de datos del pipeline multilenguaje
 
-+:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------:+
++:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Tabla 7: Flujo de datos del pipeline multilenguaje.                                                                                                                         |
 |                                                                                                                                                                             |
 |   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|   **Paso**                     **Herramienta**           **Lenguaje**   **Entrada**                         **Salida**                                                      |
+|             **Paso**                **Herramienta**       **Lenguaje**              **Entrada**                                       **Salida**                            |
 |   ---------------------------- ------------------------- -------------- ----------------------------------- --------------------------------------------------------------- |
-|   1\. Adquisición              GEE + geemap              Python         Sentinel-2 / Landsat                Pilas de índices (.tif)                                         |
+|         1\. Adquisición              GEE + geemap            Python            Sentinel-2 / Landsat                             Pilas de índices (.tif)                     |
 |                                                                                                                                                                             |
-|   2\. Series de tiempo         pandas + bfast            Python / R     Índices + estaciones                Z-scores, periodos (.csv)                                       |
+|       2\. Series de tiempo          pandas + BFAST         Python / R          Índices + estaciones                            Z-scores, periodos (.csv)                    |
 |                                                                                                                                                                             |
-|   3\. Segmentación             SamGeo + umbrales         Python         Composiciones RGB                   Parches manglar (.geojson)                                      |
+|         3\. Segmentación           SamGeo + umbrales         Python              Composiciones RGB                            Parches manglar (.geojson)                    |
 |                                                                                                                                                                             |
-|   4\. Métricas                 DataFrames.jl             Julia          Parches vectoriales                 Tabla de métricas (.csv)                                        |
+|           4\. Métricas               DataFrames.jl           Julia              Parches vectoriales                            Tabla de métricas (.csv)                     |
 |                                                                                                                                                                             |
-|   4b. Topología DE-9IM         geopandas + shapely       Python         Parches en EPSG:9377                Tabla parches_topología (.csv)                                  |
+|       4b. Topología DE-9IM        geopandas + shapely        Python            Parches en EPSG:9377                         Tabla parches_topología (.csv)                  |
 |                                                                                                                                                                             |
-|   5\. Inundación SAR           GEE Sentinel-1            Python         SAR VH seco vs húmedo               Mapa inundación (.tif)                                          |
+|        5\. Inundación SAR           GEE Sentinel-1           Python            SAR VH seco vs húmedo                            Mapa inundación (.tif)                      |
 |                                                                                                                                                                             |
-|   6\. Dashboard                geemap                    Python         Todas las capas                     Dashboard (.html)                                               |
+|          6\. Dashboard                  geemap               Python               Todas las capas                                  Dashboard (.html)                        |
 |                                                                                                                                                                             |
-|   7\. Forzamiento ERA5         cdsapi + xarray           Python         NetCDF ERA5-Land                    Anomalías y correlación (.csv)                                  |
+|       7\. Forzamiento ERA5          cdsapi + xarray          Python              NetCDF ERA5-Land                           Anomalías y correlación (.csv)                  |
 |                                                                                                                                                                             |
-|   8\. Cubo stars               stars + sf                R              TIFs trimestrales S2                Series por estación (.csv)                                      |
+|          8\. Cubo stars               stars + sf               R               TIFs trimestrales S2                           Series por estación (.csv)                    |
 |                                                                                                                                                                             |
-|   9\. Validación multilingüe   pandas                    Python         Series Python + R                   RMSE/rho (.csv)                                                 |
+|    9\. Validación multilingüe           pandas               Python              Series Python + R                                  RMSE/rho (.csv)                         |
 |                                                                                                                                                                             |
-|   10\. RF benchmark            GEE `smileRandomForest`   Python         Sentinel-2 + INVEMAR / WorldCover   F1, Recall, Precisión (.csv), importancia de variables (.png)   |
+|        10\. RF benchmark        GEE `smileRandomForest`      Python      Sentinel-2 + INVEMAR / WorldCover   F1, Recall, Precisión (.csv), importancia de variables (.png)  |
 |                                                                                                                                                                             |
-|   11\. SAR continuo VH         GEE Sentinel-1 + pandas   Python         Sentinel-1 GRD 2018-2025            Serie SAR-VH mensual, correlación con NDVI (.csv)               |
+|       11\. SAR continuo VH      GEE Sentinel-1 + pandas      Python          Sentinel-1 GRD 2018-2025              Serie SAR-VH mensual, correlación con NDVI (.csv)        |
 |                                                                                                                                                                             |
-|   12\. Alertas tempranas       pandas + matplotlib       Python         Series NDVI + SAR + bfast           Semáforo estaciones (.csv) y mapa (.png)                        |
+|      12\. Alertas tempranas       pandas + matplotlib        Python          Series NDVI + SAR + bfast                 Semáforo estaciones (.csv) y mapa (.png)             |
 |   ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 +-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## F.8 Eventos GFD con mayor área inundada sobre el AOI acotado
 
-+:-----------------------------------------------------------------------------------------------------------------:+
++:------------------------------------------------------------------------------------------------------------------+
 | Tabla 8: Eventos de inundación con mayor área afectada dentro del AOI acotado (Global Flood Database, 2001-2017). |
 |                                                                                                                   |
 |   ---------------------------------------------------------------------------------                               |
-|   **Evento**            **Inicio**      **Fin**         **Área (km²)**   **Días**                                 |
+|        **Evento**         **Inicio**        **Fin**      **Área (km²)**   **Días**                                |
 |   --------------------- --------------- --------------- ---------------- ----------                               |
-|   DFO_2625              2005-02-11      2005-02-26      299,2            15                                       |
+|         DFO_2625          2005-02-11      2005-02-26         299,2           15                                   |
 |                                                                                                                   |
-|   DFO_2588              2004-11-20      2004-11-27      274,8            7                                        |
+|         DFO_2588          2004-11-20      2004-11-27         274,8           7                                    |
 |                                                                                                                   |
-|   DFO_2761              2005-09-15      2005-12-16      239,4            92                                       |
+|         DFO_2761          2005-09-15      2005-12-16         239,4           92                                   |
 |                                                                                                                   |
-|   DFO_1996              2002-07-20      2002-07-31      233,9            11                                       |
+|         DFO_1996          2002-07-20      2002-07-31         233,9           11                                   |
 |                                                                                                                   |
-|   DFO_4495              2017-08-04      2017-08-21      221,3            17                                       |
+|         DFO_4495          2017-08-04      2017-08-21         221,3           17                                   |
 |                                                                                                                   |
-|   DFO_3212              2007-10-01      2007-12-10      211,5            70                                       |
+|         DFO_3212          2007-10-01      2007-12-10         211,5           70                                   |
 |                                                                                                                   |
-|   DFO_3750              2010-11-15      2010-12-20      190,1            35                                       |
+|         DFO_3750          2010-11-15      2010-12-20         190,1           35                                   |
 |                                                                                                                   |
-|   DFO_3754              2010-11-25      2010-12-20      175,0            25                                       |
+|         DFO_3754          2010-11-25      2010-12-20         175,0           25                                   |
 |                                                                                                                   |
-|   DFO_3421              2008-12-13      2008-12-14      151,9            1                                        |
+|         DFO_3421          2008-12-13      2008-12-14         151,9           1                                    |
 |                                                                                                                   |
-|   DFO_3311              2008-05-27      2008-05-28      78,8             1                                        |
+|         DFO_3311          2008-05-27      2008-05-28          78,8           1                                    |
 |   ---------------------------------------------------------------------------------                               |
 +-------------------------------------------------------------------------------------------------------------------+
 
 ## F.9 Correlación SAR-VH × NDVI por estación (rezagos 0-3 meses)
 
-+:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:+
-| Tabla 9: Correlación de Pearson entre la serie mensual Sentinel-1 SAR-VH y el NDVI z-score derivado de Sentinel-2 para rezagos de 0 a 3 meses, calculada sobre las ocho estaciones entre 2018 y 2025. Valores en negrita: correlaciones significativas ($p < 0,001$) sobre las cuatro estaciones de manglar denso del Complejo de Pajarales. |
-|                                                                                                                                                                                                                                                                                                                                              |
-|   ----------------------------------------------------------------------------------------------------------------------                                                                                                                                                                                                                     |
-|   **Estación**      **Naturaleza**   $\rho$ **lag 0**   $\rho$ **lag 1**   $\rho$ **lag 2**   $\rho$ **lag 3**   **n**                                                                                                                                                                                                                       |
-|   ----------------- ---------------- ------------------ ------------------ ------------------ ------------------ -------                                                                                                                                                                                                                     |
-|   CP Aguas Negras   manglar          **+0,807**         +0,788             +0,773             +0,758             85                                                                                                                                                                                                                          |
-|                                                                                                                                                                                                                                                                                                                                              |
-|   CP Luna           manglar          **+0,731**         +0,710             +0,717             +0,722             83                                                                                                                                                                                                                          |
-|                                                                                                                                                                                                                                                                                                                                              |
-|   Caño Clarín       manglar          **+0,640**         +0,380             -0,025             -0,127             63                                                                                                                                                                                                                          |
-|                                                                                                                                                                                                                                                                                                                                              |
-|   Caño Palos        manglar          **+0,462**         +0,406             +0,379             +0,434             64                                                                                                                                                                                                                          |
-|                                                                                                                                                                                                                                                                                                                                              |
-|   Isla Boquerón     limnológica      +0,166             +0,192             +0,205             +0,226             70                                                                                                                                                                                                                          |
-|                                                                                                                                                                                                                                                                                                                                              |
-|   Punta Cerro       limnológica      +0,008             +0,086             +0,043             +0,053             70                                                                                                                                                                                                                          |
-|                                                                                                                                                                                                                                                                                                                                              |
-|   Punta Chino       limnológica      +0,134             +0,168             +0,178             +0,203             70                                                                                                                                                                                                                          |
-|                                                                                                                                                                                                                                                                                                                                              |
-|   Río Sevilla       borde            -0,159             -0,102             -0,077             -0,058             71                                                                                                                                                                                                                          |
-|   ----------------------------------------------------------------------------------------------------------------------                                                                                                                                                                                                                     |
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Tabla 9: Correlación de Pearson entre la serie mensual Sentinel-1 SAR-VH y el NDVI z-score derivado de Sentinel-2 para rezagos de 0 a 3 meses, calculada sobre las ocho estaciones entre 2018 y 2025. Valores en negrita: correlaciones significativas (p \< 0,001) sobre las cuatro estaciones de manglar denso del Complejo de Pajarales. |
+|                                                                                                                                                                                                                                                                                                                                             |
+|   --------------------------------------------------------------------------------------------------                                                                                                                                                                                                                                        |
+|     **Estación**     **Naturaleza**   ρ **lag 0**   ρ **lag 1**   ρ **lag 2**   ρ **lag 3**   **n**                                                                                                                                                                                                                                         |
+|   ----------------- ---------------- ------------- ------------- ------------- ------------- -------                                                                                                                                                                                                                                        |
+|    CP Aguas Negras      manglar       **+0,807**      +0,788        +0,773        +0,758       85                                                                                                                                                                                                                                           |
+|                                                                                                                                                                                                                                                                                                                                             |
+|        CP Luna          manglar       **+0,731**      +0,710        +0,717        +0,722       83                                                                                                                                                                                                                                           |
+|                                                                                                                                                                                                                                                                                                                                             |
+|      Caño Clarín        manglar       **+0,640**      +0,380        -0,025        -0,127       63                                                                                                                                                                                                                                           |
+|                                                                                                                                                                                                                                                                                                                                             |
+|      Caño Palos         manglar       **+0,462**      +0,406        +0,379        +0,434       64                                                                                                                                                                                                                                           |
+|                                                                                                                                                                                                                                                                                                                                             |
+|     Isla Boquerón     limnológica       +0,166        +0,192        +0,205        +0,226       70                                                                                                                                                                                                                                           |
+|                                                                                                                                                                                                                                                                                                                                             |
+|      Punta Cerro      limnológica       +0,008        +0,086        +0,043        +0,053       70                                                                                                                                                                                                                                           |
+|                                                                                                                                                                                                                                                                                                                                             |
+|      Punta Chino      limnológica       +0,134        +0,168        +0,178        +0,203       70                                                                                                                                                                                                                                           |
+|                                                                                                                                                                                                                                                                                                                                             |
+|      Río Sevilla      Limnológica       -0,159        -0,102        -0,077        -0,058       71                                                                                                                                                                                                                                           |
+|   --------------------------------------------------------------------------------------------------                                                                                                                                                                                                                                        |
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## F.10 Datacubes NetCDF materializados
 
-+:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:+
++:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Tabla 10: Datacubes NetCDF CF-1.8 materializados sobre el AOI acotado en EPSG:9377 (MAGNA-SIRGAS Origen Nacional), comprimidos con zlib nivel 4.                                    |
 |                                                                                                                                                                                     |
 |   --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|   **Archivo**                     **Sensor**    **Frecuencia**                 **Periodo**                                                          **Bandas**         **Tamaño**   |
+|             **Archivo**            **Sensor**           **Frecuencia**                                     **Periodo**                                  **Bandas**      **Tamaño**  |
 |   ------------------------------- ------------- ------------------------------ -------------------------------------------------------------------- ------------------ ------------ |
-|   `cgsm_datacube_periodos.nc`     Sentinel-2    Tres composiciones discretas   Degradación (2020 H2), recuperación (2022 H1), actual (2024--2025)   RGB (B4, B3, B2)   40 MB        |
+|     `cgsm_datacube_periodos.nc`    Sentinel-2    Tres composiciones discretas   Degradación (2020 H2), recuperación (2022 H1), actual (2024--2025)   RGB (B4, B3, B2)     40 MB     |
 |                                                                                                                                                                                     |
-|   `cgsm_datacube_trimestral.nc`   Sentinel-2    Trimestral                     2018-Q1 a 2025-Q4 (31 trimestres)                                    NDVI, NDWI, CMRI   275 MB       |
+|    `cgsm_datacube_trimestral.nc`   Sentinel-2             Trimestral                            2018-Q1 a 2025-Q4 (31 trimestres)                    NDVI, NDWI, CMRI     275 MB    |
 |                                                                                                                                                                                     |
-|   `cgsm_datacube_landsat.nc`      Landsat 8/9   Anual                          2013--2025 (13 años)                                                 NDVI, NDWI, CMRI   119 MB       |
+|     `cgsm_datacube_landsat.nc`     Landsat 8/9              Anual                                      2013--2025 (13 años)                          NDVI, NDWI, CMRI     119 MB    |
 |   --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## F.11 Correlación ENSO-NDVI por naturaleza espectral
 
-+:-------------------------------------------------------------------------------------------------------------------------------------:+
++:--------------------------------------------------------------------------------------------------------------------------------------+
 | Tabla 11: Correlación de Pearson entre índices ENSO globales (ONI y SOI de NOAA) y NDVI z-score desagregada por naturaleza espectral. |
 |                                                                                                                                       |
-|   ------------------------------------------------------------------------------------------                                          |
-|   **Naturaleza**   **Rezago (meses)**   $\rho_{\text{ONI}}$   $\rho_{\text{SOI}}$   **n**                                             |
-|   ---------------- -------------------- --------------------- --------------------- --------                                          |
-|   Manglar          0                    $+ 0,027$             $+ 0,143$             86                                                |
+|   ------------------------------------------------------------------------------                                                      |
+|    **Naturaleza**   **Rezago (meses)**       ρONI            ρSOI        **n**                                                        |
+|   ---------------- -------------------- --------------- --------------- --------                                                      |
+|       Manglar               0               +0,027          +0,143         86                                                         |
 |                                                                                                                                       |
-|   Manglar          1                    $- 0,007$             $+ 0,198$             85                                                |
+|       Manglar               1               −0,007          +0,198         85                                                         |
 |                                                                                                                                       |
-|   Manglar          2                    $- 0,039$             $+ 0,146$             84                                                |
+|       Manglar               2               −0,039          +0,146         84                                                         |
 |                                                                                                                                       |
-|   Manglar          3                    $- 0,070$             $+ 0,058$             83                                                |
+|       Manglar               3               −0,070          +0,058         83                                                         |
 |                                                                                                                                       |
-|   Limnológica      0                    $- 0,121$             $+ 0,201$             72                                                |
+|     Limnológica             0               −0,121          +0,201         72                                                         |
 |                                                                                                                                       |
-|   Limnológica      1                    $- 0,089$             $+ 0,120$             71                                                |
+|     Limnológica             1               −0,089          +0,120         71                                                         |
 |                                                                                                                                       |
-|   Limnológica      2                    $- 0,054$             $+ 0,135$             70                                                |
+|     Limnológica             2               −0,054          +0,135         70                                                         |
 |                                                                                                                                       |
-|   Limnológica      3                    $- 0,014$             $+ 0,153$             69                                                |
-|   ------------------------------------------------------------------------------------------                                          |
+|     Limnológica             3               −0,014          +0,153         69                                                         |
+|   ------------------------------------------------------------------------------                                                      |
 +---------------------------------------------------------------------------------------------------------------------------------------+
 
 ## F.12 Correlación caudal IDEAM-NDVI por estación hidrológica
 
-+:-------------------------------------------------------------------------------------------------------------------------------------------------------------:+
++:--------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Tabla 12: Correlación de Pearson entre anomalía de caudal IDEAM y NDVI z-score, desagregada por estación hidrológica, naturaleza espectral y rezago temporal. |
 |                                                                                                                                                               |
-|   -----------------------------------------------------------------------------------------------------                                                       |
-|   **Estación**                   **Naturaleza**   **Rezago (meses)**   $\rho_{\text{caudal}}$   **n**                                                         |
-|   ------------------------------ ---------------- -------------------- ------------------------ -------                                                       |
-|   El Banco (Magdalena)           Manglar          0                    $+ 0,064$                74                                                            |
+|   -----------------------------------------------------------------------------------------                                                                   |
+|            **Estación**           **Naturaleza**   **Rezago (meses)**    ρcaudal     **n**                                                                    |
+|   ------------------------------ ---------------- -------------------- ------------ -------                                                                   |
+|        El Banco (Magdalena)          Manglar               0              +0,064      74                                                                      |
 |                                                                                                                                                               |
-|   El Banco (Magdalena)           Manglar          1                    $+ 0,039$                73                                                            |
+|        El Banco (Magdalena)          Manglar               1              +0,039      73                                                                      |
 |                                                                                                                                                               |
-|   El Banco (Magdalena)           Manglar          2                    $+ 0,108$                72                                                            |
+|        El Banco (Magdalena)          Manglar               2              +0,108      72                                                                      |
 |                                                                                                                                                               |
-|   El Banco (Magdalena)           Manglar          3                    $+ 0,256$                71                                                            |
+|        El Banco (Magdalena)          Manglar               3              +0,256      71                                                                      |
 |                                                                                                                                                               |
-|   El Banco (Magdalena)           Limnológica      0                    $+ 0,181$                61                                                            |
+|        El Banco (Magdalena)        Limnológica             0              +0,181      61                                                                      |
 |                                                                                                                                                               |
-|   El Banco (Magdalena)           Limnológica      1                    $+ 0,233$                60                                                            |
+|        El Banco (Magdalena)        Limnológica             1              +0,233      60                                                                      |
 |                                                                                                                                                               |
-|   El Banco (Magdalena)           Limnológica      2                    $+ 0,043$                59                                                            |
+|        El Banco (Magdalena)        Limnológica             2              +0,043      59                                                                      |
 |                                                                                                                                                               |
-|   El Banco (Magdalena)           Limnológica      3                    $+ 0,050$                58                                                            |
+|        El Banco (Magdalena)        Limnológica             3              +0,050      58                                                                      |
 |                                                                                                                                                               |
-|   Ganadería Caribe (Aracataca)   Manglar          0                    $+ 0,196$                68                                                            |
+|    Ganadería Caribe (Aracataca)      Manglar               0              +0,196      68                                                                      |
 |                                                                                                                                                               |
-|   Ganadería Caribe (Aracataca)   Manglar          1                    $+ 0,224$                67                                                            |
+|    Ganadería Caribe (Aracataca)      Manglar               1              +0,224      67                                                                      |
 |                                                                                                                                                               |
-|   Ganadería Caribe (Aracataca)   Manglar          2                    $+ 0,184$                66                                                            |
+|    Ganadería Caribe (Aracataca)      Manglar               2              +0,184      66                                                                      |
 |                                                                                                                                                               |
-|   Ganadería Caribe (Aracataca)   Manglar          3                    $+ 0,180$                65                                                            |
+|    Ganadería Caribe (Aracataca)      Manglar               3              +0,180      65                                                                      |
 |                                                                                                                                                               |
-|   Ganadería Caribe (Aracataca)   Limnológica      0                    $+ 0,107$                58                                                            |
+|    Ganadería Caribe (Aracataca)    Limnológica             0              +0,107      58                                                                      |
 |                                                                                                                                                               |
-|   Ganadería Caribe (Aracataca)   Limnológica      1                    $+ 0,263$                57                                                            |
+|    Ganadería Caribe (Aracataca)    Limnológica             1              +0,263      57                                                                      |
 |                                                                                                                                                               |
-|   Ganadería Caribe (Aracataca)   Limnológica      2                    $+ 0,267$                56                                                            |
+|    Ganadería Caribe (Aracataca)    Limnológica             2              +0,267      56                                                                      |
 |                                                                                                                                                               |
-|   Ganadería Caribe (Aracataca)   Limnológica      3                    $+ 0,150$                55                                                            |
-|   -----------------------------------------------------------------------------------------------------                                                       |
+|    Ganadería Caribe (Aracataca)    Limnológica             3              +0,150      55                                                                      |
+|   -----------------------------------------------------------------------------------------                                                                   |
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ## F.13 Correlación CHIRPS-NDVI sobre cuencas aportantes
 
-+:------------------------------------------------------------------------------------------------------------------------------------:+
++:-------------------------------------------------------------------------------------------------------------------------------------+
 | Tabla 13: Correlación de Pearson entre anomalía mensual CHIRPS sobre cuencas aportantes y NDVI z-score de las estaciones de la CGSM. |
 |                                                                                                                                      |
-|   ---------------------------------------------------------------------------------------------                                      |
-|   **Cuenca CHIRPS**      **Naturaleza**   **Rezago (meses)**   $\rho_{\text{precip}}$   **n**                                        |
-|   ---------------------- ---------------- -------------------- ------------------------ -------                                      |
-|   Magdalena alta-media   Manglar          0                    $+ 0,075$                86                                           |
+|   ------------------------------------------------------------------------------------                                               |
+|     **Cuenca CHIRPS**     **Naturaleza**   **Rezago (meses)**      ρprecip      **n**                                                |
+|   ---------------------- ---------------- -------------------- --------------- -------                                               |
+|    Magdalena alta-media      Manglar               0               +0,075        86                                                  |
 |                                                                                                                                      |
-|   Magdalena alta-media   Manglar          1                    $+ 0,170$                85                                           |
+|    Magdalena alta-media      Manglar               1               +0,170        85                                                  |
 |                                                                                                                                      |
-|   Magdalena alta-media   Manglar          2                    $+ 0,097$                84                                           |
+|    Magdalena alta-media      Manglar               2               +0,097        84                                                  |
 |                                                                                                                                      |
-|   Magdalena alta-media   Manglar          3                    $+ 0,252$                83                                           |
+|    Magdalena alta-media      Manglar               3               +0,252        83                                                  |
 |                                                                                                                                      |
-|   Magdalena alta-media   Limnológica      0                    $+ 0,276$                72                                           |
+|    Magdalena alta-media    Limnológica             0               +0,276        72                                                  |
 |                                                                                                                                      |
-|   Magdalena alta-media   Limnológica      2                    $+ 0,268$                70                                           |
+|    Magdalena alta-media    Limnológica             2               +0,268        70                                                  |
 |                                                                                                                                      |
-|   Sierra Nevada oeste    Manglar          3                    $+ 0,281$                83                                           |
+|    Sierra Nevada oeste       Manglar               3               +0,281        83                                                  |
 |                                                                                                                                      |
-|   Sierra Nevada oeste    Limnológica      2                    $+ 0,359$                70                                           |
-|   ---------------------------------------------------------------------------------------------                                      |
+|    Sierra Nevada oeste     Limnológica             2               +0,359        70                                                  |
+|   ------------------------------------------------------------------------------------                                               |
 +--------------------------------------------------------------------------------------------------------------------------------------+
 
 ## F.14 Correlación ERA5-Land vs NDVI por naturaleza espectral
 
-+:----------------------------------------------------------------------------------------------------------------------------------------------------:+
++:-----------------------------------------------------------------------------------------------------------------------------------------------------+
 | Tabla 14: Correlación entre anomalías climáticas ERA5-Land (precipitación y temperatura a 2 m) y NDVI z-score, desagregada por naturaleza espectral. |
 |                                                                                                                                                      |
-|   -------------------------------------------------------------------------------------------------------                                            |
-|   **Naturaleza**   **Rezago (meses)**   $\rho$ **precip vs NDVI z**   $\rho$ **T2m vs NDVI z**   **n**                                               |
-|   ---------------- -------------------- ----------------------------- -------------------------- --------                                            |
-|   Manglar          0                    $- 0,081$                     $+ 0,022$                  86                                                  |
+|   ---------------------------------------------------------------------------------------------                                                      |
+|    **Naturaleza**   **Rezago (meses)**   ρ **precip vs NDVI z**   ρ **T2m vs NDVI z**   **n**                                                        |
+|   ---------------- -------------------- ------------------------ --------------------- --------                                                      |
+|       Manglar               0                    −0,081                 +0,022            86                                                         |
 |                                                                                                                                                      |
-|   Manglar          1                    $- 0,081$                     $+ 0,040$                  85                                                  |
+|       Manglar               1                    −0,081                 +0,040            85                                                         |
 |                                                                                                                                                      |
-|   Manglar          2                    $- 0,123$                     $- 0,018$                  84                                                  |
+|       Manglar               2                    −0,123                 −0,018            84                                                         |
 |                                                                                                                                                      |
-|   Manglar          3                    $- 0,020$                     $- 0,087$                  83                                                  |
+|       Manglar               3                    −0,020                 −0,087            83                                                         |
 |                                                                                                                                                      |
-|   Limnológica      0                    $+ 0,082$                     $- 0,173$                  72                                                  |
+|     Limnológica             0                    +0,082                 −0,173            72                                                         |
 |                                                                                                                                                      |
-|   Limnológica      1                    $+ 0,108$                     $- 0,149$                  71                                                  |
+|     Limnológica             1                    +0,108                 −0,149            71                                                         |
 |                                                                                                                                                      |
-|   Limnológica      2                    $+ 0,292$                     $- 0,144$                  70                                                  |
+|     Limnológica             2                    +0,292                 −0,144            70                                                         |
 |                                                                                                                                                      |
-|   Limnológica      3                    $+ 0,271$                     $- 0,201$                  69                                                  |
-|   -------------------------------------------------------------------------------------------------------                                            |
+|     Limnológica             3                    +0,271                 −0,201            69                                                         |
+|   ---------------------------------------------------------------------------------------------                                                      |
 +------------------------------------------------------------------------------------------------------------------------------------------------------+

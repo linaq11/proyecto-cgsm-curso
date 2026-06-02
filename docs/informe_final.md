@@ -1,10 +1,14 @@
-Universidad Nacional de Colombia Facultad de Ciencias Agrarias
+Universidad Nacional de Colombia
 
-Programación en SIG, Proyecto Final
+Facultad de Ciencias Agrarias - Maestría en Geomática
 
-Repositorio: <https://github.com/linaq11/proyecto-cgsm-curso>
+Programación en SIG - Proyecto Final
 
-,
+Lina María Quintero Fonseca
+
+*repositorio <https://github.com/linaq11/proyecto-cgsm-curso>*
+
+Pipeline multilenguaje para el monitoreo del manglar en la Ciénaga Grande de Santa Marta (2013--2025)
 
 # 1. Resumen
 
@@ -27,6 +31,8 @@ La justificación metodológica del enfoque radica en que cada lenguaje aporta u
 La caracterización espaciotemporal del manglar tiene además un valor práctico para la gestión ambiental y la respuesta ante crisis hidroclimáticas. En febrero de 2026 se firmó el Plan de Manejo Ambiental del sitio Ramsar Sistema Delta Estuarino del Río Magdalena-CGSM, con vigencia de diez años, orientado al seguimiento ambiental permanente del humedal. En este contexto, el enfoque del estudio se articula con la orientación del acelerador Ready for Impact, desarrollado en alianza con Twilio y NASA Lifelines, al emplear datos satelitales, SIG y sensores remotos para fortalecer la respuesta ante crisis. La crisis analizada corresponde a las perturbaciones hidroclimáticas que afectan la funcionalidad del manglar de la CGSM, un ecosistema estratégico para la pesca artesanal, la regulación hídrica, la protección costera y la resiliencia socioambiental de las comunidades del corredor Tasajera-Pueblo Viejo-Buenavista.
 
 De esta manera, el estudio busca aportar una base operativa para el monitoreo del manglar de la CGSM, articulando clasificación de cobertura, análisis de cambio, fragmentación, inundación y forzamientos hidroclimáticos. Además, el flujo propuesto se plantea como un componente inicial para el desarrollo de un futuro Gemelo Digital costero, orientado a apoyar el seguimiento ambiental, la generación de alertas tempranas y la toma de decisiones en el marco de la gestión del sitio Ramsar.
+
+**Pregunta de investigación.** ¿Cómo varió la cobertura, la fragmentación y el vigor del manglar de la CGSM entre 2013 y 2025, y cómo se relacionan las perturbaciones detectadas con los forzamientos climáticos asociados a los eventos ENSO del periodo?
 
 # 3. Estado del Arte
 
@@ -178,7 +184,7 @@ El acoplamiento climático se evaluó con cuatro fuentes complementarias: ERA5-L
 
 Como validación local del flujo Python-GEE, se construyó un cubo stars en R a partir de los TIF trimestrales de Sentinel-2 previamente descargados. La serie extraída por estación reprodujo los resultados obtenidos en GEE, con ρ \> 0,95 y RMSE \< 0,05 unidades de NDVI.
 
-Para el evento de septiembre de 2020 se ejecutó una detección de inundación con Sentinel-1 SAR en banda VH y modo IW. El análisis comparó el backscatter medio del periodo seco de referencia, enero a marzo de 2020, frente al periodo de inundación, septiembre a octubre de 2020. Se identificó agua abierta cuando la diferencia SAR entre inundación y periodo seco fue inferior a −3 dB, asociada con reflexión especular, y manglar inundado bajo dosel cuando la diferencia fue positiva, atribuible a dispersión de doble rebote agua-tronco.
+Para el evento de septiembre de 2020 se ejecutó una detección de inundación con Sentinel-1 SAR en banda VH y modo IW. El análisis comparó el backscatter medio del periodo seco de referencia, enero a marzo de 2020, frente al periodo de inundación, septiembre a octubre de 2020. En el código, la diferencia se definió como SAR diff = seco − inundación. Bajo esta convención, se identificó agua abierta cuando SAR diff fue superior a +3 dB, asociada con disminución del backscatter durante la inundación por reflexión especular, y manglar inundado bajo dosel cuando SAR diff fue inferior a −2 dB, asociado con aumento del backscatter durante la inundación por dispersión de doble rebote agua-tronco.
 
 ## 7.7 Fase 5: Validación cartográfica, benchmark Random Forest y dashboard
 
@@ -190,7 +196,7 @@ Finalmente, los productos del proyecto se integraron en un dashboard HTML con ca
 
 ## 7.8 Flujo de datos
 
-![](informe_final_media/media/image3.png){width="6.5in" height="3.658193350831146in"}
+![](informe_final_media/media/image3.png){width="6.2375in" height="3.5104166666666665in"}
 
 *Figura 3: Flujo metodológico del proyecto: cinco fases técnicas más un módulo transversal de forzamiento climático, ejecutadas dentro del contenedor Docker sig_unal v1.11 con validación cruzada entre Python, R y Julia.*
 
@@ -198,7 +204,7 @@ El flujo metodológico completo se resume en la Figura 3, que integra las cinco 
 
 ## 7.9 Entorno de ejecución
 
-Todo el flujo se ejecutó dentro del contenedor Docker sig_unal v1.11, con control de versiones en Git y GitHub. La configuración del entorno, las versiones de los componentes y los comandos de autenticación de servicios externos se documentan en los anexos técnicos.
+Todo el flujo se ejecutó dentro del contenedor Docker sig_unal v1.11, con control de versiones en Git y GitHub. La configuración del entorno, las versiones de los componentes y los comandos de autenticación de servicios externos se documentan en el Anexo A y en el Anexo F.3.
 
 # 8. Resultados y discusión
 
@@ -316,7 +322,7 @@ Las series de caudal IDEAM-DHIME complementaron esta lectura desde la dimensión
 
 Figura 6: Anomalía z-score del caudal mensual IDEAM para el río Magdalena en El Banco y el río Aracataca en Ganadería Caribe, 2013--2025. Los picos extremos (z \> +2) ocurrieron en 2022, no en 2020.
 
-La precipitación CHIRPS sobre las cuencas aportantes funcionó como validación independiente del patrón observado con IDEAM. La correlación más alta entre precipitación y NDVI del manglar se obtuvo para la cuenca alta-media del Magdalena con tres meses de rezago, con ρ_CHIRPS = +0,252, valor muy cercano al observado con el caudal IDEAM del Magdalena, ρ_IDEAM = +0,256. En la vertiente noroccidental de la Sierra Nevada de Santa Marta, CHIRPS también presentó su mayor correlación en el mismo rezago, con ρ = +0,281. Esta convergencia entre fuentes independientes sugiere que el aporte hídrico sostenido se asocia positivamente con el vigor espectral del manglar en escalas de uno a tres meses.
+La precipitación CHIRPS sobre las cuencas aportantes funcionó como validación independiente del patrón observado con IDEAM. La correlación más alta entre precipitación y NDVI del manglar se obtuvo para la cuenca alta-media del Magdalena con tres meses de rezago, con ρ_CHIRPS = +0,252, valor muy cercano al observado con el caudal IDEAM del Magdalena, ρ_IDEAM = +0,256. En la vertiente noroccidental de la Sierra Nevada de Santa Marta, CHIRPS también presentó su mayor correlación en el mismo rezago, con ρ = +0,281. Esta convergencia entre fuentes independientes sugiere que el aporte hídrico sostenido se asocia positivamente con el vigor espectral del manglar en escalas de uno a tres meses. El detalle por cuenca se reporta en el Anexo F.13.
 
 La integración de ERA5-Land, ENSO, IDEAM-DHIME y CHIRPS permite matizar la interpretación del evento de septiembre de 2020. El episodio La Niña 2020--2021 generó un régimen regional de mayor humedad, detectable en los índices ENSO, en la precipitación local y posteriormente en las series de caudal. Sin embargo, la mortandad registrada en septiembre de 2020 no parece explicarse por un pico simultáneo de caudal fluvial, ya que las anomalías extremas de caudal se concentraron posteriormente, especialmente en 2022. En cambio, la evidencia apunta a un mecanismo más localizado, relacionado con precipitación sobre el humedal, inundación bajo dosel detectada por Sentinel-1 SAR y reducción posterior del NDVI en estaciones de manglar.
 
@@ -328,7 +334,7 @@ La naturaleza multilenguaje del proyecto se verificó mediante cuatro validacion
 
 1.  **Series NDVI en Python y R.** El flujo de extracción stars::st_extract aplicado sobre el cubo trimestral en R reprodujo la serie obtenida mediante reduceRegions en GEE, con ρ \> 0,95 y RMSE \< 0,05 unidades de NDVI en las ocho estaciones.
 2.  **Correlación caudal--NDVI en Python, R y Julia.** En el notebook 14_validacion_trilingual.ipynb, los tres lenguajes produjeron valores idénticos hasta tres decimales para los rezagos de 0 a 3 meses: ρ = 0,064; 0,039; 0,108 y 0,256, respectivamente. La diferencia máxima entre salidas fue del orden de 10⁻⁴.
-3.  **Topología DE-9IM en Python y Julia. En el notebook 04c_topologia_julia.ipynb, LibGEOS.jl produjo conteos idénticos a geopandas + shapely para los parches totales y de borde en los tres periodos analizados: 17/6, 17/8 y 15/8, con proporciones de borde de 35,3 %, 47,1 % y 53,3 %.**
+3.  **Topología DE-9IM en Python y Julia.** En el notebook 04c_topologia_julia.ipynb, LibGEOS.jl produjo conteos idénticos a geopandas + shapely para los parches totales y de borde en los tres periodos analizados: 17/6, 17/8 y 15/8, con proporciones de borde de 35,3 %, 47,1 % y 53,3 %.
 4.  **Análisis hidroclimáticos en Python y R.** Las réplicas en R de los índices ENSO (11b_indices_enso_noaa_R.ipynb) y del caudal IDEAM (12c_caudal_ideam_R.ipynb) reprodujeron hasta tres decimales las dieciséis filas del Anexo F.12 y las ocho del Anexo F.11. Esto incluye el valor máximo de ρ = +0,256 para El Banco, manglar, rezago de tres meses, que sustenta la interpretación hidrológica del informe.
 
 La consistencia entre estas validaciones confirma que el uso combinado de Python, R y Julia responde a la fortaleza técnica de cada lenguaje y no a una dependencia metodológica del pipeline. Python se emplea principalmente para GEE y SamGeo; R, para BFAST y el análisis de series ecohidrológicas; y Julia, para la fragmentación espacial y los predicados DE-9IM mediante LibGEOS.jl. En conjunto, los resultados demuestran que el flujo de trabajo es interoperable, reproducible e independiente del entorno computacional.
@@ -339,7 +345,7 @@ La consulta a la Global Flood Database identificó 16 eventos de inundación his
 
 El listado de los diez eventos con mayor área inundada (Inicio, Fin, Área en km² y Días de duración) se reporta en el Anexo F.8 del documento complementario.
 
-Para el evento de septiembre--octubre de 2020, no registrado en la Global Flood Database (cuya cobertura termina en 2017), la detección con Sentinel-1 SAR (banda VH, modo IW) restringida al AOI identificó 15,93 km² de inundación en agua abierta (diferencia de backscatter \< −3 dB) y 43,08 km² de inundación bajo dosel de manglar (diferencia positiva), para un total de 59,02 km² afectados, el 7,1 % del AOI acotado. El signo positivo del diferencial se interpreta como dispersión de doble rebote agua-tronco, patrón característico del manglar inundado en el que la señal radar rebota primero en la lámina de agua y luego en los troncos sumergidos. Este orden de magnitud es metodológicamente más sólido que el reportado en la iteración preliminar sobre el AOI completo no acotado (1.507,4 km²), donde se contabilizaban cambios espectrales en zonas no manglar de la Sierra Nevada y el interior continental que también producen diferencia SAR negativa por dinámica natural de la vegetación, sin relación con el evento La Niña. El cruce con las anomalías NDVI revela patrones diferenciados por estación que se discuten en el Anexo F.1.
+Para el evento de septiembre--octubre de 2020, no registrado en la Global Flood Database (cuya cobertura termina en 2017), la detección con Sentinel-1 SAR (banda VH, modo IW) restringida al AOI identificó 15,93 km² de inundación en agua abierta (diferencia de backscatter \> 3 dB) y 43,08 km² de inundación bajo dosel de manglar (diferencia negativa), para un total de 59,02 km² afectados, el 7,1 % del AOI acotado. El signo negativo del diferencial se interpreta como dispersión de doble rebote agua-tronco, patrón característico del manglar inundado en el que la señal radar rebota primero en la lámina de agua y luego en los troncos sumergidos. Este orden de magnitud es metodológicamente más sólido que el reportado en la iteración preliminar sobre el AOI completo no acotado (1.507,4 km²), donde se contabilizaban cambios espectrales en zonas no manglar de la Sierra Nevada y el interior continental que también producen diferencia SAR negativa por dinámica natural de la vegetación, sin relación con el evento La Niña. El cruce con las anomalías NDVI revela patrones diferenciados por estación que se discuten en el Anexo F.1.
 
 +:--------------------------------------------------------------------------------------------------------------------------------------+
 | Tabla 7: Extensión de la inundación detectada con Sentinel-1 SAR (septiembre--octubre 2020) sobre el AOI acotado SFF + VPI Salamanca. |
@@ -347,9 +353,9 @@ Para el evento de septiembre--octubre de 2020, no registrado en la Global Flood 
 |   ----------------------------------------------------------------------------------------                                            |
 |            **Tipo de inundación**              **Área (km²)**         **% AOI acotado**                                               |
 |   ---------------------------------------- ----------------------- -----------------------                                            |
-|       Agua abierta (SAR diff \< −3 dB)              15,93                   1,9 %                                                     |
+|       Agua abierta (SAR diff \> +3 dB)              15,93                   1,9 %                                                     |
 |                                                                                                                                       |
-|    Bajo dosel manglar (SAR diff \> +2 dB)           43,08                   5,2 %                                                     |
+|    Bajo dosel manglar (SAR diff \< −2 dB)           43,08                   5,2 %                                                     |
 |                                                                                                                                       |
 |                Total afectado                       59,02                   7,1 %                                                     |
 |   ----------------------------------------------------------------------------------------                                            |
@@ -469,6 +475,8 @@ El script src/python/alertas_manglar.py clasifica cada estación en tres categor
 
 El producto se genera en outputs/tables/alertas_estaciones.csv y se representa espacialmente mediante el mapa semáforo de la Figura 9. Su diseño permite una actualización mensual a medida que ingresan nuevas composiciones de Sentinel-2 o Sentinel-1. Este módulo constituye un prototipo funcional sobre el cual se podrá incorporar modelos predictivos de tendencia y simulación de escenarios climáticos en futuros proyectos.
 
+![](informe_final_media/media/image9.png){width="4.660416666666666in" height="3.3125in"}
+
 Figura 9: Mapa semáforo del estado del manglar de la CGSM por estación, según el módulo de alertas tempranas. Verde = estable, amarillo = alerta, rojo = crítica, según la severidad y persistencia de anomalías NDVI z-score en los últimos doce meses.
 
 La ejecución del módulo para el corte diciembre 2024 -- diciembre 2025 arrojó un panorama coherente con la narrativa de recuperación post-La Niña 2020 desarrollada en el cuerpo del informe (Tabla 10). Ninguna de las ocho estaciones se clasificó en estado crítico. Cinco estaciones quedaron en condición estable: CP Aguas Negras, con z = +1,63; CP Luna, con z = +2,38; Caño Palos, con z = +1,25; Isla Boquerón, con z = +0,81; y Punta Cerro, con z = +0,15. Las tres estaciones restantes, Caño Clarín, Punta Chino y Río Sevilla, permanecieron en estado de alerta.
@@ -477,27 +485,27 @@ El análisis del subgrupo en alerta mostró que esta condición no respondió a 
 
 Las cuatro estaciones del Complejo de Pajarales, consideradas núcleo funcional del manglar denso de la CGSM, quedaron clasificadas como estables. Este resultado es coherente con la interpretación de una recuperación estructural sostenida del bosque en su porción central. En conjunto, la distribución obtenida, cero estaciones críticas, tres en alerta y cinco estables, constituye una primera lectura cuantitativa del estado reciente del sistema bajo una lógica reproducible de monitoreo.
 
-+:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:+
 | Tabla 10: Estado actual del manglar de la CGSM por estación según el módulo de alertas tempranas (corte diciembre 2024 -- diciembre 2025). El campo z actual corresponde al z-score NDVI del último mes disponible. |
 |                                                                                                                                                                                                                     |
 |   -------------------------------------------------------------------------------------------                                                                                                                       |
 |      **Estación**     **Estado**   **actual**   **NDVI actual**      **Razón principal**                                                                                                                            |
 |   ------------------ ------------ ------------ ----------------- ----------------------------                                                                                                                       |
-|    CP Aguas Negras    🟢 estable     +1,63           0,770        Sin anomalías en 12 meses                                                                                                                         |
+|    CP Aguas Negras     estable       +1,63           0,770        Sin anomalías en 12 meses                                                                                                                         |
 |                                                                                                                                                                                                                     |
-|        CP Luna        🟢 estable     +2,38           0,664        Sin anomalías en 12 meses                                                                                                                         |
+|        CP Luna         estable       +2,38           0,664        Sin anomalías en 12 meses                                                                                                                         |
 |                                                                                                                                                                                                                     |
-|       Caño Palos      🟢 estable     +1,25           0,849        Sin anomalías en 12 meses                                                                                                                         |
+|       Caño Palos       estable       +1,25           0,849        Sin anomalías en 12 meses                                                                                                                         |
 |                                                                                                                                                                                                                     |
-|     Isla Boquerón     🟢 estable     +0,81           0,308              Sin anomalías                                                                                                                               |
+|     Isla Boquerón      estable       +0,81           0,308              Sin anomalías                                                                                                                               |
 |                                                                                                                                                                                                                     |
-|      Punta Cerro      🟢 estable     +0,15           0,145              Sin anomalías                                                                                                                               |
+|      Punta Cerro       estable       +0,15           0,145              Sin anomalías                                                                                                                               |
 |                                                                                                                                                                                                                     |
-|      Caño Clarín      🟡 alerta      +0,31           0,735             2 anomalías 12 m                                                                                                                             |
+|      Caño Clarín        alerta       +0,31           0,735             2 anomalías 12 m                                                                                                                             |
 |                                                                                                                                                                                                                     |
-|      Punta Chino      🟡 alerta      +0,69           0,337            z mín 3 m = −1,38                                                                                                                             |
+|      Punta Chino        alerta       +0,69           0,337            z mín 3 m = −1,38                                                                                                                             |
 |                                                                                                                                                                                                                     |
-|      Río Sevilla      🟡 alerta      +0,61           0,215        z mín 3 m = −1,55; 2 anom.                                                                                                                        |
+|      Río Sevilla        alerta       +0,61           0,215        z mín 3 m = −1,55; 2 anom.                                                                                                                        |
 |   -------------------------------------------------------------------------------------------                                                                                                                       |
 +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 

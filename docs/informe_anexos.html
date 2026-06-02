@@ -177,31 +177,30 @@
 <p class="author">Lina María Quintero Fonseca</p>
 <p class="date">2026-05-25</p>
 </header>
-<h1 class="TOC-Heading" id="tabla-de-contenidos">Tabla de contenidos</h1>
 <h1 id="presentación">Presentación</h1>
-<p>Este documento complementario reúne cinco anexos técnicos del proyecto <strong>Pipeline multilenguaje GeoAI para el monitoreo del manglar en la Ciénaga Grande de Santa Marta (2013–2025)</strong>. Cada anexo desarrolla material de soporte que sustenta las decisiones metodológicas, la reproducibilidad técnica y la trazabilidad de los resultados reportados en el informe principal (<code>informe_final.pdf</code>):</p>
+<p>Este documento complementario reúne cinco anexos técnicos del proyecto Pipeline multilenguaje GeoAI para el monitoreo del manglar en la Ciénaga Grande de Santa Marta (2013–2025). Cada anexo desarrolla material de soporte que sustenta las decisiones metodológicas, la reproducibilidad técnica y la trazabilidad de los resultados reportados en el informe principal (informe_final_revisado.docx):</p>
 <ul>
 <li><strong>Anexo A</strong> documenta la configuración del entorno Docker <code>sig_unal v1.11</code> con los paquetes adicionales de Python, R y Julia.</li>
 <li><strong>Anexo B</strong> describe la estructura del repositorio GitHub con la serie vigente y la legacy de notebooks.</li>
-<li><strong>Anexo C</strong> explica la discrepancia metodológica en el conteo de parches entre las implementaciones de Julia y Python.</li>
+<li><strong>Anexo C explica la discrepancia metodológica en el conteo de parches entre las implementaciones de Julia y Python.</strong></li>
 <li><strong>Anexo E</strong> contiene los fragmentos de código que materializan cada fase del pipeline.</li>
 <li><strong>Anexo F</strong> reúne las tablas de detalle movidas desde el cuerpo del informe.</li>
 </ul>
-<p>(La letra D queda sin usar; el análisis de sensibilidad caudal máximo vs medio que ocupaba esa posición se sintetiza ahora en el cuerpo del informe principal y los datos detallados quedan en <code>outputs/tables/caudal_comparacion_max_medio.csv</code>.)</p>
-<h1 id="anexo-a-configuracion-del-entorno-docker">Anexo A: Configuracion del entorno Docker</h1>
+<p>(Nota: el Anexo D se conserva sin contenido para mantener la correspondencia con versiones previas y evitar modificar las referencias internas.)</p>
+<h1 id="anexo-a-configuración-del-entorno-docker">Anexo A: Configuración del entorno Docker</h1>
 <p>El proyecto se ejecuta sobre el contenedor Docker sig_unal v1.11 proporcionado para la asignatura, con las siguientes modificaciones:</p>
-<pre><code># Librerias Python adicionales instaladas
+<pre><code># Librerías Python adicionales instaladas
 pip install earthengine-api geemap segment-geospatial leafmap
 pip install rasterio geopandas xarray shapely folium rasterstats
 pip install matplotlib pandas numpy scikit-learn contextily
 pip install cdsapi netCDF4              # descarga ERA5-Land desde CDS
 
-# Autenticacion Google Earth Engine
+# Autenticación Google Earth Engine
 earthengine authenticate --auth_mode=notebook
 
-# Autenticacion Climate Data Store (ECMWF) — para ERA5-Land
+# Autenticación Climate Data Store (ECMWF) — para ERA5-Land
 # 1) Crear cuenta en https://cds.climate.copernicus.eu/
-# 2) Aceptar terminos del conjunto de datos reanalysis-era5-land-monthly-means
+# 2) Aceptar términos del conjunto de datos reanalysis-era5-land-monthly-means
 # 3) Crear archivo ~/.cdsapirc con la URL y la API key personales
 # Paquetes R adicionales
 install.packages(c(&quot;bfast&quot;, &quot;terra&quot;, &quot;sf&quot;, &quot;ggplot2&quot;, &quot;tseries&quot;,
@@ -209,51 +208,51 @@ install.packages(c(&quot;bfast&quot;, &quot;terra&quot;, &quot;sf&quot;, &quot;g
 # Paquetes Julia adicionales
 using Pkg
 Pkg.add([&quot;GeoJSON&quot;, &quot;DataFrames&quot;, &quot;CSV&quot;, &quot;Statistics&quot;])</code></pre>
-<p>La autenticación con GEE se realiza mediante el flujo gcloud auth application-default login con quota project configurado, que genera credenciales almacenadas en ~/.config/gcloud/application_default_credentials.json. El contenedor requiere un mínimo de 8 GB de RAM asignados en Docker Desktop para ejecutar SamGeo con el backbone vit_b; con vit_h se requieren al menos 12 GB. Las composiciones RGB se remuestrean de 10 a 30 metros antes de la segmentación para reducir el consumo de memoria.<code></code><code></code></p>
+<p>La autenticación con GEE se realiza mediante el flujo gcloud auth application-default login con quota project configurado, que genera credenciales almacenadas en ~/.config/gcloud/application_default_credentials.json. El contenedor requiere un mínimo de 8 GB de RAM asignados en Docker Desktop para ejecutar SamGeo con el backbone vit_b; con vit_h se requieren al menos 12 GB. Las composiciones RGB se remuestrean de 10 a 30 metros antes de la segmentación para reducir el consumo de memoria.</p>
 <h1 id="anexo-b-estructura-del-repositorio-github">Anexo B: Estructura del repositorio GitHub</h1>
 <p>El repositorio público está disponible en bajo licencia MIT. La versión anterior del proyecto (línea base marzo 2026 sobre AOI preliminar de 5.073 km²) permanece archivada en para fines de comparación histórica.<a href="https://github.com/linaq11/proyecto-cgsm-curso">https://github.com/linaq11/proyecto-cgsm-curso</a><a href="https://github.com/LinaQuinteroF/proyecto-cgsm">https://github.com/LinaQuinteroF/proyecto-cgsm</a></p>
-<pre><code>proyecto-cgsm-curso/├── notebooks/        29 notebooks numerados (vigente 01-12 + legacy 03_…14)│                     orden de ejecución: 01 → 02 → 02b → 03_acotado →│                     04_acotado → 04b_acotado → 05_acotado → 07 → 08 →│                     09b → 10 → 11 → 11b → 12 → 12b → 12c → 13 → 14├── src/│   ├── python/       utils.py (9377 + DE-9IM), aoi_acotado.py, build_cubos.py,│   │                 make_dashboard_html.py, alertas_manglar.py, merge_cubo.py│   ├── R/            03_bfast_ndvi.R, 05_stars_cubo.R, 06_bfast_manglar_unificado.R,│   │                 08_correlacion_trilingual.R│   └── julia/        04_fragmentación.jl (4326 legado + 9377 vigente),│                     05_correlacion_trilingual.jl├── data/│   ├── raw/          AOI preliminar y acotado, RUNAP SFF + VPI, INVEMAR GBIF,│   │                 IDEAM El Banco / Ganadería Caribe│   └── processed/│       ├── cubo/     3 datacubes NetCDF CF-1.8 (40 / 275 / 119 MB)│       └── samgeo/   máscaras y GeoJSON por periodo (degradación / recuperación / actual)├── outputs/│   ├── tables/       47 CSV con resultados numéricos│   ├── figures/      35 PNG (mapas, series, correlaciones, validación, alertas)│   └── maps/         dashboard_CGSM_final.html (autocontenido, ~80 KB)└── docs/             informe_final.{qmd,html,pdf}, informe_anexos.{qmd,html,pdf},                      dashboard.html (Pages), outputs/{figures,maps}/ (Pages)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</code></pre>
-<p>La serie vigente (notebooks 01–12 + 02b, 04b/c_acotado, 09b, 11b, 12b/c, 14) reproduce las cifras del cuerpo del informe sobre el AOI acotado de 835 km². La serie legacy (03, 04, 04b, 05, 06, 09 sin sufijo _acotado) opera sobre el AOI preliminar de 5.073 km² y se conserva sólo por trazabilidad histórica; no sostiene ninguna conclusión del informe. La guía de ejecución por etapa con dependencias entre notebooks se documenta en notebooks/README.md. Las composiciones trimestrales y anuales en GeoTIFF y los NetCDF de mayor tamaño no se versionan por restricciones de tamaño de GitHub: se regeneran ejecutando los notebooks en orden secuencial con acceso autenticado a GEE.<code></code></p>
+<pre><code>proyecto-cgsm-curso/
+├── notebooks/        29 notebooks: 22 serie principal + 7 legacy (trazabilidad)
+│                     orden de ejecución: 01 → 02 → 02b → 03_acotado →
+│                     04_acotado → 04b_acotado → 05_acotado → 07 → 08 →
+│                     09b → 10 → 11 → 11b → 12 → 12b → 12c → 13 → 14
+├── src/
+│   ├── python/       utils.py (9377 + DE-9IM), aoi_acotado.py, build_cubos.py,
+│   │                 make_dashboard_html.py, alertas_manglar.py, merge_cubo.py
+│   ├── R/            03_bfast_ndvi.R, 05_stars_cubo.R, 06_bfast_manglar_unificado.R,
+│   │                 08_correlacion_trilingual.R
+│   └── julia/        04_fragmentacion.jl (4326 legacy + 9377 vigente),
+│                     05_correlacion_trilingual.jl
+├── data/
+│   ├── raw/          AOI preliminar y acotado, RUNAP SFF + VPI, INVEMAR GBIF,
+│   │                 IDEAM El Banco / Ganadería Caribe
+│   └── processed/
+│       ├── cubo/     3 datacubes NetCDF CF-1.8 (40 / 275 / 119 MB)
+│       └── samgeo/   máscaras y GeoJSON por periodo
+├── outputs/
+│   ├── tables/       47 CSV con resultados numéricos
+│   ├── figures/      35 PNG (mapas, series, correlaciones, alertas)
+│   └── maps/         dashboard_CGSM_final.html
+└── docs/             informe_final.{qmd,html,pdf}, informe_anexos.{qmd,html,pdf}</code></pre>
+<p>La serie vigente (notebooks 01–12 + 02b, 04b/c_acotado, 09b, 11b, 12b/c, 14) reproduce las cifras del cuerpo del informe sobre el AOI acotado de 835 km². La serie legacy (03, 04, 04b, 05, 06, 09 sin sufijo _acotado) opera sobre el AOI preliminar de 5.073 km² y se conserva sólo por trazabilidad histórica; no sostiene ninguna conclusión del informe. La guía de ejecución por etapa con dependencias entre notebooks se documenta en notebooks/README.md. Las composiciones trimestrales y anuales en GeoTIFF y los NetCDF de mayor tamaño no se versionan por restricciones de tamaño de GitHub: se regeneran ejecutando los notebooks en orden secuencial con acceso autenticado a GEE.</p>
 <h1 id="anexo-c-nota-metodológica-sobre-el-conteo-de-parches-julia-vs-python">Anexo C: Nota metodológica sobre el conteo de parches (Julia vs Python)</h1>
-<p>Las cifras de fragmentación sobre el AOI acotado se reportan en dos implementaciones independientes que arrojan conteos distintos del mismo conjunto de GeoJSON. En Julia, mediante el algoritmo del shoelace aplicado al anillo exterior de cada polígono (Tabla <code>tbl-fragmentación-acotado</code>), se contabilizan 79, 38 y 15 parches para los periodos de degradación, recuperación y actual respectivamente, en tanto que en Python con <code>geopandas</code> usando el atributo <code>geometry.area</code> (Tabla <code>tbl-topológia-acotado</code>), se contabilizan 17, 17 y 15. La discrepancia obedece a una diferencia metodológica especifica en el calculo del área por parche cuando los polígonos contienen anillos interiores.</p>
-<p>Cuando SamGeo segmenta un parche grande de manglar atravesado por un canal hidráulico –como el Caño Clarín o el Caño Aguas Negras–, el GeoJSON resultante exporta ese parche como un polígono con un anillo exterior que delimita la cobertura y uno o más anillos interiores que representan el canal. La implementacion en <code>geopandas</code> calcula el área neta restando los huecos –siguiendo la definición estándar del Simple Features Access para <code>Polygon.area</code>– mientras que la implementacion Julia, al iterar sobre <code>ring = geom.coordinates[1]</code>, solo procesa el anillo exterior y reporta el área bruta del envolvente externo sin descontar los canales. En consecuencia, parches con grandes huecos internos quedan clasificados en el rango filtrado 1–5.000 ha por Julia pero por debajo del umbral inferior por <code>geopandas</code>, lo que infla el conteo de parches Julia en periodos donde la dinámica hídrica produce huecos detectables –2020 (degradación) y 2022 (recuperación), cuando los canales atraviesan manglar fragmentado por La Niña y la rehabilitación hidráulica– y coincide en el periodo actual (2024-2025) donde los parches sobrevivientes son más compactos sin canales internos visibles.</p>
-<p>Ambas mediciones tienen validez metodológica diferenciada. La versión <code>geopandas</code> reporta el área efectiva de cobertura de manglar, descontando agua interior, y es apropiada para indicadores de superficie y validación contra cartografía de referencia como GMW. La versión Julia reporta el área del envolvente del parche y es apropiada para indicadores de extensión del paisaje fragmentado y para calculos de conectividad mediante distancia entre envolventes. Para evitar confusion en el informe, en la Tabla <code>tbl-fragmentación-acotado</code> se reporta el conteo Julia con la columna explicita “Parches (Julia)” y se utiliza para indicadores de forma –MSI– y aislamiento –NND–, mientras que en la Tabla <code>tbl-topológia-acotado</code> se reporta el conteo <code>geopandas</code> y se utiliza para indicadores de superficie y para el cruce con la frontera del AOI mediante predicados DE-9IM.</p>
-<h1 id="anexo-e-fragmentos-de-código-complementaríos">Anexo E: Fragmentos de código complementaríos</h1>
-<p>Para mantener el cuerpo del informe centrado en la interpretación de resultados, los fragmentos de código que materializan cada fase del pipeline se documentan en este anexo, organizados temáticamente en cuatro apartados que reproducen el orden lógico de la cadena de procesamiento: datacube y series temporales (E.1), reproyección y topología sobre parches segmentados (E.2), forzamiento climático y detección SAR (E.3), y métricas de fragmentación del paisaje en Julia (E.4). Los conceptos técnicos invocados aquí ,datacube, z-score, bfast, SamGeo, predicado DE-9IM, Random Forest, backscatter SAR, dispersión de doble rebote, F1-score, se introducen y explican funcionalmente en el cuerpo del <code>informe_final.pdf</code>; este anexo se concentra en la implementación operativa y supone que el lector conoce ya su significado conceptual.</p>
+<p>La diferencia entre los conteos de parches en Julia y Python se debe al tratamiento geométrico de polígonos con anillos interiores y geometrías multipartes. Mientras geopandas calcula el área neta descontando huecos internos, la implementación en Julia se utilizó para caracterizar unidades geométricas de paisaje y métricas de conectividad. Por esta razón, el informe distingue explícitamente entre conteos derivados de Julia (Tabla 5 del cuerpo del informe) para métricas de forma y aislamiento, y salidas geopandas (en outputs/tables/parches_geopandas.csv del repositorio) para indicadores de superficie efectiva.</p>
+<h1 id="anexo-e-fragmentos-abreviados-de-código">Anexo E: Fragmentos abreviados de código</h1>
+<p>Para mantener el cuerpo del informe centrado en la interpretación de resultados, los fragmentos de código que materializan cada fase del pipeline se documentan en este anexo, organizados temáticamente en cuatro apartados que reproducen el orden lógico de la cadena de procesamiento: datacube y series temporales (E.1), reproyección y topología sobre parches segmentados (E.2), forzamiento climático y detección SAR (E.3), y métricas de fragmentación del paisaje en Julia (E.4). Los conceptos técnicos invocados aquí ,datacube, z-score, bfast, SamGeo, predicado DE-9IM, Random Forest, backscatter SAR, dispersión de doble rebote, F1-score, se introducen y explican funcionalmente en el cuerpo del <code>informe_final_revisado.docx</code>; este anexo se concentra en la implementación operativa y supone que el lector conoce ya su significado conceptual.</p>
+<p><em>Nota: los fragmentos incluidos son extractos abreviados para documentación metodológica. La versión ejecutable completa se encuentra en los notebooks y scripts del repositorio.</em></p>
 <h2 id="e.1-datacube-multitemporal-y-series-de-tiempo">E.1 Datacube multitemporal y series de tiempo</h2>
 <h3 id="e.1.a-lectura-perezosa-del-datacube-netcdf-con-xarray">E.1.a Lectura perezosa del datacube NetCDF con xarray</h3>
-<p>El datacube trimestral materializado como NetCDF CF-1.8 se abre con evaluación perezosa mediante <code>xarray.open_conjunto de datos</code> con argumento <code>chunks</code>, de modo que las operaciones de selección y reducción se planifican como un grafo de cómputo dask y solo se materializan los píxeles necesaríos al invocar <code>.compute()</code>. Este patrón resulta indispensable para los tres archivos del proyecto (40 MB, 275 MB y 119 MB) cuando se trabaja sobre la totalidad de las 31 láminas trimestrales sin saturar la memoria del contenedor.</p>
+<p>El datacube trimestral materializado como NetCDF CF-1.8 se abre con evaluación perezosa mediante xarray.open_dataset con argumento chunks, de modo que las operaciones de selección y reducción se planifican como un grafo de cómputo dask y solo se materializan los píxeles necesarios al invocar .compute(). Este patrón resulta indispensable para los tres archivos del proyecto (40 MB, 275 MB y 119 MB) cuando se trabaja sobre la totalidad de las 31 láminas trimestrales sin saturar la memoria del contenedor.</p>
 <pre><code>import xarray as xr
-ds = xr.open_conjunto de datos(&#39;data/processed/cubo/cgsm_datacube_trimestral.nc&#39;,
+
+ds = xr.open_dataset(&#39;data/processed/cubo/cgsm_datacube_trimestral.nc&#39;,
                      chunks={&#39;time&#39;: 1, &#39;x&#39;: 512, &#39;y&#39;: 512})
+
 # Atributos CF-1.8: Conventions, institution, creator_name, crs_origen, ...
 # Acceso perezoso por chunks; .compute() materializa cuando es necesario
 ndvi_serie = ds[&#39;reflectance&#39;].sel(band_idx=&#39;NDVI&#39;).median(dim=[&#39;x&#39;,&#39;y&#39;]).compute()</code></pre>
 <h3 id="e.1.b-z-scores-y-detección-de-anomalías-ndvi-en-python">E.1.b Z-scores y detección de anomalías NDVI en Python</h3>
-<p>Sobre la serie combinada Landsat 8 + Sentinel-2 (929 observaciónes mensuales) se calcula el z-score temporal por estación mediante <code>groupby().transform()</code>, lo que permite identificar las anomalías pronunciadas como aquellas con <span class="math inline"><em>z</em> &lt; −2</span>. El resultado alimenta tanto la tabla de eventos de mortandad reportados en la Fase 2 como la lógica del módulo de alertas tempranas del Nivel 2 del Digital Twin.</p>
+<p>Sobre la serie combinada Landsat 8 + Sentinel-2 se calcula el z-score temporal por estación mediante groupby().transform(), lo que permite identificar anomalías pronunciadas como aquellas con z_score &lt; −2. El resultado alimenta tanto la tabla de eventos de mortandad como la lógica del módulo de alertas tempranas.</p>
 <pre><code># Z-scores y detección de anomalias por estación
 df[&#39;z_score&#39;] = df.groupby(&#39;estación&#39;)[&#39;ndvi&#39;].transform(
     lambda x: (x - x.mean()) / x.std())
@@ -312,7 +311,7 @@ gdf = parches_con_punto(gdf, estaciones)  # contains con los puntos INVEMAR</cod
 <pre><code>from samgeo import SamGeo
 
 # Modelo base vit_b para ajustarse a la RAM del contenedor
-sam = SamGeo(model_type=&#39;vit_b&#39;, automátic=True)
+sam = SamGeo(model_type=&#39;vit_b&#39;, automatic=True)
 
 for periodo in [&#39;degradación&#39;, &#39;recuperación&#39;, &#39;actual&#39;]:
     rgb  = f&#39;{res_dir}/CGSM_RGB_{periodo}_30m.tif&#39;
@@ -322,20 +321,24 @@ for periodo in [&#39;degradación&#39;, &#39;recuperación&#39;, &#39;actual&#39
     sam.tiff_to_vector(mask, poly)        # parches vectoriales</code></pre>
 <h2 id="e.3-forzamiento-climático-y-detección-sar">E.3 Forzamiento climático y detección SAR</h2>
 <h3 id="e.3.a-descarga-era5-land-mediante-cdsapi-y-cálculo-de-anomalías-mensuales">E.3.a Descarga ERA5-Land mediante cdsapi y cálculo de anomalías mensuales</h3>
-<p>La descarga del reanálisis ERA5-Land del ECMWF se realiza con <code>cdsapi</code> directamente desde el Climate Data Store, solicitando precipitación total y temperatura a dos metros sobre un bounding box que envuelve la CGSM con buffer; los datos se reciben en NetCDF con convenciones CF y se cargan con <code>xarray.open_conjunto de datos(chunks=...)</code> aplicando un patrón perezoso, calculando la climatología mensual y la anomalía respecto a ella para los rezagos cero a tres meses.</p>
+<p>La descarga del reanálisis ERA5-Land del ECMWF se realiza con cdsapi directamente desde el Climate Data Store, solicitando precipitación total y temperatura a dos metros sobre un bounding box que envuelve la CGSM con buffer; los datos se reciben en NetCDF con convenciones CF y se cargan con xarray.open_dataset(chunks=...) aplicando un patrón perezoso, calculando la climatología mensual y la anomalía respecto a ella para los rezagos cero a tres meses.</p>
 <pre><code>import cdsapi, xarray as xr
+
 c = cdsapi.Client()
 c.retrieve(&#39;reanalysis-era5-land-monthly-means&#39;, {
     &#39;product_type&#39;: &#39;monthly_averaged_reanalysis&#39;,
     &#39;variable&#39;: [&#39;total_precipitation&#39;, &#39;2m_temperature&#39;],
     &#39;year&#39;: [str(y) for y in range(2018, 2026)],
     &#39;month&#39;: [f&#39;{m:02d}&#39; for m in range(1, 13)],
-    &#39;time&#39;: &#39;00:00&#39;, &#39;area&#39;: [11.20, -75.05, 10.30, -74.05],
-    &#39;format&#39;: &#39;netcdf&#39;}, &#39;data/raw/era5_land_cgsm_monthly.nc&#39;)
-ds = xr.open_conjunto de datos(&#39;data/raw/era5_land_cgsm_monthly.nc&#39;, chunks={&#39;time&#39;: 12})
+    &#39;time&#39;: &#39;00:00&#39;,
+    &#39;area&#39;: [11.20, -75.05, 10.30, -74.05],
+    &#39;format&#39;: &#39;netcdf&#39;
+}, &#39;data/raw/era5_land_cgsm_monthly.nc&#39;)
+
+ds = xr.open_dataset(&#39;data/raw/era5_land_cgsm_monthly.nc&#39;, chunks={&#39;time&#39;: 12})
 anom = ds.groupby(&#39;time.month&#39;) - ds.groupby(&#39;time.month&#39;).mean(&#39;time&#39;)</code></pre>
 <h3 id="e.3.b-detección-de-inundación-sentinel-1-sar-para-el-evento-de-septiembre-2020">E.3.b Detección de inundación Sentinel-1 SAR para el evento de septiembre 2020</h3>
-<p>Para el evento de septiembre 2020 se realiza una detección de inundación mediante Sentinel-1 SAR (banda VH, modo IW), comparando el backscatter medio del periodo seco de referencia (enero–marzo 2020, 49 imágenes) contra el periodo de inundación (septiembre–octubre 2020, 36 imágenes). Se aplica un umbral de 3 dB para inundación en agua abierta y se identifica inundación bajo dosel de manglar mediante valores negativos de diferencia SAR —donde el aumento del backscatter refleja la dispersión de doble rebote característica de la interacción agua–tronco—.</p>
+<p>Para el evento de septiembre de 2020 se realizó una detección de inundación mediante Sentinel-1 SAR, banda VH y modo IW, comparando el backscatter medio del periodo seco de referencia, enero-marzo de 2020, con el periodo de inundación, septiembre-octubre de 2020. En el código, la diferencia se definió como SAR diff = seco − inundación. Bajo esta convención, se identificó agua abierta cuando SAR diff fue superior a +3 dB, asociada con disminución del backscatter durante la inundación por reflexión especular, y manglar inundado bajo dosel cuando SAR diff fue inferior a −2 dB, asociado con aumento del backscatter durante la inundación por dispersión de doble rebote agua-tronco.</p>
 <pre><code>s1_dry = ee.ImageCollection(&#39;COPERNICUS/S1_GRD&#39;) \
     .filterDate(&#39;2020-01-01&#39;,&#39;2020-03-31&#39;).select(&#39;VH&#39;).median()
 s1_flood = ee.ImageCollection(&#39;COPERNICUS/S1_GRD&#39;) \
@@ -369,6 +372,31 @@ function compute_metrics(periodo, base_dir)
 end</code></pre>
 <h1 id="anexo-f-tablas-detalladas-movidas-desde-el-cuerpo">Anexo F: Tablas detalladas movidas desde el cuerpo</h1>
 <p>Para mantener el cuerpo del informe centrado en la narrativa de los hallazgos, dos tablas de detalle metodológico se reubican en este anexo: el cruce estación por estación entre la señal SAR de septiembre 2020, la anomalía NDVI y la frecuencia de inundación histórica de la Global Flood Database (referida en la sección de Validación con datos NASA), y las nueve transiciones de superficie del JRC Global Surface Water 1984–2021 (referida en la sección de Dinámica hídrica).</p>
+<p><strong>Nota de homologación de estaciones complementarias.</strong> En la serie legacy desarrollada sobre el AOI preliminar de 5.073 km², dos estaciones complementarias del Complejo de Pajarales fueron registradas con la nomenclatura CP Pajarales y VIPIS. Durante la depuración metodológica hacia el AOI acotado de 835,3 km², estas estaciones fueron homologadas y reubicadas sobre cobertura de manglar denso verificada mediante NDVI &gt; 0,4 en composiciones Sentinel-2 de 2024. En la nomenclatura vigente del informe principal, CP Pajarales corresponde a CP Aguas Negras y VIPIS corresponde a CP Luna. Esta homologación no representa únicamente un cambio de etiqueta, sino también un ajuste espacial de coordenadas para garantizar consistencia con el AOI acotado y con la cobertura efectiva de manglar analizada. Las tablas de este anexo reportan la nomenclatura vigente y conservan la equivalencia legacy únicamente como nota de trazabilidad.</p>
+<table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 15%" />
+<col style="width: 69%" />
+</colgroup>
+<tbody>
+<tr>
+<td><strong>Nombre legacy</strong></td>
+<td><strong>Nombre vigente</strong></td>
+<td><strong>Observación</strong></td>
+</tr>
+<tr>
+<td>CP Pajarales</td>
+<td>CP Aguas Negras</td>
+<td>Reubicada hacia manglar denso del sector Aguas Negras, dentro del Complejo de Pajarales</td>
+</tr>
+<tr>
+<td>VIPIS</td>
+<td>CP Luna</td>
+<td>Reubicada hacia manglar denso del sector CP Luna, dentro del Complejo de Pajarales</td>
+</tr>
+</tbody>
+</table>
 <h2 id="f.1-cruce-sar-ndvi-gfd-por-estación">F.1 Cruce SAR + NDVI + GFD por estación</h2>
 <table>
 <colgroup>
@@ -376,100 +404,100 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 1: Cruce de señal SAR, NDVI y frecuencia de inundación histórica por estación, restringido al AOI acotado SFF + VPI Salamanca.</p>
+<td style="text-align: left;"><p>Tabla 1: Cruce de señal SAR, NDVI y frecuencia de inundación histórica por estación, restringido al AOI acotado SFF + VPI Salamanca.</p>
 <table>
 <colgroup>
 <col style="width: 11%" />
 <col style="width: 11%" />
 <col style="width: 11%" />
-<col style="width: 10%" />
+<col style="width: 9%" />
 <col style="width: 11%" />
 <col style="width: 11%" />
 <col style="width: 31%" />
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Estación</strong></th>
-<th style="text-align: left;"><strong>Naturaleza</strong></th>
-<th style="text-align: left;"><strong>Dentro AOI acotado</strong></th>
-<th style="text-align: left;"><strong>SAR diff (dB)</strong></th>
-<th style="text-align: left;"><strong>NDVI sept-2020</strong></th>
-<th style="text-align: left;"><strong>Eventos GFD</strong></th>
-<th style="text-align: left;"><strong>Interpretación</strong></th>
+<th style="text-align: center;"><strong>Estación</strong></th>
+<th style="text-align: center;"><strong>Naturaleza</strong></th>
+<th style="text-align: center;"><strong>Dentro AOI acotado</strong></th>
+<th style="text-align: center;"><strong>SAR diff (dB)</strong></th>
+<th style="text-align: center;"><strong>NDVI sept-2020</strong></th>
+<th style="text-align: center;"><strong>Eventos GFD</strong></th>
+<th style="text-align: center;"><strong>Interpretación</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Isla Boquerón</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">No</td>
-<td style="text-align: left;">N/A</td>
-<td style="text-align: left;">-0,018</td>
-<td style="text-align: left;">10 de 16</td>
-<td style="text-align: left;">Fuera del AOI: sobre lámina de agua del complejo lagunar central</td>
+<td style="text-align: center;">Isla Boquerón</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">-0,018</td>
+<td style="text-align: center;">10 de 16</td>
+<td style="text-align: center;">Fuera del AOI: sobre lámina de agua del complejo lagunar central</td>
 </tr>
 <tr>
-<td style="text-align: left;">Punta Cerro</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">No</td>
-<td style="text-align: left;">N/A</td>
-<td style="text-align: left;">-0,078</td>
-<td style="text-align: left;">10 de 16</td>
-<td style="text-align: left;">Fuera del AOI: sobre lámina de agua del complejo lagunar central</td>
+<td style="text-align: center;">Punta Cerro</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">-0,078</td>
+<td style="text-align: center;">10 de 16</td>
+<td style="text-align: center;">Fuera del AOI: sobre lámina de agua del complejo lagunar central</td>
 </tr>
 <tr>
-<td style="text-align: left;">Punta Chino</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">No</td>
-<td style="text-align: left;">N/A</td>
-<td style="text-align: left;">0,200</td>
-<td style="text-align: left;">9 de 16</td>
-<td style="text-align: left;">Fuera del AOI: sobre lámina de agua del complejo lagunar central</td>
+<td style="text-align: center;">Punta Chino</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">0,200</td>
+<td style="text-align: center;">9 de 16</td>
+<td style="text-align: center;">Fuera del AOI: sobre lámina de agua del complejo lagunar central</td>
 </tr>
 <tr>
-<td style="text-align: left;">Río Sevilla</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">No</td>
-<td style="text-align: left;">N/A</td>
-<td style="text-align: left;">0,050</td>
-<td style="text-align: left;">10 de 16</td>
-<td style="text-align: left;">Fuera del AOI: sobre lámina de agua del complejo lagunar central</td>
+<td style="text-align: center;">Río Sevilla</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">0,050</td>
+<td style="text-align: center;">10 de 16</td>
+<td style="text-align: center;">Fuera del AOI: sobre lámina de agua del complejo lagunar central</td>
 </tr>
 <tr>
-<td style="text-align: left;">Caño Palos</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">Sí</td>
-<td style="text-align: left;">+0,15</td>
-<td style="text-align: left;">0,400</td>
-<td style="text-align: left;">2 de 16</td>
-<td style="text-align: left;">Sin afectación SAR mayor</td>
+<td style="text-align: center;">Caño Palos</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">Sí</td>
+<td style="text-align: center;">+0,15</td>
+<td style="text-align: center;">0,400</td>
+<td style="text-align: center;">2 de 16</td>
+<td style="text-align: center;">Sin afectación SAR mayor</td>
 </tr>
 <tr>
-<td style="text-align: left;">CP Pajarales</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">No</td>
-<td style="text-align: left;">N/A</td>
-<td style="text-align: left;">0,300</td>
-<td style="text-align: left;">9 de 16</td>
-<td style="text-align: left;">Fuera del AOI: oeste del SFF, en zona riberana</td>
+<td style="text-align: center;">CP Aguas Negras (legacy: CP Pajarales)</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">0,300</td>
+<td style="text-align: center;">9 de 16</td>
+<td style="text-align: center;">Fuera del AOI: oeste del SFF, en zona riberana</td>
 </tr>
 <tr>
-<td style="text-align: left;">Caño Clarín</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">No</td>
-<td style="text-align: left;">N/A</td>
-<td style="text-align: left;">0,500</td>
-<td style="text-align: left;">1 de 16</td>
-<td style="text-align: left;">Fuera del AOI: sur del SFF, sobre zona de rehabilitación hidráulica</td>
+<td style="text-align: center;">Caño Clarín</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">N/A</td>
+<td style="text-align: center;">0,500</td>
+<td style="text-align: center;">1 de 16</td>
+<td style="text-align: center;">Fuera del AOI: sur del SFF, sobre zona de rehabilitación hidráulica</td>
 </tr>
 <tr>
-<td style="text-align: left;">VIPIS</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">Sí</td>
-<td style="text-align: left;">+0,12</td>
-<td style="text-align: left;">0,350</td>
-<td style="text-align: left;">9 de 16</td>
-<td style="text-align: left;">Sin afectación SAR mayor</td>
+<td style="text-align: center;">CP Luna (legacy: VIPIS)</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">Sí</td>
+<td style="text-align: center;">+0,12</td>
+<td style="text-align: center;">0,350</td>
+<td style="text-align: center;">9 de 16</td>
+<td style="text-align: center;">Sin afectación SAR mayor</td>
 </tr>
 </tbody>
 </table></td>
@@ -483,65 +511,65 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 2: Transiciones JRC Global Surface Water (1984–2021) dentro del AOI acotado SFF + VPI Salamanca. El AOI contiene 385,3 km² de agua permanente (&gt;75 % del tiempo) y 44,1 km² estacional (25–75 %), de modo que casi la mitad del polígono protegido es lámina de agua.</p>
+<td style="text-align: left;"><p>Tabla 2: Transiciones JRC Global Surface Water (1984–2021) dentro del AOI acotado SFF + VPI Salamanca. El AOI contiene 385,3 km² de agua permanente (&gt;75 % del tiempo) y 44,1 km² estacional (25–75 %), de modo que casi la mitad del polígono protegido es lámina de agua.</p>
 <table>
 <colgroup>
 <col style="width: 40%" />
 <col style="width: 17%" />
-<col style="width: 42%" />
+<col style="width: 41%" />
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Transición JRC dentro del AOI acotado</strong></th>
-<th style="text-align: left;"><strong>Área (km²)</strong></th>
-<th style="text-align: left;"><strong>Interpretación</strong></th>
+<th style="text-align: center;"><strong>Transición JRC dentro del AOI acotado</strong></th>
+<th style="text-align: center;"><strong>Área (km²)</strong></th>
+<th style="text-align: center;"><strong>Interpretación</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Permanente</td>
-<td style="text-align: left;">377,75</td>
-<td style="text-align: left;">Lámina de agua estable</td>
+<td style="text-align: center;">Permanente</td>
+<td style="text-align: center;">377,75</td>
+<td style="text-align: center;">Lámina de agua estable</td>
 </tr>
 <tr>
-<td style="text-align: left;">Nuevo permanente</td>
-<td style="text-align: left;">23,55</td>
-<td style="text-align: left;">Cuerpos nuevos consolidados</td>
+<td style="text-align: center;">Nuevo permanente</td>
+<td style="text-align: center;">23,55</td>
+<td style="text-align: center;">Cuerpos nuevos consolidados</td>
 </tr>
 <tr>
-<td style="text-align: left;">Permanente perdido</td>
-<td style="text-align: left;">18,55</td>
-<td style="text-align: left;">Cuerpos de agua secados</td>
+<td style="text-align: center;">Permanente perdido</td>
+<td style="text-align: center;">18,55</td>
+<td style="text-align: center;">Cuerpos de agua secados</td>
 </tr>
 <tr>
-<td style="text-align: left;">Estacional</td>
-<td style="text-align: left;">17,98</td>
-<td style="text-align: left;">Zonas con régimen estacional estable</td>
+<td style="text-align: center;">Estacional</td>
+<td style="text-align: center;">17,98</td>
+<td style="text-align: center;">Zonas con régimen estacional estable</td>
 </tr>
 <tr>
-<td style="text-align: left;">Nuevo estacional</td>
-<td style="text-align: left;">31,31</td>
-<td style="text-align: left;">Nuevas áreas de inundación estacional</td>
+<td style="text-align: center;">Nuevo estacional</td>
+<td style="text-align: center;">31,31</td>
+<td style="text-align: center;">Nuevas áreas de inundación estacional</td>
 </tr>
 <tr>
-<td style="text-align: left;">Estacional perdido</td>
-<td style="text-align: left;">29,38</td>
-<td style="text-align: left;">Zonas que dejaron de inundarse</td>
+<td style="text-align: center;">Estacional perdido</td>
+<td style="text-align: center;">29,38</td>
+<td style="text-align: center;">Zonas que dejaron de inundarse</td>
 </tr>
 <tr>
-<td style="text-align: left;">Permanente a estacional</td>
-<td style="text-align: left;">18,54</td>
-<td style="text-align: left;">Retroceso parcial de lámina permanente</td>
+<td style="text-align: center;">Permanente a estacional</td>
+<td style="text-align: center;">18,54</td>
+<td style="text-align: center;">Retroceso parcial de lámina permanente</td>
 </tr>
 <tr>
-<td style="text-align: left;">Efímero estacional</td>
-<td style="text-align: left;">49,30</td>
-<td style="text-align: left;">Inundación intermitente sin patrón estacional</td>
+<td style="text-align: center;">Efímero estacional</td>
+<td style="text-align: center;">49,30</td>
+<td style="text-align: center;">Inundación intermitente sin patrón estacional</td>
 </tr>
 <tr>
-<td style="text-align: left;">Efímero permanente</td>
-<td style="text-align: left;">1,74</td>
-<td style="text-align: left;">Agua intermitente persistente</td>
+<td style="text-align: center;">Efímero permanente</td>
+<td style="text-align: center;">1,74</td>
+<td style="text-align: center;">Agua intermitente persistente</td>
 </tr>
 </tbody>
 </table></td>
@@ -555,7 +583,7 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 3: Entorno de ejecución completo del proyecto.</p>
+<td style="text-align: left;"><p>Tabla 3: Entorno de ejecución completo del proyecto.</p>
 <table>
 <colgroup>
 <col style="width: 50%" />
@@ -563,53 +591,53 @@ end</code></pre>
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Componente</strong></th>
-<th style="text-align: left;"><strong>Especificación</strong></th>
+<th style="text-align: center;"><strong>Componente</strong></th>
+<th style="text-align: center;"><strong>Especificación</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Contenedor</td>
-<td style="text-align: left;">Docker sig_unal v1.11 (Ubuntu + RStudio Server)</td>
+<td style="text-align: center;">Contenedor</td>
+<td style="text-align: center;">Docker sig_unal v1.11 (Ubuntu + RStudio Server)</td>
 </tr>
 <tr>
-<td style="text-align: left;">Python</td>
-<td style="text-align: left;">3.12.3 + geemap, samgeo, leafmap, rasterio, geopandas</td>
+<td style="text-align: center;">Python</td>
+<td style="text-align: center;">3.12.3 + geemap, samgeo, leafmap, rasterio, geopandas</td>
 </tr>
 <tr>
-<td style="text-align: left;">R</td>
-<td style="text-align: left;">4.3.3 + terra, sf, tidyverse, bfast, tmap</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">4.3.3 + terra, sf, tidyverse, bfast, tmap</td>
 </tr>
 <tr>
-<td style="text-align: left;">Julia</td>
-<td style="text-align: left;">1.11.3 + DataFrames, CSV, GeoJSON, Statistics</td>
+<td style="text-align: center;">Julia</td>
+<td style="text-align: center;">1.11.3 + DataFrames, CSV, GeoJSON, Statistics</td>
 </tr>
 <tr>
-<td style="text-align: left;">Quarto</td>
-<td style="text-align: left;">1.4.550 (informe reproducible)</td>
+<td style="text-align: center;">Quarto</td>
+<td style="text-align: center;">1.4.550 (informe reproducible)</td>
 </tr>
 <tr>
-<td style="text-align: left;">Control de versiones</td>
-<td style="text-align: left;">Git + GitHub</td>
+<td style="text-align: center;">Control de versiones</td>
+<td style="text-align: center;">Git + GitHub</td>
 </tr>
 <tr>
-<td style="text-align: left;">Análisis geoespacial en la nube</td>
-<td style="text-align: left;">Google Earth Engine (API Python)</td>
+<td style="text-align: center;">Análisis geoespacial en la nube</td>
+<td style="text-align: center;">Google Earth Engine (API Python)</td>
 </tr>
 </tbody>
 </table></td>
 </tr>
 </tbody>
 </table>
-<h2 id="f.4-quiebres-bfast-sobre-las-ocho-estaciones-del-proyecto">F.4 Quiebres bfast sobre las ocho estaciones del proyecto</h2>
+<h2 id="f.4-quiebres-bfast-sobre-las-ocho-estaciones-del-proyecto">F.4 Quiebres BFAST sobre las ocho estaciones del proyecto</h2>
 <table>
 <colgroup>
 <col style="width: 100%" />
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 4: Quiebres estructurales detectados por bfast sobre las ocho estaciones del proyecto en la serie combinada Landsat 8 + Sentinel-2 (2013–2025). El análisis refinado sobre las cuatro estaciones de manglar denso se reporta en la tabla <strong>?@tbl-bfast-unificado</strong> del informe principal.</p>
-<table>
+<td style="text-align: left;"><p>Tabla 4: Quiebres estructurales detectados por BFAST sobre las ocho estaciones del proyecto en la serie combinada Landsat 8 + Sentinel-2 (2013–2025). El análisis refinado sobre las cuatro estaciones de manglar denso se reporta en la Tabla 5 del cuerpo del informe principal.</p>
+<table style="width:100%;">
 <colgroup>
 <col style="width: 12%" />
 <col style="width: 23%" />
@@ -619,69 +647,69 @@ end</code></pre>
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Estación</strong></th>
-<th style="text-align: left;"><strong>Quiebres (h=0,15)</strong></th>
-<th style="text-align: left;"><strong>Fecha principal</strong></th>
-<th style="text-align: left;"><strong>Quiebres (h=0,10)</strong></th>
-<th style="text-align: left;"><strong>Evento asociado</strong></th>
+<th style="text-align: center;"><strong>Estación</strong></th>
+<th style="text-align: center;"><strong>Quiebres (h=0,15)</strong></th>
+<th style="text-align: center;"><strong>Fecha principal</strong></th>
+<th style="text-align: center;"><strong>Quiebres (h=0,10)</strong></th>
+<th style="text-align: center;"><strong>Evento asociado</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">CP Pajarales</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">2016-10</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">El Niño 2015–2016</td>
+<td style="text-align: center;">CP Aguas Negras (legacy: CP Pajarales)</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2016-10</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">El Niño 2015–2016</td>
 </tr>
 <tr>
-<td style="text-align: left;">Caño Clarín</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">2016-09</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">El Niño 2015–2016</td>
+<td style="text-align: center;">Caño Clarín</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2016-09</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">El Niño 2015–2016</td>
 </tr>
 <tr>
-<td style="text-align: left;">Caño Palos</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">2015-06</td>
-<td style="text-align: left;">error</td>
-<td style="text-align: left;">El Niño (inicio)</td>
+<td style="text-align: center;">Caño Palos</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2015-06</td>
+<td style="text-align: center;">No estimado</td>
+<td style="text-align: center;">El Niño (inicio)</td>
 </tr>
 <tr>
-<td style="text-align: left;">Isla Boqueron</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">2016-04, 2018-05</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">El Niño + transicion</td>
+<td style="text-align: center;">Isla Boquerón</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">2016-04, 2018-05</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">El Niño + transición</td>
 </tr>
 <tr>
-<td style="text-align: left;">Punta Cerro</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">2016-11</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;">El Niño + La Niña + recuperación</td>
+<td style="text-align: center;">Punta Cerro</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2016-11</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">El Niño + La Niña + recuperación</td>
 </tr>
 <tr>
-<td style="text-align: left;">Punta Chino</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">2016-05</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">El Niño 2015–2016</td>
+<td style="text-align: center;">Punta Chino</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2016-05</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">El Niño 2015–2016</td>
 </tr>
 <tr>
-<td style="text-align: left;">Río Sevilla</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">2016-12</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;">El Niño 2015–2016</td>
+<td style="text-align: center;">Río Sevilla</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">2016-12</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">El Niño 2015–2016</td>
 </tr>
 <tr>
-<td style="text-align: left;">VIPIS</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">2016-04, 2022-03</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;">El Niño + recuperación</td>
+<td style="text-align: center;">CP Luna (legacy: VIPIS)</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">2016-04, 2022-03</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">El Niño + recuperación</td>
 </tr>
 </tbody>
 </table></td>
@@ -695,7 +723,7 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 5: Parches de manglar truncados por la frontera del AOI acotado (predicado DE-9IM <code>intersects</code> con tolerancia de 30 m). Los parches se cuentan agregados como features completos en <code>geopandas</code>.</p>
+<td style="text-align: left;"><p>Tabla 5: Parches de manglar truncados por la frontera del AOI acotado (predicado DE-9IM <code>intersects</code> con tolerancia de 30 m). Los parches se cuentan agregados como features completos en <code>geopandas</code>.</p>
 <table>
 <colgroup>
 <col style="width: 13%" />
@@ -706,48 +734,48 @@ end</code></pre>
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Periodo</strong></th>
-<th style="text-align: left;"><strong>Parches</strong></th>
-<th style="text-align: left;"><strong>Parches en borde</strong></th>
-<th style="text-align: left;"><strong>% en borde</strong></th>
-<th style="text-align: left;"><strong>Área en borde (ha)</strong></th>
+<th style="text-align: center;"><strong>Periodo</strong></th>
+<th style="text-align: center;"><strong>Parches</strong></th>
+<th style="text-align: center;"><strong>Parches en borde</strong></th>
+<th style="text-align: center;"><strong>% en borde</strong></th>
+<th style="text-align: center;"><strong>Área en borde (ha)</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Degradación (2020-S2)</td>
-<td style="text-align: left;">17</td>
-<td style="text-align: left;">6</td>
-<td style="text-align: left;">35,3</td>
-<td style="text-align: left;">5.104,3</td>
+<td style="text-align: center;">Degradación (2020-S2)</td>
+<td style="text-align: center;">17</td>
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">35,3</td>
+<td style="text-align: center;">5.104,3</td>
 </tr>
 <tr>
-<td style="text-align: left;">Recuperación (2022-S1)</td>
-<td style="text-align: left;">17</td>
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">47,1</td>
-<td style="text-align: left;">8.325,7</td>
+<td style="text-align: center;">Recuperación (2022-S1)</td>
+<td style="text-align: center;">17</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">47,1</td>
+<td style="text-align: center;">8.325,7</td>
 </tr>
 <tr>
-<td style="text-align: left;">Actual (2024–2025)</td>
-<td style="text-align: left;">15</td>
-<td style="text-align: left;">8</td>
-<td style="text-align: left;">53,3</td>
-<td style="text-align: left;">5.237,9</td>
+<td style="text-align: center;">Actual (2024–2025)</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">53,3</td>
+<td style="text-align: center;">5.237,9</td>
 </tr>
 </tbody>
 </table></td>
 </tr>
 </tbody>
 </table>
-<h2 id="f.6-listado-completo-de-las-18-anomalías-ndvi-z-2">F.6 Listado completo de las 18 anomalías NDVI (z &lt; −2)</h2>
+<h2 id="f.6-principales-anomalías-ndvi-z-2">F.6 Principales anomalías NDVI (z &lt; −2)</h2>
 <table>
 <colgroup>
 <col style="width: 100%" />
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 6: Anomalias significativas de NDVI (<span class="math inline"><em>z</em> &lt; −2</span>) en la serie combinada 2013–2025, ordenadas por z-score decreciente.</p>
+<td style="text-align: left;"><p>Tabla 6: Anomalías significativas de NDVI (z&lt;−2) en la serie combinada 2013–2025, ordenadas por z-score decreciente.</p>
 <table>
 <colgroup>
 <col style="width: 20%" />
@@ -758,69 +786,69 @@ end</code></pre>
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Estación</strong></th>
-<th style="text-align: left;"><strong>Fecha</strong></th>
-<th style="text-align: left;"><strong>NDVI</strong></th>
-<th style="text-align: left;"><strong>z-score</strong></th>
-<th style="text-align: left;"><strong>Sensor</strong></th>
+<th style="text-align: center;"><strong>Estación</strong></th>
+<th style="text-align: center;"><strong>Fecha</strong></th>
+<th style="text-align: center;"><strong>NDVI</strong></th>
+<th style="text-align: center;"><strong>z-score</strong></th>
+<th style="text-align: center;"><strong>Sensor</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Isla Boqueron</td>
-<td style="text-align: left;">2020-09</td>
-<td style="text-align: left;">-0,018</td>
-<td style="text-align: left;">-3,36</td>
-<td style="text-align: left;">Sentinel-2</td>
+<td style="text-align: center;">Isla Boquerón</td>
+<td style="text-align: center;">2020-09</td>
+<td style="text-align: center;">-0,018</td>
+<td style="text-align: center;">-3,36</td>
+<td style="text-align: center;">Sentinel-2</td>
 </tr>
 <tr>
-<td style="text-align: left;">Caño Clarín</td>
-<td style="text-align: left;">2018-03</td>
-<td style="text-align: left;">0,166</td>
-<td style="text-align: left;">-3,15</td>
-<td style="text-align: left;">Sentinel-2</td>
+<td style="text-align: center;">Caño Clarín</td>
+<td style="text-align: center;">2018-03</td>
+<td style="text-align: center;">0,166</td>
+<td style="text-align: center;">-3,15</td>
+<td style="text-align: center;">Sentinel-2</td>
 </tr>
 <tr>
-<td style="text-align: left;">VIPIS</td>
-<td style="text-align: left;">2016-04</td>
-<td style="text-align: left;">-0,291</td>
-<td style="text-align: left;">-2,93</td>
-<td style="text-align: left;">Landsat 8</td>
+<td style="text-align: center;">CP Luna (legacy: VIPIS)</td>
+<td style="text-align: center;">2016-04</td>
+<td style="text-align: center;">-0,291</td>
+<td style="text-align: center;">-2,93</td>
+<td style="text-align: center;">Landsat 8</td>
 </tr>
 <tr>
-<td style="text-align: left;">Caño Clarín</td>
-<td style="text-align: left;">2025-03</td>
-<td style="text-align: left;">0,223</td>
-<td style="text-align: left;">-2,77</td>
-<td style="text-align: left;">Sentinel-2</td>
+<td style="text-align: center;">Caño Clarín</td>
+<td style="text-align: center;">2025-03</td>
+<td style="text-align: center;">0,223</td>
+<td style="text-align: center;">-2,77</td>
+<td style="text-align: center;">Sentinel-2</td>
 </tr>
 <tr>
-<td style="text-align: left;">Caño Palos</td>
-<td style="text-align: left;">2024-09</td>
-<td style="text-align: left;">0,272</td>
-<td style="text-align: left;">-2,66</td>
-<td style="text-align: left;">Sentinel-2</td>
+<td style="text-align: center;">Caño Palos</td>
+<td style="text-align: center;">2024-09</td>
+<td style="text-align: center;">0,272</td>
+<td style="text-align: center;">-2,66</td>
+<td style="text-align: center;">Sentinel-2</td>
 </tr>
 <tr>
-<td style="text-align: left;">CP Pajarales</td>
-<td style="text-align: left;">2018-03</td>
-<td style="text-align: left;">0,203</td>
-<td style="text-align: left;">-2,50</td>
-<td style="text-align: left;">Sentinel-2</td>
+<td style="text-align: center;">CP Aguas Negras (legacy: CP Pajarales)</td>
+<td style="text-align: center;">2018-03</td>
+<td style="text-align: center;">0,203</td>
+<td style="text-align: center;">-2,50</td>
+<td style="text-align: center;">Sentinel-2</td>
 </tr>
 <tr>
-<td style="text-align: left;">Punta Cerro</td>
-<td style="text-align: left;">2020-09</td>
-<td style="text-align: left;">-0,078</td>
-<td style="text-align: left;">-2,46</td>
-<td style="text-align: left;">Sentinel-2</td>
+<td style="text-align: center;">Punta Cerro</td>
+<td style="text-align: center;">2020-09</td>
+<td style="text-align: center;">-0,078</td>
+<td style="text-align: center;">-2,46</td>
+<td style="text-align: center;">Sentinel-2</td>
 </tr>
 <tr>
-<td style="text-align: left;">CP Pajarales</td>
-<td style="text-align: left;">2022-09</td>
-<td style="text-align: left;">0,217</td>
-<td style="text-align: left;">-2,40</td>
-<td style="text-align: left;">Sentinel-2</td>
+<td style="text-align: center;">CP Aguas Negras (legacy: CP Pajarales)</td>
+<td style="text-align: center;">2022-09</td>
+<td style="text-align: center;">0,217</td>
+<td style="text-align: center;">-2,40</td>
+<td style="text-align: center;">Sentinel-2</td>
 </tr>
 </tbody>
 </table></td>
@@ -834,115 +862,115 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 7: Flujo de datos del pipeline multilenguaje.</p>
+<td style="text-align: left;"><p>Tabla 7: Flujo de datos del pipeline multilenguaje.</p>
 <table>
 <colgroup>
 <col style="width: 17%" />
 <col style="width: 17%" />
 <col style="width: 13%" />
-<col style="width: 23%" />
+<col style="width: 24%" />
 <col style="width: 26%" />
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Paso</strong></th>
-<th style="text-align: left;"><strong>Herramienta</strong></th>
-<th style="text-align: left;"><strong>Lenguaje</strong></th>
-<th style="text-align: left;"><strong>Entrada</strong></th>
-<th style="text-align: left;"><strong>Salida</strong></th>
+<th style="text-align: center;"><strong>Paso</strong></th>
+<th style="text-align: center;"><strong>Herramienta</strong></th>
+<th style="text-align: center;"><strong>Lenguaje</strong></th>
+<th style="text-align: center;"><strong>Entrada</strong></th>
+<th style="text-align: center;"><strong>Salida</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">1. Adquisición</td>
-<td style="text-align: left;">GEE + geemap</td>
-<td style="text-align: left;">Python</td>
-<td style="text-align: left;">Sentinel-2 / Landsat</td>
-<td style="text-align: left;">Pilas de índices (.tif)</td>
+<td style="text-align: center;">1. Adquisición</td>
+<td style="text-align: center;">GEE + geemap</td>
+<td style="text-align: center;">Python</td>
+<td style="text-align: center;">Sentinel-2 / Landsat</td>
+<td style="text-align: center;">Pilas de índices (.tif)</td>
 </tr>
 <tr>
-<td style="text-align: left;">2. Series de tiempo</td>
-<td style="text-align: left;">pandas + bfast</td>
-<td style="text-align: left;">Python / R</td>
-<td style="text-align: left;">Índices + estaciones</td>
-<td style="text-align: left;">Z-scores, periodos (.csv)</td>
+<td style="text-align: center;">2. Series de tiempo</td>
+<td style="text-align: center;">pandas + BFAST</td>
+<td style="text-align: center;">Python / R</td>
+<td style="text-align: center;">Índices + estaciones</td>
+<td style="text-align: center;">Z-scores, periodos (.csv)</td>
 </tr>
 <tr>
-<td style="text-align: left;">3. Segmentación</td>
-<td style="text-align: left;">SamGeo + umbrales</td>
-<td style="text-align: left;">Python</td>
-<td style="text-align: left;">Composiciones RGB</td>
-<td style="text-align: left;">Parches manglar (.geojson)</td>
+<td style="text-align: center;">3. Segmentación</td>
+<td style="text-align: center;">SamGeo + umbrales</td>
+<td style="text-align: center;">Python</td>
+<td style="text-align: center;">Composiciones RGB</td>
+<td style="text-align: center;">Parches manglar (.geojson)</td>
 </tr>
 <tr>
-<td style="text-align: left;">4. Métricas</td>
-<td style="text-align: left;">DataFrames.jl</td>
-<td style="text-align: left;">Julia</td>
-<td style="text-align: left;">Parches vectoriales</td>
-<td style="text-align: left;">Tabla de métricas (.csv)</td>
+<td style="text-align: center;">4. Métricas</td>
+<td style="text-align: center;">DataFrames.jl</td>
+<td style="text-align: center;">Julia</td>
+<td style="text-align: center;">Parches vectoriales</td>
+<td style="text-align: center;">Tabla de métricas (.csv)</td>
 </tr>
 <tr>
-<td style="text-align: left;">4b. Topología DE-9IM</td>
-<td style="text-align: left;">geopandas + shapely</td>
-<td style="text-align: left;">Python</td>
-<td style="text-align: left;">Parches en EPSG:9377</td>
-<td style="text-align: left;">Tabla parches_topología (.csv)</td>
+<td style="text-align: center;">4b. Topología DE-9IM</td>
+<td style="text-align: center;">geopandas + shapely</td>
+<td style="text-align: center;">Python</td>
+<td style="text-align: center;">Parches en EPSG:9377</td>
+<td style="text-align: center;">Tabla parches_topología (.csv)</td>
 </tr>
 <tr>
-<td style="text-align: left;">5. Inundación SAR</td>
-<td style="text-align: left;">GEE Sentinel-1</td>
-<td style="text-align: left;">Python</td>
-<td style="text-align: left;">SAR VH seco vs húmedo</td>
-<td style="text-align: left;">Mapa inundación (.tif)</td>
+<td style="text-align: center;">5. Inundación SAR</td>
+<td style="text-align: center;">GEE Sentinel-1</td>
+<td style="text-align: center;">Python</td>
+<td style="text-align: center;">SAR VH seco vs húmedo</td>
+<td style="text-align: center;">Mapa inundación (.tif)</td>
 </tr>
 <tr>
-<td style="text-align: left;">6. Dashboard</td>
-<td style="text-align: left;">geemap</td>
-<td style="text-align: left;">Python</td>
-<td style="text-align: left;">Todas las capas</td>
-<td style="text-align: left;">Dashboard (.html)</td>
+<td style="text-align: center;">6. Dashboard</td>
+<td style="text-align: center;">geemap</td>
+<td style="text-align: center;">Python</td>
+<td style="text-align: center;">Todas las capas</td>
+<td style="text-align: center;">Dashboard (.html)</td>
 </tr>
 <tr>
-<td style="text-align: left;">7. Forzamiento ERA5</td>
-<td style="text-align: left;">cdsapi + xarray</td>
-<td style="text-align: left;">Python</td>
-<td style="text-align: left;">NetCDF ERA5-Land</td>
-<td style="text-align: left;">Anomalías y correlación (.csv)</td>
+<td style="text-align: center;">7. Forzamiento ERA5</td>
+<td style="text-align: center;">cdsapi + xarray</td>
+<td style="text-align: center;">Python</td>
+<td style="text-align: center;">NetCDF ERA5-Land</td>
+<td style="text-align: center;">Anomalías y correlación (.csv)</td>
 </tr>
 <tr>
-<td style="text-align: left;">8. Cubo stars</td>
-<td style="text-align: left;">stars + sf</td>
-<td style="text-align: left;">R</td>
-<td style="text-align: left;">TIFs trimestrales S2</td>
-<td style="text-align: left;">Series por estación (.csv)</td>
+<td style="text-align: center;">8. Cubo stars</td>
+<td style="text-align: center;">stars + sf</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: center;">TIFs trimestrales S2</td>
+<td style="text-align: center;">Series por estación (.csv)</td>
 </tr>
 <tr>
-<td style="text-align: left;">9. Validación multilingüe</td>
-<td style="text-align: left;">pandas</td>
-<td style="text-align: left;">Python</td>
-<td style="text-align: left;">Series Python + R</td>
-<td style="text-align: left;">RMSE/rho (.csv)</td>
+<td style="text-align: center;">9. Validación multilingüe</td>
+<td style="text-align: center;">pandas</td>
+<td style="text-align: center;">Python</td>
+<td style="text-align: center;">Series Python + R</td>
+<td style="text-align: center;">RMSE/rho (.csv)</td>
 </tr>
 <tr>
-<td style="text-align: left;">10. RF benchmark</td>
-<td style="text-align: left;">GEE <code>smileRandomForest</code></td>
-<td style="text-align: left;">Python</td>
-<td style="text-align: left;">Sentinel-2 + INVEMAR / WorldCover</td>
-<td style="text-align: left;">F1, Recall, Precisión (.csv), importancia de variables (.png)</td>
+<td style="text-align: center;">10. RF benchmark</td>
+<td style="text-align: center;">GEE <code>smileRandomForest</code></td>
+<td style="text-align: center;">Python</td>
+<td style="text-align: center;">Sentinel-2 + INVEMAR / WorldCover</td>
+<td style="text-align: center;">F1, Recall, Precisión (.csv), importancia de variables (.png)</td>
 </tr>
 <tr>
-<td style="text-align: left;">11. SAR continuo VH</td>
-<td style="text-align: left;">GEE Sentinel-1 + pandas</td>
-<td style="text-align: left;">Python</td>
-<td style="text-align: left;">Sentinel-1 GRD 2018-2025</td>
-<td style="text-align: left;">Serie SAR-VH mensual, correlación con NDVI (.csv)</td>
+<td style="text-align: center;">11. SAR continuo VH</td>
+<td style="text-align: center;">GEE Sentinel-1 + pandas</td>
+<td style="text-align: center;">Python</td>
+<td style="text-align: center;">Sentinel-1 GRD 2018-2025</td>
+<td style="text-align: center;">Serie SAR-VH mensual, correlación con NDVI (.csv)</td>
 </tr>
 <tr>
-<td style="text-align: left;">12. Alertas tempranas</td>
-<td style="text-align: left;">pandas + matplotlib</td>
-<td style="text-align: left;">Python</td>
-<td style="text-align: left;">Series NDVI + SAR + bfast</td>
-<td style="text-align: left;">Semáforo estaciones (.csv) y mapa (.png)</td>
+<td style="text-align: center;">12. Alertas tempranas</td>
+<td style="text-align: center;">pandas + matplotlib</td>
+<td style="text-align: center;">Python</td>
+<td style="text-align: center;">Series NDVI + SAR + bfast</td>
+<td style="text-align: center;">Semáforo estaciones (.csv) y mapa (.png)</td>
 </tr>
 </tbody>
 </table></td>
@@ -956,94 +984,94 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 8: Eventos de inundación con mayor área afectada dentro del AOI acotado (Global Flood Database, 2001-2017).</p>
+<td style="text-align: left;"><p>Tabla 8: Eventos de inundación con mayor área afectada dentro del AOI acotado (Global Flood Database, 2001-2017).</p>
 <table>
 <colgroup>
 <col style="width: 30%" />
 <col style="width: 21%" />
 <col style="width: 21%" />
-<col style="width: 15%" />
-<col style="width: 10%" />
+<col style="width: 16%" />
+<col style="width: 9%" />
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Evento</strong></th>
-<th style="text-align: left;"><strong>Inicio</strong></th>
-<th style="text-align: left;"><strong>Fin</strong></th>
-<th style="text-align: left;"><strong>Área (km²)</strong></th>
-<th style="text-align: left;"><strong>Días</strong></th>
+<th style="text-align: center;"><strong>Evento</strong></th>
+<th style="text-align: center;"><strong>Inicio</strong></th>
+<th style="text-align: center;"><strong>Fin</strong></th>
+<th style="text-align: center;"><strong>Área (km²)</strong></th>
+<th style="text-align: center;"><strong>Días</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">DFO_2625</td>
-<td style="text-align: left;">2005-02-11</td>
-<td style="text-align: left;">2005-02-26</td>
-<td style="text-align: left;">299,2</td>
-<td style="text-align: left;">15</td>
+<td style="text-align: center;">DFO_2625</td>
+<td style="text-align: center;">2005-02-11</td>
+<td style="text-align: center;">2005-02-26</td>
+<td style="text-align: center;">299,2</td>
+<td style="text-align: center;">15</td>
 </tr>
 <tr>
-<td style="text-align: left;">DFO_2588</td>
-<td style="text-align: left;">2004-11-20</td>
-<td style="text-align: left;">2004-11-27</td>
-<td style="text-align: left;">274,8</td>
-<td style="text-align: left;">7</td>
+<td style="text-align: center;">DFO_2588</td>
+<td style="text-align: center;">2004-11-20</td>
+<td style="text-align: center;">2004-11-27</td>
+<td style="text-align: center;">274,8</td>
+<td style="text-align: center;">7</td>
 </tr>
 <tr>
-<td style="text-align: left;">DFO_2761</td>
-<td style="text-align: left;">2005-09-15</td>
-<td style="text-align: left;">2005-12-16</td>
-<td style="text-align: left;">239,4</td>
-<td style="text-align: left;">92</td>
+<td style="text-align: center;">DFO_2761</td>
+<td style="text-align: center;">2005-09-15</td>
+<td style="text-align: center;">2005-12-16</td>
+<td style="text-align: center;">239,4</td>
+<td style="text-align: center;">92</td>
 </tr>
 <tr>
-<td style="text-align: left;">DFO_1996</td>
-<td style="text-align: left;">2002-07-20</td>
-<td style="text-align: left;">2002-07-31</td>
-<td style="text-align: left;">233,9</td>
-<td style="text-align: left;">11</td>
+<td style="text-align: center;">DFO_1996</td>
+<td style="text-align: center;">2002-07-20</td>
+<td style="text-align: center;">2002-07-31</td>
+<td style="text-align: center;">233,9</td>
+<td style="text-align: center;">11</td>
 </tr>
 <tr>
-<td style="text-align: left;">DFO_4495</td>
-<td style="text-align: left;">2017-08-04</td>
-<td style="text-align: left;">2017-08-21</td>
-<td style="text-align: left;">221,3</td>
-<td style="text-align: left;">17</td>
+<td style="text-align: center;">DFO_4495</td>
+<td style="text-align: center;">2017-08-04</td>
+<td style="text-align: center;">2017-08-21</td>
+<td style="text-align: center;">221,3</td>
+<td style="text-align: center;">17</td>
 </tr>
 <tr>
-<td style="text-align: left;">DFO_3212</td>
-<td style="text-align: left;">2007-10-01</td>
-<td style="text-align: left;">2007-12-10</td>
-<td style="text-align: left;">211,5</td>
-<td style="text-align: left;">70</td>
+<td style="text-align: center;">DFO_3212</td>
+<td style="text-align: center;">2007-10-01</td>
+<td style="text-align: center;">2007-12-10</td>
+<td style="text-align: center;">211,5</td>
+<td style="text-align: center;">70</td>
 </tr>
 <tr>
-<td style="text-align: left;">DFO_3750</td>
-<td style="text-align: left;">2010-11-15</td>
-<td style="text-align: left;">2010-12-20</td>
-<td style="text-align: left;">190,1</td>
-<td style="text-align: left;">35</td>
+<td style="text-align: center;">DFO_3750</td>
+<td style="text-align: center;">2010-11-15</td>
+<td style="text-align: center;">2010-12-20</td>
+<td style="text-align: center;">190,1</td>
+<td style="text-align: center;">35</td>
 </tr>
 <tr>
-<td style="text-align: left;">DFO_3754</td>
-<td style="text-align: left;">2010-11-25</td>
-<td style="text-align: left;">2010-12-20</td>
-<td style="text-align: left;">175,0</td>
-<td style="text-align: left;">25</td>
+<td style="text-align: center;">DFO_3754</td>
+<td style="text-align: center;">2010-11-25</td>
+<td style="text-align: center;">2010-12-20</td>
+<td style="text-align: center;">175,0</td>
+<td style="text-align: center;">25</td>
 </tr>
 <tr>
-<td style="text-align: left;">DFO_3421</td>
-<td style="text-align: left;">2008-12-13</td>
-<td style="text-align: left;">2008-12-14</td>
-<td style="text-align: left;">151,9</td>
-<td style="text-align: left;">1</td>
+<td style="text-align: center;">DFO_3421</td>
+<td style="text-align: center;">2008-12-13</td>
+<td style="text-align: center;">2008-12-14</td>
+<td style="text-align: center;">151,9</td>
+<td style="text-align: center;">1</td>
 </tr>
 <tr>
-<td style="text-align: left;">DFO_3311</td>
-<td style="text-align: left;">2008-05-27</td>
-<td style="text-align: left;">2008-05-28</td>
-<td style="text-align: left;">78,8</td>
-<td style="text-align: left;">1</td>
+<td style="text-align: center;">DFO_3311</td>
+<td style="text-align: center;">2008-05-27</td>
+<td style="text-align: center;">2008-05-28</td>
+<td style="text-align: center;">78,8</td>
+<td style="text-align: center;">1</td>
 </tr>
 </tbody>
 </table></td>
@@ -1057,100 +1085,100 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 9: Correlación de Pearson entre la serie mensual Sentinel-1 SAR-VH y el NDVI z-score derivado de Sentinel-2 para rezagos de 0 a 3 meses, calculada sobre las ocho estaciones entre 2018 y 2025. Valores en negrita: correlaciones significativas (<span class="math inline"><em>p</em> &lt; 0, 001</span>) sobre las cuatro estaciones de manglar denso del Complejo de Pajarales.</p>
-<table style="width:100%;">
+<td style="text-align: left;"><p>Tabla 9: Correlación de Pearson entre la serie mensual Sentinel-1 SAR-VH y el NDVI z-score derivado de Sentinel-2 para rezagos de 0 a 3 meses, calculada sobre las ocho estaciones entre 2018 y 2025. Valores en negrita: correlaciones significativas (p &lt; 0,001) sobre las cuatro estaciones de manglar denso del Complejo de Pajarales.</p>
+<table>
 <colgroup>
 <col style="width: 22%" />
-<col style="width: 18%" />
+<col style="width: 17%" />
 <col style="width: 12%" />
 <col style="width: 12%" />
 <col style="width: 12%" />
 <col style="width: 12%" />
-<col style="width: 7%" />
+<col style="width: 8%" />
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Estación</strong></th>
-<th style="text-align: left;"><strong>Naturaleza</strong></th>
-<th style="text-align: left;"><span class="math inline"><em>ρ</em></span> <strong>lag 0</strong></th>
-<th style="text-align: left;"><span class="math inline"><em>ρ</em></span> <strong>lag 1</strong></th>
-<th style="text-align: left;"><span class="math inline"><em>ρ</em></span> <strong>lag 2</strong></th>
-<th style="text-align: left;"><span class="math inline"><em>ρ</em></span> <strong>lag 3</strong></th>
-<th style="text-align: left;"><strong>n</strong></th>
+<th style="text-align: center;"><strong>Estación</strong></th>
+<th style="text-align: center;"><strong>Naturaleza</strong></th>
+<th style="text-align: center;">ρ <strong>lag 0</strong></th>
+<th style="text-align: center;">ρ <strong>lag 1</strong></th>
+<th style="text-align: center;">ρ <strong>lag 2</strong></th>
+<th style="text-align: center;">ρ <strong>lag 3</strong></th>
+<th style="text-align: center;"><strong>n</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">CP Aguas Negras</td>
-<td style="text-align: left;">manglar</td>
-<td style="text-align: left;"><strong>+0,807</strong></td>
-<td style="text-align: left;">+0,788</td>
-<td style="text-align: left;">+0,773</td>
-<td style="text-align: left;">+0,758</td>
-<td style="text-align: left;">85</td>
+<td style="text-align: center;">CP Aguas Negras</td>
+<td style="text-align: center;">manglar</td>
+<td style="text-align: center;"><strong>+0,807</strong></td>
+<td style="text-align: center;">+0,788</td>
+<td style="text-align: center;">+0,773</td>
+<td style="text-align: center;">+0,758</td>
+<td style="text-align: center;">85</td>
 </tr>
 <tr>
-<td style="text-align: left;">CP Luna</td>
-<td style="text-align: left;">manglar</td>
-<td style="text-align: left;"><strong>+0,731</strong></td>
-<td style="text-align: left;">+0,710</td>
-<td style="text-align: left;">+0,717</td>
-<td style="text-align: left;">+0,722</td>
-<td style="text-align: left;">83</td>
+<td style="text-align: center;">CP Luna</td>
+<td style="text-align: center;">manglar</td>
+<td style="text-align: center;"><strong>+0,731</strong></td>
+<td style="text-align: center;">+0,710</td>
+<td style="text-align: center;">+0,717</td>
+<td style="text-align: center;">+0,722</td>
+<td style="text-align: center;">83</td>
 </tr>
 <tr>
-<td style="text-align: left;">Caño Clarín</td>
-<td style="text-align: left;">manglar</td>
-<td style="text-align: left;"><strong>+0,640</strong></td>
-<td style="text-align: left;">+0,380</td>
-<td style="text-align: left;">-0,025</td>
-<td style="text-align: left;">-0,127</td>
-<td style="text-align: left;">63</td>
+<td style="text-align: center;">Caño Clarín</td>
+<td style="text-align: center;">manglar</td>
+<td style="text-align: center;"><strong>+0,640</strong></td>
+<td style="text-align: center;">+0,380</td>
+<td style="text-align: center;">-0,025</td>
+<td style="text-align: center;">-0,127</td>
+<td style="text-align: center;">63</td>
 </tr>
 <tr>
-<td style="text-align: left;">Caño Palos</td>
-<td style="text-align: left;">manglar</td>
-<td style="text-align: left;"><strong>+0,462</strong></td>
-<td style="text-align: left;">+0,406</td>
-<td style="text-align: left;">+0,379</td>
-<td style="text-align: left;">+0,434</td>
-<td style="text-align: left;">64</td>
+<td style="text-align: center;">Caño Palos</td>
+<td style="text-align: center;">manglar</td>
+<td style="text-align: center;"><strong>+0,462</strong></td>
+<td style="text-align: center;">+0,406</td>
+<td style="text-align: center;">+0,379</td>
+<td style="text-align: center;">+0,434</td>
+<td style="text-align: center;">64</td>
 </tr>
 <tr>
-<td style="text-align: left;">Isla Boquerón</td>
-<td style="text-align: left;">limnológica</td>
-<td style="text-align: left;">+0,166</td>
-<td style="text-align: left;">+0,192</td>
-<td style="text-align: left;">+0,205</td>
-<td style="text-align: left;">+0,226</td>
-<td style="text-align: left;">70</td>
+<td style="text-align: center;">Isla Boquerón</td>
+<td style="text-align: center;">limnológica</td>
+<td style="text-align: center;">+0,166</td>
+<td style="text-align: center;">+0,192</td>
+<td style="text-align: center;">+0,205</td>
+<td style="text-align: center;">+0,226</td>
+<td style="text-align: center;">70</td>
 </tr>
 <tr>
-<td style="text-align: left;">Punta Cerro</td>
-<td style="text-align: left;">limnológica</td>
-<td style="text-align: left;">+0,008</td>
-<td style="text-align: left;">+0,086</td>
-<td style="text-align: left;">+0,043</td>
-<td style="text-align: left;">+0,053</td>
-<td style="text-align: left;">70</td>
+<td style="text-align: center;">Punta Cerro</td>
+<td style="text-align: center;">limnológica</td>
+<td style="text-align: center;">+0,008</td>
+<td style="text-align: center;">+0,086</td>
+<td style="text-align: center;">+0,043</td>
+<td style="text-align: center;">+0,053</td>
+<td style="text-align: center;">70</td>
 </tr>
 <tr>
-<td style="text-align: left;">Punta Chino</td>
-<td style="text-align: left;">limnológica</td>
-<td style="text-align: left;">+0,134</td>
-<td style="text-align: left;">+0,168</td>
-<td style="text-align: left;">+0,178</td>
-<td style="text-align: left;">+0,203</td>
-<td style="text-align: left;">70</td>
+<td style="text-align: center;">Punta Chino</td>
+<td style="text-align: center;">limnológica</td>
+<td style="text-align: center;">+0,134</td>
+<td style="text-align: center;">+0,168</td>
+<td style="text-align: center;">+0,178</td>
+<td style="text-align: center;">+0,203</td>
+<td style="text-align: center;">70</td>
 </tr>
 <tr>
-<td style="text-align: left;">Río Sevilla</td>
-<td style="text-align: left;">borde</td>
-<td style="text-align: left;">-0,159</td>
-<td style="text-align: left;">-0,102</td>
-<td style="text-align: left;">-0,077</td>
-<td style="text-align: left;">-0,058</td>
-<td style="text-align: left;">71</td>
+<td style="text-align: center;">Río Sevilla</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">-0,159</td>
+<td style="text-align: center;">-0,102</td>
+<td style="text-align: center;">-0,077</td>
+<td style="text-align: center;">-0,058</td>
+<td style="text-align: center;">71</td>
 </tr>
 </tbody>
 </table></td>
@@ -1164,7 +1192,7 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 10: Datacubes NetCDF CF-1.8 materializados sobre el AOI acotado en EPSG:9377 (MAGNA-SIRGAS Origen Nacional), comprimidos con zlib nivel 4.</p>
+<td style="text-align: left;"><p>Tabla 10: Datacubes NetCDF CF-1.8 materializados sobre el AOI acotado en EPSG:9377 (MAGNA-SIRGAS Origen Nacional), comprimidos con zlib nivel 4.</p>
 <table>
 <colgroup>
 <col style="width: 28%" />
@@ -1172,42 +1200,42 @@ end</code></pre>
 <col style="width: 17%" />
 <col style="width: 23%" />
 <col style="width: 10%" />
-<col style="width: 5%" />
+<col style="width: 6%" />
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Archivo</strong></th>
-<th style="text-align: left;"><strong>Sensor</strong></th>
-<th style="text-align: left;"><strong>Frecuencia</strong></th>
-<th style="text-align: left;"><strong>Periodo</strong></th>
-<th style="text-align: left;"><strong>Bandas</strong></th>
-<th style="text-align: left;"><strong>Tamaño</strong></th>
+<th style="text-align: center;"><strong>Archivo</strong></th>
+<th style="text-align: center;"><strong>Sensor</strong></th>
+<th style="text-align: center;"><strong>Frecuencia</strong></th>
+<th style="text-align: center;"><strong>Periodo</strong></th>
+<th style="text-align: center;"><strong>Bandas</strong></th>
+<th style="text-align: center;"><strong>Tamaño</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>cgsm_datacube_periodos.nc</code></td>
-<td style="text-align: left;">Sentinel-2</td>
-<td style="text-align: left;">Tres composiciones discretas</td>
-<td style="text-align: left;">Degradación (2020 H2), recuperación (2022 H1), actual (2024–2025)</td>
-<td style="text-align: left;">RGB (B4, B3, B2)</td>
-<td style="text-align: left;">40 MB</td>
+<td style="text-align: center;"><code>cgsm_datacube_periodos.nc</code></td>
+<td style="text-align: center;">Sentinel-2</td>
+<td style="text-align: center;">Tres composiciones discretas</td>
+<td style="text-align: center;">Degradación (2020 H2), recuperación (2022 H1), actual (2024–2025)</td>
+<td style="text-align: center;">RGB (B4, B3, B2)</td>
+<td style="text-align: center;">40 MB</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>cgsm_datacube_trimestral.nc</code></td>
-<td style="text-align: left;">Sentinel-2</td>
-<td style="text-align: left;">Trimestral</td>
-<td style="text-align: left;">2018-Q1 a 2025-Q4 (31 trimestres)</td>
-<td style="text-align: left;">NDVI, NDWI, CMRI</td>
-<td style="text-align: left;">275 MB</td>
+<td style="text-align: center;"><code>cgsm_datacube_trimestral.nc</code></td>
+<td style="text-align: center;">Sentinel-2</td>
+<td style="text-align: center;">Trimestral</td>
+<td style="text-align: center;">2018-Q1 a 2025-Q4 (31 trimestres)</td>
+<td style="text-align: center;">NDVI, NDWI, CMRI</td>
+<td style="text-align: center;">275 MB</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>cgsm_datacube_landsat.nc</code></td>
-<td style="text-align: left;">Landsat 8/9</td>
-<td style="text-align: left;">Anual</td>
-<td style="text-align: left;">2013–2025 (13 años)</td>
-<td style="text-align: left;">NDVI, NDWI, CMRI</td>
-<td style="text-align: left;">119 MB</td>
+<td style="text-align: center;"><code>cgsm_datacube_landsat.nc</code></td>
+<td style="text-align: center;">Landsat 8/9</td>
+<td style="text-align: center;">Anual</td>
+<td style="text-align: center;">2013–2025 (13 años)</td>
+<td style="text-align: center;">NDVI, NDWI, CMRI</td>
+<td style="text-align: center;">119 MB</td>
 </tr>
 </tbody>
 </table></td>
@@ -1221,7 +1249,7 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 11: Correlación de Pearson entre índices ENSO globales (ONI y SOI de NOAA) y NDVI z-score desagregada por naturaleza espectral.</p>
+<td style="text-align: left;"><p>Tabla 11: Correlación de Pearson entre índices ENSO globales (ONI y SOI de NOAA) y NDVI z-score desagregada por naturaleza espectral.</p>
 <table>
 <colgroup>
 <col style="width: 22%" />
@@ -1232,69 +1260,69 @@ end</code></pre>
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Naturaleza</strong></th>
-<th style="text-align: left;"><strong>Rezago (meses)</strong></th>
-<th style="text-align: left;"><span class="math inline"><em>ρ</em><sub>ONI</sub></span></th>
-<th style="text-align: left;"><span class="math inline"><em>ρ</em><sub>SOI</sub></span></th>
-<th style="text-align: left;"><strong>n</strong></th>
+<th style="text-align: center;"><strong>Naturaleza</strong></th>
+<th style="text-align: center;"><strong>Rezago (meses)</strong></th>
+<th style="text-align: center;">ρONI</th>
+<th style="text-align: center;">ρSOI</th>
+<th style="text-align: center;"><strong>n</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;"><span class="math inline">+0, 027</span></td>
-<td style="text-align: left;"><span class="math inline">+0, 143</span></td>
-<td style="text-align: left;">86</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">+0,027</td>
+<td style="text-align: center;">+0,143</td>
+<td style="text-align: center;">86</td>
 </tr>
 <tr>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;"><span class="math inline">−0, 007</span></td>
-<td style="text-align: left;"><span class="math inline">+0, 198</span></td>
-<td style="text-align: left;">85</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">−0,007</td>
+<td style="text-align: center;">+0,198</td>
+<td style="text-align: center;">85</td>
 </tr>
 <tr>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><span class="math inline">−0, 039</span></td>
-<td style="text-align: left;"><span class="math inline">+0, 146</span></td>
-<td style="text-align: left;">84</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">−0,039</td>
+<td style="text-align: center;">+0,146</td>
+<td style="text-align: center;">84</td>
 </tr>
 <tr>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;"><span class="math inline">−0, 070</span></td>
-<td style="text-align: left;"><span class="math inline">+0, 058</span></td>
-<td style="text-align: left;">83</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">−0,070</td>
+<td style="text-align: center;">+0,058</td>
+<td style="text-align: center;">83</td>
 </tr>
 <tr>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;"><span class="math inline">−0, 121</span></td>
-<td style="text-align: left;"><span class="math inline">+0, 201</span></td>
-<td style="text-align: left;">72</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">−0,121</td>
+<td style="text-align: center;">+0,201</td>
+<td style="text-align: center;">72</td>
 </tr>
 <tr>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;"><span class="math inline">−0, 089</span></td>
-<td style="text-align: left;"><span class="math inline">+0, 120</span></td>
-<td style="text-align: left;">71</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">−0,089</td>
+<td style="text-align: center;">+0,120</td>
+<td style="text-align: center;">71</td>
 </tr>
 <tr>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><span class="math inline">−0, 054</span></td>
-<td style="text-align: left;"><span class="math inline">+0, 135</span></td>
-<td style="text-align: left;">70</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">−0,054</td>
+<td style="text-align: center;">+0,135</td>
+<td style="text-align: center;">70</td>
 </tr>
 <tr>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;"><span class="math inline">−0, 014</span></td>
-<td style="text-align: left;"><span class="math inline">+0, 153</span></td>
-<td style="text-align: left;">69</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">−0,014</td>
+<td style="text-align: center;">+0,153</td>
+<td style="text-align: center;">69</td>
 </tr>
 </tbody>
 </table></td>
@@ -1308,136 +1336,136 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 12: Correlación de Pearson entre anomalía de caudal IDEAM y NDVI z-score, desagregada por estación hidrológica, naturaleza espectral y rezago temporal.</p>
+<td style="text-align: left;"><p>Tabla 12: Correlación de Pearson entre anomalía de caudal IDEAM y NDVI z-score, desagregada por estación hidrológica, naturaleza espectral y rezago temporal.</p>
 <table>
 <colgroup>
 <col style="width: 33%" />
 <col style="width: 22%" />
 <col style="width: 16%" />
 <col style="width: 17%" />
-<col style="width: 10%" />
+<col style="width: 9%" />
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Estación</strong></th>
-<th style="text-align: left;"><strong>Naturaleza</strong></th>
-<th style="text-align: left;"><strong>Rezago (meses)</strong></th>
-<th style="text-align: left;"><span class="math inline"><em>ρ</em><sub>caudal</sub></span></th>
-<th style="text-align: left;"><strong>n</strong></th>
+<th style="text-align: center;"><strong>Estación</strong></th>
+<th style="text-align: center;"><strong>Naturaleza</strong></th>
+<th style="text-align: center;"><strong>Rezago (meses)</strong></th>
+<th style="text-align: center;">ρcaudal</th>
+<th style="text-align: center;"><strong>n</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">El Banco (Magdalena)</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;"><span class="math inline">+0, 064</span></td>
-<td style="text-align: left;">74</td>
+<td style="text-align: center;">El Banco (Magdalena)</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">+0,064</td>
+<td style="text-align: center;">74</td>
 </tr>
 <tr>
-<td style="text-align: left;">El Banco (Magdalena)</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;"><span class="math inline">+0, 039</span></td>
-<td style="text-align: left;">73</td>
+<td style="text-align: center;">El Banco (Magdalena)</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">+0,039</td>
+<td style="text-align: center;">73</td>
 </tr>
 <tr>
-<td style="text-align: left;">El Banco (Magdalena)</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><span class="math inline">+0, 108</span></td>
-<td style="text-align: left;">72</td>
+<td style="text-align: center;">El Banco (Magdalena)</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">+0,108</td>
+<td style="text-align: center;">72</td>
 </tr>
 <tr>
-<td style="text-align: left;">El Banco (Magdalena)</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;"><span class="math inline">+0, 256</span></td>
-<td style="text-align: left;">71</td>
+<td style="text-align: center;">El Banco (Magdalena)</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">+0,256</td>
+<td style="text-align: center;">71</td>
 </tr>
 <tr>
-<td style="text-align: left;">El Banco (Magdalena)</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;"><span class="math inline">+0, 181</span></td>
-<td style="text-align: left;">61</td>
+<td style="text-align: center;">El Banco (Magdalena)</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">+0,181</td>
+<td style="text-align: center;">61</td>
 </tr>
 <tr>
-<td style="text-align: left;">El Banco (Magdalena)</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;"><span class="math inline">+0, 233</span></td>
-<td style="text-align: left;">60</td>
+<td style="text-align: center;">El Banco (Magdalena)</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">+0,233</td>
+<td style="text-align: center;">60</td>
 </tr>
 <tr>
-<td style="text-align: left;">El Banco (Magdalena)</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><span class="math inline">+0, 043</span></td>
-<td style="text-align: left;">59</td>
+<td style="text-align: center;">El Banco (Magdalena)</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">+0,043</td>
+<td style="text-align: center;">59</td>
 </tr>
 <tr>
-<td style="text-align: left;">El Banco (Magdalena)</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;"><span class="math inline">+0, 050</span></td>
-<td style="text-align: left;">58</td>
+<td style="text-align: center;">El Banco (Magdalena)</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">+0,050</td>
+<td style="text-align: center;">58</td>
 </tr>
 <tr>
-<td style="text-align: left;">Ganadería Caribe (Aracataca)</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;"><span class="math inline">+0, 196</span></td>
-<td style="text-align: left;">68</td>
+<td style="text-align: center;">Ganadería Caribe (Aracataca)</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">+0,196</td>
+<td style="text-align: center;">68</td>
 </tr>
 <tr>
-<td style="text-align: left;">Ganadería Caribe (Aracataca)</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;"><span class="math inline">+0, 224</span></td>
-<td style="text-align: left;">67</td>
+<td style="text-align: center;">Ganadería Caribe (Aracataca)</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">+0,224</td>
+<td style="text-align: center;">67</td>
 </tr>
 <tr>
-<td style="text-align: left;">Ganadería Caribe (Aracataca)</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><span class="math inline">+0, 184</span></td>
-<td style="text-align: left;">66</td>
+<td style="text-align: center;">Ganadería Caribe (Aracataca)</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">+0,184</td>
+<td style="text-align: center;">66</td>
 </tr>
 <tr>
-<td style="text-align: left;">Ganadería Caribe (Aracataca)</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;"><span class="math inline">+0, 180</span></td>
-<td style="text-align: left;">65</td>
+<td style="text-align: center;">Ganadería Caribe (Aracataca)</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">+0,180</td>
+<td style="text-align: center;">65</td>
 </tr>
 <tr>
-<td style="text-align: left;">Ganadería Caribe (Aracataca)</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;"><span class="math inline">+0, 107</span></td>
-<td style="text-align: left;">58</td>
+<td style="text-align: center;">Ganadería Caribe (Aracataca)</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">+0,107</td>
+<td style="text-align: center;">58</td>
 </tr>
 <tr>
-<td style="text-align: left;">Ganadería Caribe (Aracataca)</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;"><span class="math inline">+0, 263</span></td>
-<td style="text-align: left;">57</td>
+<td style="text-align: center;">Ganadería Caribe (Aracataca)</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">+0,263</td>
+<td style="text-align: center;">57</td>
 </tr>
 <tr>
-<td style="text-align: left;">Ganadería Caribe (Aracataca)</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><span class="math inline">+0, 267</span></td>
-<td style="text-align: left;">56</td>
+<td style="text-align: center;">Ganadería Caribe (Aracataca)</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">+0,267</td>
+<td style="text-align: center;">56</td>
 </tr>
 <tr>
-<td style="text-align: left;">Ganadería Caribe (Aracataca)</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;"><span class="math inline">+0, 150</span></td>
-<td style="text-align: left;">55</td>
+<td style="text-align: center;">Ganadería Caribe (Aracataca)</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">+0,150</td>
+<td style="text-align: center;">55</td>
 </tr>
 </tbody>
 </table></td>
@@ -1451,80 +1479,80 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 13: Correlación de Pearson entre anomalía mensual CHIRPS sobre cuencas aportantes y NDVI z-score de las estaciones de la CGSM.</p>
+<td style="text-align: left;"><p>Tabla 13: Correlación de Pearson entre anomalía mensual CHIRPS sobre cuencas aportantes y NDVI z-score de las estaciones de la CGSM.</p>
 <table>
 <colgroup>
 <col style="width: 27%" />
 <col style="width: 22%" />
 <col style="width: 17%" />
 <col style="width: 22%" />
-<col style="width: 10%" />
+<col style="width: 9%" />
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Cuenca CHIRPS</strong></th>
-<th style="text-align: left;"><strong>Naturaleza</strong></th>
-<th style="text-align: left;"><strong>Rezago (meses)</strong></th>
-<th style="text-align: left;"><span class="math inline"><em>ρ</em><sub>precip</sub></span></th>
-<th style="text-align: left;"><strong>n</strong></th>
+<th style="text-align: center;"><strong>Cuenca CHIRPS</strong></th>
+<th style="text-align: center;"><strong>Naturaleza</strong></th>
+<th style="text-align: center;"><strong>Rezago (meses)</strong></th>
+<th style="text-align: center;">ρprecip</th>
+<th style="text-align: center;"><strong>n</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Magdalena alta-media</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;"><span class="math inline">+0, 075</span></td>
-<td style="text-align: left;">86</td>
+<td style="text-align: center;">Magdalena alta-media</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">+0,075</td>
+<td style="text-align: center;">86</td>
 </tr>
 <tr>
-<td style="text-align: left;">Magdalena alta-media</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;"><span class="math inline">+0, 170</span></td>
-<td style="text-align: left;">85</td>
+<td style="text-align: center;">Magdalena alta-media</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">+0,170</td>
+<td style="text-align: center;">85</td>
 </tr>
 <tr>
-<td style="text-align: left;">Magdalena alta-media</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><span class="math inline">+0, 097</span></td>
-<td style="text-align: left;">84</td>
+<td style="text-align: center;">Magdalena alta-media</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">+0,097</td>
+<td style="text-align: center;">84</td>
 </tr>
 <tr>
-<td style="text-align: left;">Magdalena alta-media</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;"><span class="math inline">+0, 252</span></td>
-<td style="text-align: left;">83</td>
+<td style="text-align: center;">Magdalena alta-media</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">+0,252</td>
+<td style="text-align: center;">83</td>
 </tr>
 <tr>
-<td style="text-align: left;">Magdalena alta-media</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;"><span class="math inline">+0, 276</span></td>
-<td style="text-align: left;">72</td>
+<td style="text-align: center;">Magdalena alta-media</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">+0,276</td>
+<td style="text-align: center;">72</td>
 </tr>
 <tr>
-<td style="text-align: left;">Magdalena alta-media</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><span class="math inline">+0, 268</span></td>
-<td style="text-align: left;">70</td>
+<td style="text-align: center;">Magdalena alta-media</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">+0,268</td>
+<td style="text-align: center;">70</td>
 </tr>
 <tr>
-<td style="text-align: left;">Sierra Nevada oeste</td>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;"><span class="math inline">+0, 281</span></td>
-<td style="text-align: left;">83</td>
+<td style="text-align: center;">Sierra Nevada oeste</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">+0,281</td>
+<td style="text-align: center;">83</td>
 </tr>
 <tr>
-<td style="text-align: left;">Sierra Nevada oeste</td>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><span class="math inline">+0, 359</span></td>
-<td style="text-align: left;">70</td>
+<td style="text-align: center;">Sierra Nevada oeste</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">+0,359</td>
+<td style="text-align: center;">70</td>
 </tr>
 </tbody>
 </table></td>
@@ -1538,7 +1566,7 @@ end</code></pre>
 </colgroup>
 <tbody>
 <tr>
-<td style="text-align: center;"><p>Tabla 14: Correlación entre anomalías climáticas ERA5-Land (precipitación y temperatura a 2 m) y NDVI z-score, desagregada por naturaleza espectral.</p>
+<td style="text-align: left;"><p>Tabla 14: Correlación entre anomalías climáticas ERA5-Land (precipitación y temperatura a 2 m) y NDVI z-score, desagregada por naturaleza espectral.</p>
 <table>
 <colgroup>
 <col style="width: 20%" />
@@ -1549,69 +1577,69 @@ end</code></pre>
 </colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>Naturaleza</strong></th>
-<th style="text-align: left;"><strong>Rezago (meses)</strong></th>
-<th style="text-align: left;"><span class="math inline"><em>ρ</em></span> <strong>precip vs NDVI z</strong></th>
-<th style="text-align: left;"><span class="math inline"><em>ρ</em></span> <strong>T2m vs NDVI z</strong></th>
-<th style="text-align: left;"><strong>n</strong></th>
+<th style="text-align: center;"><strong>Naturaleza</strong></th>
+<th style="text-align: center;"><strong>Rezago (meses)</strong></th>
+<th style="text-align: center;">ρ <strong>precip vs NDVI z</strong></th>
+<th style="text-align: center;">ρ <strong>T2m vs NDVI z</strong></th>
+<th style="text-align: center;"><strong>n</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;"><span class="math inline">−0, 081</span></td>
-<td style="text-align: left;"><span class="math inline">+0, 022</span></td>
-<td style="text-align: left;">86</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">−0,081</td>
+<td style="text-align: center;">+0,022</td>
+<td style="text-align: center;">86</td>
 </tr>
 <tr>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;"><span class="math inline">−0, 081</span></td>
-<td style="text-align: left;"><span class="math inline">+0, 040</span></td>
-<td style="text-align: left;">85</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">−0,081</td>
+<td style="text-align: center;">+0,040</td>
+<td style="text-align: center;">85</td>
 </tr>
 <tr>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><span class="math inline">−0, 123</span></td>
-<td style="text-align: left;"><span class="math inline">−0, 018</span></td>
-<td style="text-align: left;">84</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">−0,123</td>
+<td style="text-align: center;">−0,018</td>
+<td style="text-align: center;">84</td>
 </tr>
 <tr>
-<td style="text-align: left;">Manglar</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;"><span class="math inline">−0, 020</span></td>
-<td style="text-align: left;"><span class="math inline">−0, 087</span></td>
-<td style="text-align: left;">83</td>
+<td style="text-align: center;">Manglar</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">−0,020</td>
+<td style="text-align: center;">−0,087</td>
+<td style="text-align: center;">83</td>
 </tr>
 <tr>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">0</td>
-<td style="text-align: left;"><span class="math inline">+0, 082</span></td>
-<td style="text-align: left;"><span class="math inline">−0, 173</span></td>
-<td style="text-align: left;">72</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">+0,082</td>
+<td style="text-align: center;">−0,173</td>
+<td style="text-align: center;">72</td>
 </tr>
 <tr>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">1</td>
-<td style="text-align: left;"><span class="math inline">+0, 108</span></td>
-<td style="text-align: left;"><span class="math inline">−0, 149</span></td>
-<td style="text-align: left;">71</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">+0,108</td>
+<td style="text-align: center;">−0,149</td>
+<td style="text-align: center;">71</td>
 </tr>
 <tr>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">2</td>
-<td style="text-align: left;"><span class="math inline">+0, 292</span></td>
-<td style="text-align: left;"><span class="math inline">−0, 144</span></td>
-<td style="text-align: left;">70</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">+0,292</td>
+<td style="text-align: center;">−0,144</td>
+<td style="text-align: center;">70</td>
 </tr>
 <tr>
-<td style="text-align: left;">Limnológica</td>
-<td style="text-align: left;">3</td>
-<td style="text-align: left;"><span class="math inline">+0, 271</span></td>
-<td style="text-align: left;"><span class="math inline">−0, 201</span></td>
-<td style="text-align: left;">69</td>
+<td style="text-align: center;">Limnológica</td>
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">+0,271</td>
+<td style="text-align: center;">−0,201</td>
+<td style="text-align: center;">69</td>
 </tr>
 </tbody>
 </table></td>
