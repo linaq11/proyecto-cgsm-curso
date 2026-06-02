@@ -592,7 +592,7 @@ a:focus-visible, button:focus-visible {
         <p style="margin-top:12px; font-size:12.5px; color:var(--text-muted);">Los quiebres se calculan sobre una serie continua de 929 valores mensuales construida juntando
         <abbr title="Misión Landsat 8 (NASA/USGS), operativa desde 2013, ofrece imágenes ópticas de 30 m de resolución cada 16 días">Landsat 8</abbr>
         (2013--2017) y <abbr title="Constelación Sentinel-2 de la ESA (Copernicus), imágenes ópticas de 10 m cada 5 días">Sentinel-2</abbr>
-        (2018–2025), lo que cubre doce años de observación. Sobre esa serie se detectan 18 anomalías
+        (2018–2025), lo que cubre doce años de observación. Sobre esa serie se detectan principales anomalías NDVI (sobre serie 2018-2025)
         relevantes —definidas como un
         <abbr title="z-score: desviación estandarizada respecto a la media histórica. z<-2 = anomalía significativa">z-score</abbr>
         menor a −2 frente a la media histórica de la estación— y los quiebres estructurales se identifican con el método
@@ -703,9 +703,10 @@ a:focus-visible, button:focus-visible {
           <abbr title="Sentinel-1 (ESA): satélite de radar de apertura sintética que opera de día y de noche, atravesando nubes">Sentinel-1</abbr>
           <abbr title="SAR = Synthetic Aperture Radar; VH = polarización vertical-horizontal, sensible a estructura de vegetación e inundación">SAR-VH</abbr>
           entre el periodo seco de referencia (enero-marzo de 2020, 49 imágenes) y el periodo de inundación
-          (septiembre-octubre de 2020, 36 imágenes). Se identificó agua abierta cuando ΔVH fue inferior a −3 dB,
-          asociada con reflexión especular, y manglar inundado bajo dosel cuando ΔVH fue positiva,
-          atribuible a dispersión de doble rebote agua-tronco.
+          (septiembre-octubre de 2020, 36 imágenes). Con la convención <b>SAR diff = seco − inundación</b>,
+          se identificó agua abierta cuando SAR diff fue superior a <b>+3 dB</b>, asociada con reflexión especular
+          (pierde retrodispersión al inundarse), y manglar inundado bajo dosel cuando SAR diff fue inferior a
+          <b>−2 dB</b>, atribuible a dispersión de doble rebote agua-tronco (gana retrodispersión al inundarse).
         </p>
         <div class="table-wrap">
           <table class="data">
@@ -940,13 +941,13 @@ a:focus-visible, button:focus-visible {
 
   <div class="row cols-4">
     <div class="kpi primary"><span class="kpi-icon"><i class="bi bi-filetype-py"></i></span>
-      <div class="kpi-body"><p class="kpi-title">Cuadernos en Python</p><p class="kpi-value">27</p></div></div>
+      <div class="kpi-body"><p class="kpi-title">Cuadernos en Python</p><p class="kpi-value">15</p></div></div>
     <div class="kpi info"><span class="kpi-icon"><i class="bi bi-filetype-r"></i></span>
       <div class="kpi-body"><p class="kpi-title">Cuadernos en R</p><p class="kpi-value">4</p></div></div>
     <div class="kpi warning"><span class="kpi-icon"><i class="bi bi-filetype-jl"></i></span>
-      <div class="kpi-body"><p class="kpi-title">Cuadernos en Julia</p><p class="kpi-value">2</p></div></div>
+      <div class="kpi-body"><p class="kpi-title">Cuadernos en Julia</p><p class="kpi-value">3</p></div></div>
     <div class="kpi success"><span class="kpi-icon"><i class="bi bi-check2-all"></i></span>
-      <div class="kpi-body"><p class="kpi-title">Pruebas cruzadas entre lenguajes</p><p class="kpi-value huge">4 / 4</p></div></div>
+      <div class="kpi-body"><p class="kpi-title">Total · principales + legacy</p><p class="kpi-value huge">29 = 22 + 7</p></div></div>
   </div>
 
   <div class="row cols-55-45">

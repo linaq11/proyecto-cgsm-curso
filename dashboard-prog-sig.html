@@ -156,7 +156,7 @@
     <span><b>Sistema:</b> Ramsar CGSM · AOI acotado 835 km²</span>
     <span><b>Período:</b> 12 años de imágenes satelitales</span>
     <span><b>Herramientas:</b> Python + R + Julia</span>
-    <span><b>33 notebooks</b> · 50 tablas · 44 figuras</span>
+    <span><b>29 notebooks</b> · 50 tablas · 44 figuras</span>
     <span><b>Informe:</b> 29 pp Typst</span>
   </div>
   <nav class="tabs">
@@ -663,7 +663,7 @@
         <text x="550" y="195" fill="#7a838e" font-size="10" letter-spacing="0.1em">SALIDAS UNIFICADAS</text>
         <g class="node-box">
           <rect x="60" y="220" width="180" height="60" rx="8" fill="#1f2530" stroke="#7ee787" stroke-width="1.5"/>
-          <text x="150" y="244" fill="#7ee787" font-weight="600">33 notebooks</text>
+          <text x="150" y="244" fill="#7ee787" font-weight="600">29 notebooks</text>
           <text x="150" y="262" fill="#adb5bd" font-size="10">.ipynb numerados · reproducibles</text>
         </g>
         <g class="node-box">
@@ -746,7 +746,7 @@
 <!-- ════════ 7 · METODOLOGÍA ════════ -->
 <section id="pane-metodo" class="pane">
   <h2>7 · Metodología paso a paso</h2>
-  <p class="lead">33 notebooks numerados. Cada uno conecta con el siguiente. La pipeline completa corre en Docker con un comando.</p>
+  <p class="lead">29 notebooks numerados (22 principales + 7 legacy). Cada uno conecta con el siguiente. La pipeline completa corre en Docker con un comando.</p>
 
   <h3>Conceptos básicos</h3>
   <div class="explain">
@@ -851,7 +851,7 @@
   <h3>Síntesis cuantitativa</h3>
   <div class="grid">
     <div class="stat"><div class="n">929</div><div class="l">registros NDVI mensual 2013-2025</div></div>
-    <div class="stat"><div class="n">18 anomalías</div><div class="l">eventos con z &lt; -2 (más negativos = más severos)</div></div>
+    <div class="stat"><div class="n">principales anomalías NDVI</div><div class="l">episodios con z &lt; -2 (más negativos = más severos)</div></div>
     <div class="stat"><div class="n">43,08 km²</div><div class="l">inundación bajo dosel sept 2020 · SAR-VH</div></div>
     <div class="stat"><div class="n">7/8 estaciones</div><div class="l">quiebre 2016 con BFAST h=0.10 · El Niño</div></div>
     <div class="stat"><div class="n">79 → 15</div><div class="l">parches degradación → actual · −81%</div></div>
@@ -980,7 +980,7 @@
   </table>
 
   <h3>Hallazgos cualitativos</h3>
-  <div class="finding">Las 18 anomalías significativas se concentran en 2015-2016 (El Niño) y 2020 (La Niña). El BFAST unificado sobre las cuatro estaciones de manglar denso refina la atribución del episodio La Niña 2020-2021 con quiebres específicos en Caño Palos (jul-2020), Caño Clarín (feb-2020 + abr-2021), CP Aguas Negras (abr-2022) y CP Luna (ene-2022).</div>
+  <div class="finding">Las principales anomalías NDVI se concentran en 2015-2016 (El Niño) y 2020 (La Niña). El BFAST unificado sobre las cuatro estaciones de manglar denso refina la atribución del episodio La Niña 2020-2021 con quiebres específicos en Caño Palos (jul-2020), Caño Clarín (feb-2020 + abr-2021), CP Aguas Negras (abr-2022) y CP Luna (ene-2022).</div>
   <div class="finding ok">El SAR Sentinel-1 separa por primera vez los dos mecanismos del evento sept 2020: 15,93 km² de agua abierta + 43,08 km² de inundación bajo dosel (scattering doble rebote agua-tronco) = 7,1 % del AOI acotado.</div>
   <div class="finding ok">La serie continua SAR-VH 2018-2025 confirma la firma estructural del manglar denso: CP Aguas Negras ρ = +0,807 y CP Luna ρ = +0,731 con NDVI (p &lt; 0,001), ambas independientes del óptico.</div>
   <div class="finding ok">Los cuatro forzamientos climáticos (ERA5 + ENSO + caudal + CHIRPS) reformulan la cadena causal en cuatro pasos: La Niña → caudal sostenido (positivo para manglar) → evento puntual de inundación local 2020 → quiebres BFAST de mediano plazo en 2022.</div>
@@ -1027,7 +1027,7 @@
 
 <!-- ════════ 10 · NOTEBOOKS ════════ -->
 <section id="pane-notebooks" class="pane">
-  <h2>10 · Catálogo de notebooks · 33 archivos explicados</h2>
+  <h2>10 · Catálogo de notebooks · 29 archivos explicados (22 principales + 7 legacy)</h2>
   <p class="lead">Filtrar por categoría para ver el subconjunto relevante.</p>
 
   <div class="filter-bar">
@@ -1072,7 +1072,7 @@
 
   <div class="finding ok"><b>La pipeline multilenguaje es viable y productiva.</b> Python + R + Julia se complementan: Python para satélites y SamGeo, R para BFAST y series ecohidrológicas, Julia para fragmentación y predicados DE-9IM con LibGEOS. Cuatro validaciones cruzadas formales confirman convergencia hasta el tercer decimal entre los tres lenguajes.</div>
 
-  <div class="finding"><b>La caracterización espaciotemporal cubre el periodo 2013-2025</b> integrando 929 registros mensuales NDVI combinados Landsat 8 + Sentinel-2, 18 anomalías significativas (sept 2020 La Niña), un quiebre estructural generalizado en 2016 (El Niño 2015-2016 en 7/8 estaciones con BFAST h=0.10), y un análisis BFAST unificado sobre las 4 estaciones de manglar denso que refina los eventos La Niña 2020, post-Niña 2022 y El Niño 2023-24.</div>
+  <div class="finding"><b>La caracterización espaciotemporal cubre el periodo 2013-2025</b> integrando 929 registros mensuales NDVI combinados Landsat 8 + Sentinel-2, principales anomalías NDVI (sept 2020 La Niña destaca), un quiebre estructural generalizado en 2016 (El Niño 2015-2016 en 7/8 estaciones con BFAST h=0.10), y un análisis BFAST unificado sobre las 4 estaciones de manglar denso que refina los eventos La Niña 2020, post-Niña 2022 y El Niño 2023-24.</div>
 
   <div class="finding warn"><b>Cambio neto positivo +76 km² entre 2020 y 2025 — acompañado de fragmentación creciente.</b> La cobertura clasificada por umbrales no equivale a cobertura real: el mapa de cambio NDVI sobre el datacube trimestral CF-1.8 muestra ganancia de vigor sobre parches sobrevivientes y pérdida en bordes hipersalinos.</div>
 
