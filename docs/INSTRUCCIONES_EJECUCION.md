@@ -142,14 +142,24 @@ jupyter notebook notebooks/06_dashboard.ipynb
 
 ---
 
-## 7. Renderizar informe v6
+## 7. Actualizar informe y anexos desde Word
+
+El flujo vigente trata `informe_final.docx` e `informe_anexos.docx` como **fuentes de verdad** (editables en Word). Después de cualquier edición:
 
 ```bash
-cd docs
-quarto render informe_final.qmd
+cd /home/rstudio/work/proyecto-cgsm
+bash scripts/update_from_docx.sh all      # informe + anexos
+bash scripts/update_from_docx.sh final    # solo informe principal
+bash scripts/update_from_docx.sh anexos   # solo anexos
 ```
 
-Genera `informe_final.html` y `informe_final.pdf` actualizados.
+El script regenera automáticamente:
+
+- `docs/informe_final.html` y `docs/informe_final.md` desde el `.docx` (pandoc)
+- `docs/informe_final.pdf` (25 pp) vía Typst si existe `informe_final.qmd`
+- Lo equivalente para `informe_anexos.{html,md,pdf}` (12 pp)
+
+Los pipelines viejos `scripts/render_docs.sh` y `scripts/embellish_docx_tables.py` están archivados en `scripts/_legacy/` y los `.qmd` LaTeX en `docs/_legacy_qmd/`. No se usan para entrega; quedan solo como referencia histórica.
 
 ---
 
@@ -170,9 +180,10 @@ git add data/raw/cgsm_aoi_acotado_*.geojson \
          outputs/tables/correlacion_clima_ndvi.csv \
          outputs/tables/series_temporales_stars.csv \
          outputs/tables/validacion_multilingual.csv \
-         docs/informe_final.qmd docs/informe_final.html docs/informe_final.pdf \
+         docs/informe_final.docx docs/informe_final.html docs/informe_final.md docs/informe_final.pdf \
+         docs/informe_anexos.docx docs/informe_anexos.html docs/informe_anexos.md docs/informe_anexos.pdf \
          docs/INSTRUCCIONES_EJECUCION.md
-git commit -m "v6: AOI acotado SFF+VPI, EPSG:9377, DE-9IM, ERA5-Land, cubo stars"
+git commit -m "Entrega final: informe (25 pp) + anexos (12 pp) revisados"
 git tag v1.0-curso
 git push origin main --tags
 ```
