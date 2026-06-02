@@ -42,7 +42,7 @@
   <!-- PHASES (Python R Julia) -->
   <g font-family="Inter, sans-serif" font-size="11" text-anchor="middle">
     <text x="700" y="50" fill="#6a6a6a" font-size="10" letter-spacing="0.1em">PIPELINE · 3 LENGUAJES</text>
-    <g><rect x="600" y="70" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#0d47a1" stroke-width="1.5"/><text x="700" y="92" fill="#0d47a1" font-weight="600">Python · Adquisición + IA</text><text x="700" y="108" fill="#4a4a4a" font-size="10">geemap · samgeo · xarray</text></g>
+    <g><rect x="600" y="70" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#0d47a1" stroke-width="1.5"/><text x="700" y="92" fill="#0d47a1" font-weight="600">Python · Adquisición + segmentación</text><text x="700" y="108" fill="#4a4a4a" font-size="10">geemap · samgeo · xarray</text></g>
     <g><rect x="600" y="140" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#4527a0" stroke-width="1.5"/><text x="700" y="162" fill="#4527a0" font-weight="600">R · Estadística + BFAST</text><text x="700" y="178" fill="#4a4a4a" font-size="10">bfast · stars · sf · terra</text></g>
     <g><rect x="600" y="210" width="200" height="50" rx="8" fill="#f5f8fa" stroke="#311b92" stroke-width="1.5"/><text x="700" y="232" fill="#311b92" font-weight="600">Julia · Fragmentación</text><text x="700" y="248" fill="#4a4a4a" font-size="10">shoelace · NND · MSI</text></g>
   </g>
