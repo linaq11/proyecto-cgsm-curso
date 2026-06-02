@@ -32,12 +32,12 @@ La Ciénaga Grande de Santa Marta —CGSM— es el sistema lagunar costero más 
 ## Productos
 
 - **Dashboard ejecutivo** (`docs/dashboard.html`) con 5 pestañas (Resumen, Cobertura, Clima e hidrología, Validación multilenguaje, Acerca de), 18 KPI, 14 figuras, 6 tablas, glosario técnico y mapa folium con 17 capas temáticas y slider temporal NDVI 2018–2025
-- **Informe final** en PDF y HTML (~46 páginas, 19 referencias APA)
-- **Artículo journal** en PDF y HTML (versión condensada para publicación)
+- **Informe final** en PDF y HTML (`informe_final.{docx,html,md,pdf}`, 25 páginas, 19 referencias APA)
+- **Anexos** en PDF y HTML (`informe_anexos.{docx,html,md,pdf}`, 12 páginas)
 - **3 datacubes NetCDF CF-1.8** (períodos 40 MB, trimestral 275 MB, anual Landsat 119 MB)
 - **35 figuras PNG** (mapas, series temporales, correlaciones, validación)
 - **47 tablas CSV** con resultados numéricos completos
-- **29 notebooks numerados y reproducibles** dentro de contenedor Docker `sig_unal v1.11`
+- **29 notebooks numerados y reproducibles** (22 principales + 7 legacy; Python + R + Julia) dentro de contenedor Docker `sig_unal v1.11`
 
 ### Nota sobre el mapa interactivo
 
@@ -53,7 +53,7 @@ Requiere autenticación activa con Google Earth Engine.
 
 ## Reproducibilidad
 
-El proyecto se ejecuta dentro del contenedor Docker `sig_unal v1.11` que integra Python 3.12, R 4.3.3, Julia 1.11.3 y Quarto 1.4. Las instrucciones detalladas de instalación, autenticación con Google Earth Engine y dependencias adicionales están en el **Anexo A** del informe final. Los archivos de configuración del entorno se encuentran en `environment.yml`.
+El proyecto se ejecuta dentro del contenedor Docker `sig_unal v1.11` que integra Python 3.12, R 4.3.3, Julia 1.11.3 y Quarto 1.4. Las instrucciones detalladas de instalación, autenticación con Google Earth Engine y dependencias adicionales están en el **Anexo A** de `informe_anexos.pdf` y en `docs/INSTRUCCIONES_EJECUCION.md`.
 
 ```bash
 # Clonar el repositorio
@@ -74,11 +74,13 @@ docker run -p 8889:8888 -p 8788:8787 \
 ```
 proyecto-cgsm-curso/
 ├── data/                Datos crudos (AOI, admin, INVEMAR) y procesados (cubos, RGB)
-├── docs/                Informe Quarto + dashboard ejecutivo servido por GitHub Pages
-│   ├── dashboard.html               Dashboard principal (open-design, self-contained)
-│   ├── informe_final.{pdf,html,qmd} Informe técnico completo
-│   └── outputs/                     Figuras y mapa copiados para Pages
-├── notebooks/           29 notebooks numerados (Python + R) en orden de ejecución
+├── docs/                Informe + anexos + dashboard ejecutivo servidos por GitHub Pages
+│   ├── dashboard.html                  Dashboard principal (open-design, self-contained)
+│   ├── informe_final.{docx,html,md,pdf}  Informe técnico (25 páginas)
+│   ├── informe_anexos.{docx,html,md,pdf} Anexos (12 páginas)
+│   ├── INSTRUCCIONES_EJECUCION.md      Orden exacto de ejecución de notebooks y scripts
+│   └── outputs/                        Figuras y mapa copiados para Pages
+├── notebooks/           29 notebooks numerados (22 principales + 7 legacy; Python + R + Julia) en orden de ejecución
 ├── outputs/             Figuras PNG, tablas CSV, mapas HTML, métricas
 └── src/
     ├── python/          Módulos auxiliares + scripts de generación

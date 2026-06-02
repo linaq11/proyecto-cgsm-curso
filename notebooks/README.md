@@ -1,6 +1,6 @@
 # Guía de notebooks — Proyecto CGSM
 
-El árbol de notebooks se organiza en dos series —vigente y legacy— pues a lo largo del proyecto el área de estudio se redefinió a partir de los polígonos oficiales del Sistema Nacional de Áreas Protegidas (RUNAP), de modo que las cifras del cuerpo del informe v6 dejaron de ser comparables con las de la primera iteración. La **serie vigente** opera sobre el AOI acotado al Santuario de Fauna y Flora CGSM y al Vía Parque Isla de Salamanca (835,3 km²) y es la que sostiene los resultados del informe; la **serie legacy/baseline**, en cambio, se ejecutó sobre un AOI envolvente de 5.073 km² (marzo 2026) y sus cifras se conservan en el Anexo C del informe únicamente como rastro metodológico, de manera que cualquier lector puede reconstruir el paso entre una versión y otra sin perder trazabilidad.
+El árbol de notebooks se organiza en dos series, vigente y legacy, pues a lo largo del proyecto el área de estudio se redefinió a partir de los polígonos oficiales del Sistema Nacional de Áreas Protegidas (RUNAP), de modo que las cifras del cuerpo del informe dejaron de ser comparables con las de la primera iteración. La **serie vigente** opera sobre el AOI acotado al Santuario de Fauna y Flora CGSM y al Vía Parque Isla de Salamanca (835,3 km²) y es la que sostiene los resultados del informe; la **serie legacy/baseline**, en cambio, se ejecutó sobre un AOI envolvente de 5.073 km² (marzo 2026) y sus cifras se conservan en el Anexo C del informe únicamente como rastro metodológico, de manera que cualquier lector puede reconstruir el paso entre una iteración y la actual sin perder trazabilidad.
 
 ## Serie vigente — orden de ejecución
 
@@ -33,7 +33,7 @@ El árbol de notebooks se organiza en dos series —vigente y legacy— pues a l
 
 ## Serie legacy / baseline (no ejecutar para los resultados vigentes)
 
-Los notebooks listados a continuación corresponden a la primera iteración del proyecto sobre el AOI envolvente y se conservan en el repositorio por trazabilidad —pues sus cifras alimentan el Anexo C del informe—, de manera que **no se ejecutan para sostener las conclusiones del cuerpo del informe** sino que funcionan, en este sentido, como bitácora del recorrido metodológico.
+Los notebooks listados a continuación corresponden a la primera iteración del proyecto sobre el AOI envolvente y se conservan en el repositorio por trazabilidad, pues sus cifras alimentan el Anexo C del informe, de manera que **no se ejecutan para sostener las conclusiones del cuerpo del informe** sino que funcionan, en este sentido, como bitácora del recorrido metodológico.
 
 | Notebook | Estado |
 |----------|--------|
@@ -45,7 +45,7 @@ Los notebooks listados a continuación corresponden a la primera iteración del 
 | `09_datacube_netcdf.ipynb` | Legacy — versión preliminar del datacube sin reproyección a EPSG:9377 |
 | `99_diagnose_ndvi_year.ipynb` | Diagnóstico — auxiliar para inspección puntual de capas NDVI por año |
 
-Quien quiera reproducir el baseline del Anexo C debe ejecutar `03_segmentation.ipynb` y `04_fragmentation.ipynb` desde la primera celda, así como están, sin reemplazar el AOI; en cambio, para reproducir la v6 vigente —que es lo recomendado— se ejecutan los notebooks con sufijo `_acotado` y el `09b`, los cuales sustituyen por completo a sus homónimos legacy.
+Quien quiera reproducir el baseline del Anexo C debe ejecutar `03_segmentation.ipynb` y `04_fragmentation.ipynb` desde la primera celda, así como están, sin reemplazar el AOI; en cambio, para reproducir la versión vigente, que es lo recomendado, se ejecutan los notebooks con sufijo `_acotado` y el `09b`, los cuales sustituyen por completo a sus homónimos legacy.
 
 ## Productos derivados (entregables del proyecto)
 
@@ -64,11 +64,12 @@ Para regenerar el módulo de alertas tempranas:
 python src/python/alertas_manglar.py
 ```
 
-Para renderizar el informe técnico:
+Para regenerar el informe técnico y los anexos desde los `.docx` editables (workflow vigente: docx como fuente de verdad → HTML + MD + PDF vía Typst):
 
 ```bash
-quarto render docs/informe_final.qmd          # 28 páginas · PDF + HTML + DOCX
-quarto render docs/informe_anexos.qmd         # Anexos · PDF + HTML + DOCX
+bash scripts/update_from_docx.sh all      # informe (25 pp) + anexos (12 pp)
+bash scripts/update_from_docx.sh final    # solo informe principal
+bash scripts/update_from_docx.sh anexos   # solo anexos
 ```
 
 ## Carpetas y convenciones de salida
@@ -86,7 +87,7 @@ quarto render docs/informe_anexos.qmd         # Anexos · PDF + HTML + DOCX
 | `outputs/tables/` | 47 CSV con resultados numéricos | Todos |
 | `outputs/figures/` | 35 PNG estáticos (mapas, series, correlaciones, validación, alertas) | bfast, ERA5, ENSO, caudal, CHIRPS, validación, alertas |
 | `outputs/maps/` | HTML interactivos (`dashboard_CGSM_final.html`) | `make_dashboard_html.py`, 06 legacy |
-| `docs/` | Informe Quarto, artículo journal, dashboard ejecutivo `dashboard.html` | Quarto + GitHub Pages |
+| `docs/` | `informe_final.{docx,html,md,pdf}` (25 pp), `informe_anexos.{docx,html,md,pdf}` (12 pp), `dashboard.html` ejecutivo, `INSTRUCCIONES_EJECUCION.md` | docx-as-source + Typst + GitHub Pages |
 
 ## Insumos externos que requieren descarga manual
 
