@@ -650,11 +650,22 @@ a:focus-visible, button:focus-visible {
           cuando se detecta breakpoint aunque la anomalía z sea moderada; y se conserva como estable
           solo cuando ninguna de las dos señales reporta deterioro.
         </p>
+        <p style="font-size:13.5px; line-height:1.6; margin-top:12px; margin-bottom:0;">
+          Sobre las series del periodo 2020-2025, bfastmonitor reporta dos breakpoints
+          regionales con magnitud positiva: <strong>CP Pajarales</strong> en julio 2020
+          (magnitud +0,213) y <strong>VIPIS</strong> en abril 2020 (magnitud +0,225). Ambas
+          son señales de recuperación al inicio del episodio La Niña 2020-2021, coherentes
+          con la trayectoria del NDVI mediano que el informe documenta. El breakpoint del
+          Complejo de Pajarales se propaga a las cuatro estaciones de manglar del
+          polígono (CP_Aguas_Negras, CP_Luna, Cano_Palos, Cano_Clarin) para la lógica
+          de alertas; VIPIS queda como señal zonal, pues las cuatro estaciones del
+          sector oriental son limnológicas y no muestrean dosel.
+        </p>
         <p style="margin-top:12px; font-size:12.5px; color:var(--text-muted);">
           Entrada del monitor: <code>outputs/tables/ndvi_combinado_2013_2025.csv</code>.
           Salida: <code>outputs/tables/bfastmonitor_estaciones.csv</code>
           (columnas: estación · breakpoint · magnitud · estado), consumida por
-          <code>src/python/alertas_manglar.py</code>.
+          <code>src/python/alertas_manglar.py</code> con propagación zona → estaciones de manglar.
         </p>
       </div>
     </div>

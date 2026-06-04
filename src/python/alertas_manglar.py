@@ -9,6 +9,10 @@ aplica una lógica de semáforo que clasifica cada estación en tres estados
   1. z-score reciente del NDVI (anomalías últimos 12 meses).
   2. Breakpoints de bfastmonitor near-real-time leídos de
      `outputs/tables/bfastmonitor_estaciones.csv` (notebook 06b_bfast_monitor_R).
+     bfastmonitor opera sobre series zonales (CP Pajarales, VIPIS) que cuentan
+     con la ventana histórica 2013-2019 requerida por el método. La señal zonal
+     se propaga a las estaciones de manglar del polígono via BFM_ZONA_ESTACIONES;
+     las limnológicas no se propagan porque muestrean espejo de agua, no dosel.
 
 La combinación de ambas señales permite escalar a crítica cuando hay
 breakpoint con magnitud negativa y z-score deteriorado en paralelo, marcar
@@ -91,14 +95,39 @@ if not bfm.empty:
     print(f'  bfastmonitor: {len(bfm)} estaciones')
 
 
+# Mapping zona bfastmonitor -> estaciones individuales.
+# El notebook 06b corre bfastmonitor sobre series zonales agregadas
+# (CP Pajarales, VIPIS) que requieren la ventana histórica 2013-2019
+# disponible en ndvi_combinado_2013_2025.csv. Las estaciones individuales
+# solo tienen serie desde 2018 (S2), insuficiente para la ventana
+# histórica del monitor. Por eso el breakpoint zonal se propaga a las
+# estaciones de manglar dentro del polígono. Las limnológicas no se
+# propagan porque muestrean espejo de agua, no manglar.
+BFM_ZONA_ESTACIONES = {
+    'CP Pajarales': ['CP_Aguas_Negras', 'CP_Luna', 'Cano_Palos', 'Cano_Clarin'],
+    # 'VIPIS': []  # ninguna estación de monitoreo cae dentro del manglar VIPIS
+}
+
+
 def _bfm_row(estacion):
-    """Devuelve la fila de bfastmonitor para una estación, o None."""
+    """Devuelve la fila bfastmonitor de la zona que contiene la estación, o None.
+
+    Búsqueda por zona y propagación a las estaciones del polígono. El supuesto
+    de propagación está documentado en BFM_ZONA_ESTACIONES.
+    """
     if bfm.empty or 'estacion' not in bfm.columns:
         return None
+    # Match directo (por si bfastmonitor se aplicó a la estación misma)
     sub = bfm[bfm['estacion'] == estacion]
-    if sub.empty:
-        return None
-    return sub.iloc[0]
+    if not sub.empty:
+        return sub.iloc[0]
+    # Match por zona (propagación)
+    for zona, estaciones in BFM_ZONA_ESTACIONES.items():
+        if estacion in estaciones:
+            sub = bfm[bfm['estacion'] == zona]
+            if not sub.empty:
+                return sub.iloc[0]
+    return None
 
 
 # ------------------------------------------------------------------
