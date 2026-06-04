@@ -628,6 +628,37 @@ a:focus-visible, button:focus-visible {
       </div>
     </div>
   </div>
+
+  <div class="row">
+    <div class="card">
+      <div class="card-head"><h2 class="card-title">Monitor near-real-time · bfastmonitor + z-score</h2></div>
+      <div class="card-body">
+        <p style="font-size:13.5px; line-height:1.6; margin-bottom:12px;">
+          La lógica del semáforo de alertas integra dos señales complementarias sobre cada estación.
+          La primera es el <strong>z-score reciente del NDVI</strong>, calculado sobre la serie mensual
+          combinada Landsat 8 + Sentinel-2, que detecta anomalías de los últimos doce meses. La
+          segunda es la salida de <strong>bfastmonitor</strong> (Verbesselt et al., 2012), aplicada en
+          el notebook <code>06b_bfast_monitor_R.ipynb</code> con ventana histórica 2013-2019 y
+          periodo de monitoreo 2020-2025.
+        </p>
+        <p style="font-size:13.5px; line-height:1.6; margin-bottom:0;">
+          A diferencia del BFAST clásico, bfastmonitor opera de forma <em>online</em>: cada nueva
+          composición mensual recalcula el estado de la estación sin reajustar la serie histórica,
+          lo que permite usarlo como capa operativa del Nivel 2 del Digital Twin. La escalada del
+          semáforo combina ambas señales: una estación pasa a crítica cuando coinciden un breakpoint
+          de magnitud negativa con z mínimo inferior a −1 en los tres meses recientes; pasa a alerta
+          cuando se detecta breakpoint aunque la anomalía z sea moderada; y se conserva como estable
+          solo cuando ninguna de las dos señales reporta deterioro.
+        </p>
+        <p style="margin-top:12px; font-size:12.5px; color:var(--text-muted);">
+          Entrada del monitor: <code>outputs/tables/ndvi_combinado_2013_2025.csv</code>.
+          Salida: <code>outputs/tables/bfastmonitor_estaciones.csv</code>
+          (columnas: estación · breakpoint · magnitud · estado), consumida por
+          <code>src/python/alertas_manglar.py</code>.
+        </p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ================= COBERTURA ================= -->

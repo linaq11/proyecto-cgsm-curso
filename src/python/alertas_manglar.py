@@ -2,10 +2,24 @@
 Módulo de detección de alertas tempranas para el manglar de la CGSM.
 
 Materializa el nivel 2 del paradigma Digital Twin: sobre las series temporales
-NDVI y SAR-VH ya construidas, se aplica una lógica de semáforo que clasifica
-cada estación en tres estados ---estable, alerta o crítica--- según la
-severidad de las anomalías recientes y la presencia de quiebres bfast en
-los últimos doce meses.
+NDVI y SAR-VH ya construidas, se integran dos señales complementarias y se
+aplica una lógica de semáforo que clasifica cada estación en tres estados
+(estable, alerta o crítica):
+
+  1. z-score reciente del NDVI (anomalías últimos 12 meses).
+  2. Breakpoints de bfastmonitor near-real-time leídos de
+     `outputs/tables/bfastmonitor_estaciones.csv` (notebook 06b_bfast_monitor_R).
+
+La combinación de ambas señales permite escalar a crítica cuando hay
+breakpoint con magnitud negativa y z-score deteriorado en paralelo, marcar
+alerta cuando el monitor detecta breakpoint aún si las anomalías z son
+moderadas, y conservar estable solo si no hay ninguna de las dos señales.
+
+Entradas:
+    outputs/tables/serie_temporal_ndvi_definitiva.csv
+    outputs/tables/sar_vh_serie_mensual.csv          (opcional)
+    outputs/tables/bfast_resumen.csv                  (opcional · bfast clásico)
+    outputs/tables/bfastmonitor_estaciones.csv        (opcional · near-real-time)
 
 Salidas:
     outputs/tables/alertas_estaciones.csv
@@ -59,7 +73,7 @@ ndvi['z_ndvi'] = ndvi.groupby('estacion')['ndvi'].transform(
 recientes = ndvi[ndvi['date'] >= fecha_corte].copy()
 
 # ------------------------------------------------------------------
-# 3. Cargar quiebres bfast (si existen)
+# 3. Cargar quiebres bfast clásico (si existen)
 # ------------------------------------------------------------------
 bfast_path = TABLES / 'bfast_resumen.csv'
 bfast = pd.read_csv(bfast_path) if bfast_path.exists() else pd.DataFrame()
@@ -67,15 +81,40 @@ if not bfast.empty:
     print(f'  bfast: {len(bfast)} estaciones')
 
 # ------------------------------------------------------------------
-# 4. Lógica de alertas
+# 3b. Cargar resultados bfastmonitor near-real-time (si existen)
+#     Producido por notebooks/06b_bfast_monitor_R.ipynb
+#     Columnas: estacion, breakpoint, magnitud, estado
 # ------------------------------------------------------------------
-def clasificar_estacion(estacion, ndvi_rec, sar_rec=None, bfast_est=None):
+bfm_path = TABLES / 'bfastmonitor_estaciones.csv'
+bfm = pd.read_csv(bfm_path) if bfm_path.exists() else pd.DataFrame()
+if not bfm.empty:
+    print(f'  bfastmonitor: {len(bfm)} estaciones')
+
+
+def _bfm_row(estacion):
+    """Devuelve la fila de bfastmonitor para una estación, o None."""
+    if bfm.empty or 'estacion' not in bfm.columns:
+        return None
+    sub = bfm[bfm['estacion'] == estacion]
+    if sub.empty:
+        return None
+    return sub.iloc[0]
+
+
+# ------------------------------------------------------------------
+# 4. Lógica de alertas (z-score NDVI + bfastmonitor near-real-time)
+# ------------------------------------------------------------------
+def clasificar_estacion(estacion, ndvi_rec, sar_rec=None, bfast_est=None, bfm_est=None):
     """Asigna estado de alerta a una estación.
 
-    Reglas:
-        🔴 crítica: anomalía NDVI z<-2 en el último mes O quiebre bfast en últimos 6 meses
-        🟡 alerta:  anomalía NDVI -2<=z<-1 en últimos 3 meses O 2+ anomalías z<-1 en 12 meses
-        🟢 estable: sin anomalías significativas recientes
+    Reglas integradas (z-score + bfastmonitor):
+        crítica: anomalía NDVI z<-2 en el último mes O
+                 2+ anomalías z<-2 en 12 meses O
+                 bfastmonitor breakpoint con magnitud negativa Y z mínimo 3 meses <-1
+        alerta:  bfastmonitor breakpoint detectado (cualquier magnitud) O
+                 anomalía NDVI -2<=z<-1 en últimos 3 meses O
+                 2+ anomalías z<-1 en 12 meses
+        estable: sin breakpoint near-real-time y sin anomalías significativas recientes
     """
     if len(ndvi_rec) == 0:
         return {'estado': 'sin_datos', 'razon': 'No hay registros recientes'}
@@ -87,11 +126,24 @@ def clasificar_estacion(estacion, ndvi_rec, sar_rec=None, bfast_est=None):
     n_anomalias = (ndvi_rec['z_ndvi'] < -1).sum()
     n_criticas = (ndvi_rec['z_ndvi'] < -2).sum()
 
+    # Señal bfastmonitor
+    bfm_breakpoint = False
+    bfm_magnitud_neg = False
+    bfm_etiqueta = ''
+    if bfm_est is not None:
+        estado_bfm = str(bfm_est.get('estado', ''))
+        magn = bfm_est.get('magnitud', None)
+        if estado_bfm == 'breakpoint_detectado':
+            bfm_breakpoint = True
+            if pd.notna(magn) and magn < 0:
+                bfm_magnitud_neg = True
+            bfm_etiqueta = f' · bfastmonitor bp magnitud={magn:.3f}' if pd.notna(magn) else ' · bfastmonitor bp'
+
     # Estado CRÍTICO
     if ultimo_mes is not None and ultimo_mes['z_ndvi'] < -2:
         return {
             'estado': 'critica',
-            'razon': f'NDVI z={ultimo_mes["z_ndvi"]:.2f} en {ultimo_mes["date"].strftime("%Y-%m")}',
+            'razon': f'NDVI z={ultimo_mes["z_ndvi"]:.2f} en {ultimo_mes["date"].strftime("%Y-%m")}{bfm_etiqueta}',
             'z_actual': ultimo_mes['z_ndvi'],
             'ndvi_actual': ultimo_mes['ndvi'],
         }
@@ -99,16 +151,26 @@ def clasificar_estacion(estacion, ndvi_rec, sar_rec=None, bfast_est=None):
     if n_criticas >= 2:
         return {
             'estado': 'critica',
-            'razon': f'{n_criticas} anomalías z<-2 en últimos 12 meses',
+            'razon': f'{n_criticas} anomalías z<-2 en últimos 12 meses{bfm_etiqueta}',
+            'z_actual': ultimo_mes['z_ndvi'] if ultimo_mes is not None else np.nan,
+            'ndvi_actual': ultimo_mes['ndvi'] if ultimo_mes is not None else np.nan,
+        }
+
+    if bfm_magnitud_neg and z_min_3 < -1:
+        return {
+            'estado': 'critica',
+            'razon': f'bfastmonitor breakpoint magnitud<0 + z min 3m={z_min_3:.2f}',
             'z_actual': ultimo_mes['z_ndvi'] if ultimo_mes is not None else np.nan,
             'ndvi_actual': ultimo_mes['ndvi'] if ultimo_mes is not None else np.nan,
         }
 
     # Estado ALERTA
-    if z_min_3 < -1 or n_anomalias >= 2:
+    if bfm_breakpoint or z_min_3 < -1 or n_anomalias >= 2:
+        razon_alerta = (f'z mínimo últimos 3 meses = {z_min_3:.2f} · '
+                        f'{n_anomalias} anomalías 12 meses{bfm_etiqueta}')
         return {
             'estado': 'alerta',
-            'razon': f'z mínimo últimos 3 meses = {z_min_3:.2f} · {n_anomalias} anomalías 12 meses',
+            'razon': razon_alerta,
             'z_actual': ultimo_mes['z_ndvi'] if ultimo_mes is not None else np.nan,
             'ndvi_actual': ultimo_mes['ndvi'] if ultimo_mes is not None else np.nan,
         }
@@ -116,7 +178,7 @@ def clasificar_estacion(estacion, ndvi_rec, sar_rec=None, bfast_est=None):
     # Estado ESTABLE
     return {
         'estado': 'estable',
-        'razon': 'Sin anomalías significativas en 12 meses',
+        'razon': 'Sin anomalías significativas en 12 meses y sin breakpoint near-real-time',
         'z_actual': ultimo_mes['z_ndvi'] if ultimo_mes is not None else np.nan,
         'ndvi_actual': ultimo_mes['ndvi'] if ultimo_mes is not None else np.nan,
     }
@@ -129,7 +191,8 @@ alertas = []
 for estacion in sorted(ndvi['estacion'].unique()):
     sub_ndvi = recientes[recientes['estacion'] == estacion]
     sub_bfast = bfast[bfast.get('estacion', pd.Series()).eq(estacion)] if not bfast.empty else None
-    resultado = clasificar_estacion(estacion, sub_ndvi, None, sub_bfast)
+    sub_bfm = _bfm_row(estacion)
+    resultado = clasificar_estacion(estacion, sub_ndvi, None, sub_bfast, sub_bfm)
     resultado['estacion'] = estacion
     alertas.append(resultado)
 
