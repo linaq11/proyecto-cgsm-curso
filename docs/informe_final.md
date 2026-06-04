@@ -147,7 +147,7 @@ La distribución funcional del pipeline multilenguaje se organizó según las fo
 
     **Python**                                                                               Adquisición GEE, segmentación SAM, Random Forest, datacubes, dashboard                                                                              geemap, samgeo, xarray, rioxarray, rasterio, geopandas, folium, cdsapi   01_gee_acquisition, 02_time_series, 03_segmentation_acotado, 05_flooding_nasa_acotado, 07_era5_clima, 11_random_forest_benchmark, 12_sentinel1_sar_serie
 
-      **R**                                                                                      Detección de quiebres bfast, cubo stars, réplicas estadísticas                                                                                                    bfast, stars, sf, terra, tidyverse                                   src/R/03_bfast_ndvi.R, src/R/05_stars_cubo.R, notebooks/02b_bfast_ndvi_R.ipynb, 11b_indices_enso_noaa_R, 12c_caudal_ideam_R
+      **R**                                                                                      Detección de quiebres bfast, cubo stars, réplicas estadísticas                                                                                                    bfast, stars, sf, terra, tidyverse                      src/R/03_bfast_ndvi.R, src/R/05_stars_cubo.R, notebooks/02b_bfast_ndvi_R.ipynb, 06b_bfast_monitor_R.ipynb, 11b_indices_enso_noaa_R, 12c_caudal_ideam_R
 
     **Julia**     Métricas de fragmentación, topología DE-9IM (Dimensionally Extended 9-Intersection Model, modelo formal que clasifica relaciones espaciales entre geometrías como intersección, contención o disjunción), cómputo geométrico             GeoJSON.jl, DataFrames.jl, LibGEOS.jl, Statistics                                               src/julia/04_fragmentacion.jl, notebooks/04c_topologia_julia, 14_validacion_trilingual
   -------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ ------------------------------------------------------------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -196,7 +196,7 @@ Finalmente, los productos del proyecto se integraron en un dashboard HTML con ca
 
 ## 7.8 Flujo de datos
 
-![](informe_final_media/media/image3.png){width="6.2375in" height="3.5104166666666665in"}
+![](C:/LINA/UNAL 2626-1/PROG_SIG/Docker_1/proyecto-cgsm/docs/informe_final_media/media/image3.png){width="6.2375in" height="3.5104166666666665in"}
 
 *Figura 3: Flujo metodológico del proyecto: cinco fases técnicas más un módulo transversal de forzamiento climático, ejecutadas dentro del contenedor Docker sig_unal v1.11 con validación cruzada entre Python, R y Julia.*
 
@@ -471,11 +471,13 @@ El detalle por estación de las correlaciones SAR-VH × NDVI, junto con los cuat
 
 El proyecto incorporó un módulo de alertas tempranas que articula las series temporales de NDVI y SAR-VH con los quiebres BFAST, mediante una lógica de semáforo aplicada a las ocho estaciones de monitoreo. Este componente constituye el módulo operacional de monitoreo del Gemelo Digital propuesto, al pasar de la observación histórica del sistema a una lectura periódica de su estado reciente.
 
-El script src/python/alertas_manglar.py clasifica cada estación en tres categorías: estable, alerta o crítica, de acuerdo con la severidad y recurrencia de las anomalías registradas en los últimos doce meses. El estado crítico se activa cuando la estación presenta z \< −2 en el último mes o dos anomalías acumuladas de esa magnitud durante el periodo evaluado. El estado de alerta corresponde a anomalías moderadas, definidas como −2 ≤ z \< −1, presentes en los últimos tres meses o repetidas al menos dos veces en el año. Finalmente, el estado estable se asigna a series sin desviaciones significativas recientes.
+La detección formal de cambios sobre las series NDVI mensuales se realizó con la función bfastmonitor() del paquete R bfast (Verbesselt et al. 2012). El método define una ventana histórica estable, ajusta sobre ella un modelo armónico-estacional que representa el comportamiento esperado de la serie y compara las observaciones del periodo de monitoreo contra esa línea base; cuando la desviación supera el umbral estadístico al nivel de significancia p \< 0,05, se reporta un breakpoint con fecha y magnitud. Para esta aplicación, la ventana histórica se fijó en 2013--2019 ---periodo posterior a la rehabilitación hidráulica del sistema, considerado de relativa estabilidad estructural--- y el periodo de monitoreo abarcó 2020--2025. A diferencia del BFAST clásico, que requiere la serie completa para identificar quiebres retrospectivos, bfastmonitor opera de forma incremental, lo que permite recalcular el estado de cada estación cada vez que ingresa una nueva composición mensual al pipeline.
+
+El script src/python/alertas_manglar.py integra el resultado de bfastmonitor con el z-score NDVI mensual para clasificar cada estación en tres categorías: estable, alerta o crítica. El estado crítico se activa cuando bfastmonitor reporta un breakpoint vigente en el periodo de monitoreo o cuando la estación presenta z \< −2 en el último mes; el estado de alerta corresponde a dos o más anomalías persistentes en los últimos cuatro meses sin breakpoint formal; el estado estable agrupa estaciones sin breakpoint detectado y con z-score dentro de banda durante los doce meses previos.
 
 El producto se genera en outputs/tables/alertas_estaciones.csv y se representa espacialmente mediante el mapa semáforo de la Figura 9. Su diseño permite una actualización mensual a medida que ingresan nuevas composiciones de Sentinel-2 o Sentinel-1. Este módulo constituye un prototipo funcional sobre el cual se podrá incorporar modelos predictivos de tendencia y simulación de escenarios climáticos en futuros proyectos.
 
-![](informe_final_media/media/image9.png){width="4.660416666666666in" height="3.3125in"}
+![](C:/LINA/UNAL 2626-1/PROG_SIG/Docker_1/proyecto-cgsm/docs/informe_final_media/media/image9.png){width="4.660416666666666in" height="3.3125in"}
 
 Figura 9: Mapa semáforo del estado del manglar de la CGSM por estación, según el módulo de alertas tempranas. Verde = estable, amarillo = alerta, rojo = crítica, según la severidad y persistencia de anomalías NDVI z-score en los últimos doce meses.
 
@@ -556,7 +558,7 @@ En este contexto, el módulo de alertas tempranas desarrollado en este trabajo s
 
   Datacubes multitemporales   09b_datacube_extendido.ipynb                                                                                                                                                 Cubos NetCDF CF-1.8 a 30 m, EPSG:9377.
 
-  Series temporales y BFAST   02_time_series.ipynb, 02b_bfast_ndvi_R.ipynb, 02c_bfast_manglar_unificado.ipynb                                                                                              Series NDVI y quiebres estructurales 2013--2025.
+  Series temporales y BFAST   02_time_series.ipynb, 02b_bfast_ndvi_R.ipynb, 02c_bfast_manglar_unificado.ipynb, 06b_bfast_monitor_R.ipynb                                                                   Series NDVI y quiebres estructurales 2013--2025.
 
   Segmentación SamGeo         03_segmentation_acotado.ipynb                                                                                                                                                Segmentación con backbone vit_b sobre RGB.
 
@@ -616,6 +618,10 @@ Olofsson, P., Foody, G. M., Herold, M., Stehman, S. V., Woodcock, C. E., y Wulde
 Raza, S., Zhang, J., Zuo, S., y Chen, J. (2024). Time series monitoring and analysis of Pakistán's mangrove using Sentinel-2 data. *Frontiers in Environmental Science*, *12*, 1416450. https://doi.org/10.3389/fenvs.2024.1416450
 
 Selvaraj, J. J., y Gallego-Pérez, J. (2023). An enhanced approach to mangrove forest analysis in the Colombian Pacific coast using óptical and SAR data in Google Earth Engine. *Remote Sensing Applications: Society and Environment*, *30*, 100938. https://doi.org/10.1016/j.rsase.2023.100938
+
+Verbesselt, J., Hyndman, R., Newnham, G., y Culvenor, D. (2010). Detecting trend and seasonal changes in satellite image time series. Remote Sensing of Environment, 114(1), 106--115. https://doi.org/10.1016/j.rse.2009.08.014
+
+Verbesselt, J., Zeileis, A., y Herold, M. (2012). Near real-time disturbance detection using satellite image time series. Remote Sensing of Environment, 123, 98--108. https://doi.org/10.1016/j.rse.2012.02.022
 
 Vinasco, J. S., Rodríguez, D. A., Velásquez, S., Quintero, D. F., Livni, L. R., y Hernández, F. L. (2020). Coverage changes detection at Ciénaga Grande, Santa Marta -- Colombia using automátic classification. *The International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences*, *XLII-3/W12-2020*, 195--200. https://doi.org/10.5194/isprs-archives-XLII-3-W12-2020-195-2020
 

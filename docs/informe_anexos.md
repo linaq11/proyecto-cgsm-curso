@@ -40,29 +40,25 @@ La autenticación con GEE se realiza mediante el flujo gcloud auth application-d
 
 El repositorio público está disponible en bajo licencia MIT. La versión anterior del proyecto (línea base marzo 2026 sobre AOI preliminar de 5.073 km²) permanece archivada en para fines de comparación histórica.<https://github.com/linaq11/proyecto-cgsm-curso><https://github.com/LinaQuinteroF/proyecto-cgsm>
 
-    proyecto-cgsm-curso/
-    ├── notebooks/        29 notebooks: 22 serie principal + 7 legacy (trazabilidad)
-    │                     orden de ejecución: 01 → 02 → 02b → 03_acotado →
-    │                     04_acotado → 04b_acotado → 05_acotado → 07 → 08 →
-    │                     09b → 10 → 11 → 11b → 12 → 12b → 12c → 13 → 14
-    ├── src/
-    │   ├── python/       utils.py (9377 + DE-9IM), aoi_acotado.py, build_cubos.py,
-    │   │                 make_dashboard_html.py, alertas_manglar.py, merge_cubo.py
-    │   ├── R/            03_bfast_ndvi.R, 05_stars_cubo.R, 06_bfast_manglar_unificado.R,
-    │   │                 08_correlacion_trilingual.R
-    │   └── julia/        04_fragmentacion.jl (4326 legacy + 9377 vigente),
-    │                     05_correlacion_trilingual.jl
-    ├── data/
-    │   ├── raw/          AOI preliminar y acotado, RUNAP SFF + VPI, INVEMAR GBIF,
-    │   │                 IDEAM El Banco / Ganadería Caribe
-    │   └── processed/
-    │       ├── cubo/     3 datacubes NetCDF CF-1.8 (40 / 275 / 119 MB)
-    │       └── samgeo/   máscaras y GeoJSON por periodo
-    ├── outputs/
-    │   ├── tables/       47 CSV con resultados numéricos
-    │   ├── figures/      35 PNG (mapas, series, correlaciones, alertas)
-    │   └── maps/         dashboard_CGSM_final.html
-    └── docs/             informe_final.{qmd,html,pdf}, informe_anexos.{qmd,html,pdf}
+    proyecto-cgsm-curso/├── notebooks/        30 notebooks: 23 serie principal + 7 legacy (trazabilidad)│                     orden de ejecución: 01 → 02 → 02b → 03_acotado →│                     04_acotado → 04b_acotado → 05_acotado → 06b → 07 → 08 →│                     09b → 10 → 11 → 11b → 12 → 12b → 12c → 13 → 14├── src/│   ├── python/       utils.py (9377 + DE-9IM), aoi_acotado.py, build_cubos.py,│   │                 make_dashboard_html.py, alertas_manglar.py, merge_cubo.py│   ├── R/            03_bfast_ndvi.R, 05_stars_cubo.R, 06_bfast_manglar_unificado.R,│   │                 08_correlacion_trilingual.R│   └── julia/        04_fragmentacion.jl (4326 legacy + 9377 vigente),│                     05_correlacion_trilingual.jl├── data/│   ├── raw/          AOI preliminar y acotado, RUNAP SFF + VPI, INVEMAR GBIF,│   │                 IDEAM El Banco / Ganadería Caribe│   └── processed/│       ├── cubo/     3 datacubes NetCDF CF-1.8 (40 / 275 / 119 MB)│       └── samgeo/   máscaras y GeoJSON por periodo├── outputs/│   ├── tables/       47 CSV con resultados numéricos│   ├── figures/      35 PNG (mapas, series, correlaciones, alertas)│   └── maps/         dashboard_CGSM_final.html└── docs/             informe_final.{qmd,html,pdf}, informe_anexos.{qmd,html,pdf}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 La serie vigente (notebooks 01--12 + 02b, 04b/c_acotado, 09b, 11b, 12b/c, 14) reproduce las cifras del cuerpo del informe sobre el AOI acotado de 835 km². La serie legacy (03, 04, 04b, 05, 06, 09 sin sufijo \_acotado) opera sobre el AOI preliminar de 5.073 km² y se conserva sólo por trazabilidad histórica; no sostiene ninguna conclusión del informe. La guía de ejecución por etapa con dependencias entre notebooks se documenta en notebooks/README.md. Las composiciones trimestrales y anuales en GeoTIFF y los NetCDF de mayor tamaño no se versionan por restricciones de tamaño de GitHub: se regeneran ejecutando los notebooks en orden secuencial con acceso autenticado a GEE.
 
@@ -138,6 +134,30 @@ Sobre las series mensuales combinadas Landsat 8 + Sentinel-2 (929 observaciones)
                  start = c(2013, 1), frequency = 12)
     fit    <- bfast(ts_est, h = 0.10, season = "harmonic", max.iter = 2)
     plot(fit)   # quiebres 2016 (El Nino), 2020 (La Nina), 2023-24 (El Nino)
+
+### E.1.f Monitor operativo near-real-time con bfastmonitor en R
+
+Sobre las mismas series mensuales combinadas Landsat 8 + Sentinel-2 se aplica bfast::bfastmonitor con una ventana histórica 2013--2019 y un periodo de monitoreo 2020--2025. El modelo ajusta una descomposición armónica con harmon de orden 3 sobre la ventana histórica, considerada estable tras la rehabilitación hidráulica de canales (1996--1998), y evalúa el periodo de monitoreo en busca de breakpoints al nivel de significancia p \< 0,05. La salida outputs/tables/bfastmonitor_estaciones.csv contiene, por estación, la fecha del breakpoint detectado, su magnitud y el estado del monitor a la fecha de corte, y alimenta directamente la lógica del semáforo descrita en la sección homónima del cuerpo del informe.
+
+    library(bfast)
+    serie <- read.csv("outputs/tables/serie_temporal_ndvi_combinada.csv")
+
+    # Por estación, ajustar bfastmonitor con history 2013-2019 / monitor 2020-2025
+    resultados <- lapply(unique(serie$estación), function(est) {
+      ts_est <- ts(subset(serie, estación == est)$ndvi,
+                    start = c(2013, 1), frequency = 12)
+      mon <- bfastmonitor(ts_est,
+                          start   = c(2020, 1),
+                          formula = response ~ harmon,
+                          order   = 3,
+                          level   = 0.05)
+      data.frame(estación = est,
+                 breakpoint = as.character(time(mon$breakpoint)),
+                 magnitud   = mon$magnitude)
+    })
+
+    write.csv(do.call(rbind, resultados),
+              "outputs/tables/bfastmonitor_estaciones.csv", row.names = FALSE)
 
 ## E.2 Reproyección al sistema oficial colombiano y topología DE-9IM
 
