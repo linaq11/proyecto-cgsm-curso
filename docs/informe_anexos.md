@@ -135,7 +135,7 @@ Sobre las series mensuales combinadas Landsat 8 + Sentinel-2 (929 observaciones)
     fit    <- bfast(ts_est, h = 0.10, season = "harmonic", max.iter = 2)
     plot(fit)   # quiebres 2016 (El Nino), 2020 (La Nina), 2023-24 (El Nino)
 
-### E.1.f Monitor operativo near-real-time con bfastmonitor en R
+### E.1.f Monitor near-real-time con bfastmonitor en R
 
 Sobre las mismas series mensuales combinadas Landsat 8 + Sentinel-2 se aplica bfast::bfastmonitor con una ventana histórica 2013--2019 y un periodo de monitoreo 2020--2025. El modelo ajusta una descomposición armónica con harmon de orden 3 sobre la ventana histórica, considerada estable tras la rehabilitación hidráulica de canales (1996--1998), y evalúa el periodo de monitoreo en busca de breakpoints al nivel de significancia p \< 0,05. La salida outputs/tables/bfastmonitor_estaciones.csv contiene, por estación, la fecha del breakpoint detectado, su magnitud y el estado del monitor a la fecha de corte, y alimenta directamente la lógica del semáforo descrita en la sección homónima del cuerpo del informe.
 
