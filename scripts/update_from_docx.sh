@@ -115,6 +115,13 @@ case "$TARGET" in
     ;;
   anexos)
     regenerate_from_docx "informe_anexos"
+    # NOTA: PDF de anexos NO se regenera aquí por defecto. Lina lo exporta
+    # manualmente desde Word para preservar el layout con highlighting nativo.
+    # Para forzar el render Typst: bash scripts/update_from_docx.sh anexos-pdf
+    echo "  · informe_anexos.pdf · no se regenera (export manual desde Word)"
+    ;;
+  anexos-pdf)
+    regenerate_from_docx "informe_anexos"
     render_pdf_typst "informe_anexos"
     ;;
   all)
@@ -122,10 +129,14 @@ case "$TARGET" in
     render_pdf_typst "informe_final"
     echo
     regenerate_from_docx "informe_anexos"
-    render_pdf_typst "informe_anexos"
+    echo "  · informe_anexos.pdf · no se regenera (export manual desde Word)"
     ;;
   *)
-    echo "Uso: $0 [final|anexos|all]"
+    echo "Uso: $0 [final|anexos|anexos-pdf|all]"
+    echo "       final       · informe_final.docx -> html/md/pdf vía Typst"
+    echo "       anexos      · informe_anexos.docx -> html/md/qmd (PDF manual desde Word)"
+    echo "       anexos-pdf  · igual a 'anexos' pero también regenera PDF vía Typst"
+    echo "       all         · final completo + anexos sin PDF"
     exit 1
     ;;
 esac

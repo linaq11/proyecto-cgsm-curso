@@ -401,10 +401,19 @@ ax.grid(True, alpha=0.35, linestyle='-', linewidth=0.5, color='#c8d0d8')
 ax.set_axisbelow(True)
 
 # NOTA: no usar tight_layout aquí porque pisa el subplots_adjust del título.
-plt.savefig(FIGURES / 'alertas_semaforo.png', dpi=180,
-            bbox_inches='tight', facecolor='white')
+png_path = FIGURES / 'alertas_semaforo.png'
+plt.savefig(png_path, dpi=180, bbox_inches='tight', facecolor='white')
 plt.close()
-print(f'✓ {FIGURES / "alertas_semaforo.png"}')
+print(f'✓ {png_path}')
+
+# Espejo en docs/outputs/figures/ para que GitHub Pages sirva la versión
+# actualizada. Sin este copy, Pages se queda con el PNG viejo y el dashboard
+# muestra el título anterior.
+import shutil
+docs_mirror = ROOT / 'docs' / 'outputs' / 'figures' / 'alertas_semaforo.png'
+docs_mirror.parent.mkdir(parents=True, exist_ok=True)
+shutil.copy2(png_path, docs_mirror)
+print(f'✓ {docs_mirror} (espejo para Pages)')
 
 
 # ------------------------------------------------------------------
