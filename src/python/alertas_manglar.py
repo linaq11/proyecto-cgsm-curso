@@ -139,11 +139,13 @@ def clasificar_estacion(estacion, ndvi_rec, sar_rec=None, bfast_est=None, bfm_es
     Reglas integradas (z-score + bfastmonitor):
         crítica: anomalía NDVI z<-2 en el último mes O
                  2+ anomalías z<-2 en 12 meses O
-                 bfastmonitor breakpoint con magnitud negativa Y z mínimo 3 meses <-1
-        alerta:  bfastmonitor breakpoint detectado (cualquier magnitud) O
-                 anomalía NDVI -2<=z<-1 en últimos 3 meses O
-                 2+ anomalías z<-1 en 12 meses
-        estable: sin breakpoint near-real-time y sin anomalías significativas recientes
+                 bfastmonitor breakpoint con magnitud NEGATIVA Y z mínimo 3 meses <-1
+        alerta:  anomalía NDVI -2<=z<-1 en últimos 3 meses O
+                 2+ anomalías z<-1 en 12 meses O
+                 bfastmonitor breakpoint con magnitud NEGATIVA (deterioro)
+        estable: sin anomalías z significativas y sin breakpoint negativo.
+                 Si bfastmonitor reporta breakpoint POSITIVO (recuperación), se
+                 anota en la razón como contexto pero no cambia el estado.
     """
     if len(ndvi_rec) == 0:
         return {'estado': 'sin_datos', 'razon': 'No hay registros recientes'}
@@ -193,8 +195,10 @@ def clasificar_estacion(estacion, ndvi_rec, sar_rec=None, bfast_est=None, bfm_es
             'ndvi_actual': ultimo_mes['ndvi'] if ultimo_mes is not None else np.nan,
         }
 
-    # Estado ALERTA
-    if bfm_breakpoint or z_min_3 < -1 or n_anomalias >= 2:
+    # Estado ALERTA · solo el breakpoint con magnitud negativa escala estado.
+    # Breakpoints positivos (recuperaciones) se mencionan en la razón pero no
+    # disparan alerta, porque indican mejora del dosel, no deterioro.
+    if (bfm_breakpoint and bfm_magnitud_neg) or z_min_3 < -1 or n_anomalias >= 2:
         razon_alerta = (f'z mínimo últimos 3 meses = {z_min_3:.2f} · '
                         f'{n_anomalias} anomalías 12 meses{bfm_etiqueta}')
         return {
@@ -204,10 +208,15 @@ def clasificar_estacion(estacion, ndvi_rec, sar_rec=None, bfast_est=None, bfm_es
             'ndvi_actual': ultimo_mes['ndvi'] if ultimo_mes is not None else np.nan,
         }
 
-    # Estado ESTABLE
+    # Estado ESTABLE · si bfastmonitor reporta breakpoint positivo (recuperación)
+    # se anota como contexto, pero no afecta el estado.
+    razon_estable = ('Sin anomalías significativas en 12 meses' +
+                     (f'; bfastmonitor reporta recuperación regional magnitud={bfm_est.get("magnitud", float("nan")):+.3f}'
+                      if bfm_breakpoint and not bfm_magnitud_neg else
+                      ' y sin breakpoint near-real-time'))
     return {
         'estado': 'estable',
-        'razon': 'Sin anomalías significativas en 12 meses y sin breakpoint near-real-time',
+        'razon': razon_estable,
         'z_actual': ultimo_mes['z_ndvi'] if ultimo_mes is not None else np.nan,
         'ndvi_actual': ultimo_mes['ndvi'] if ultimo_mes is not None else np.nan,
     }
