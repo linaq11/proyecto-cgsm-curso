@@ -70,11 +70,48 @@ regenerate_from_docx() {
 }
 
 # ──────────────────────────────────────────────────────────────────────
+# Función: regenerar qmd para anexos (no se mantiene a mano)
+# Combina YAML base + cuerpo regenerado del md.
+# ──────────────────────────────────────────────────────────────────────
+regenerate_anexos_qmd() {
+  local MD="$DOCS/informe_anexos.md"
+  local QMD="$DOCS/informe_anexos.qmd"
+
+  if [ ! -f "$MD" ]; then return 0; fi
+
+  python3 -c "
+from pathlib import Path
+YAML = '''---
+title: \"Pipeline multilenguaje GeoAI para el monitoreo del manglar en la Ciénaga Grande de Santa Marta · Anexos\"
+author: \"Lina María Quintero Fonseca\"
+lang: es
+format:
+  typst:
+    toc: false
+    number-sections: false
+    fontsize: 11pt
+    margin:
+      x: 2.5cm
+      y: 2.5cm
+---
+'''
+md = Path('$MD').read_text(encoding='utf-8')
+Path('$QMD').write_text(YAML + '\n' + md, encoding='utf-8')
+print(f'  ✓ qmd anexos regenerado ({len(md)} chars)')
+"
+}
+
+# ──────────────────────────────────────────────────────────────────────
 # Función: renderizar PDF vía Typst (si hay qmd)
 # ──────────────────────────────────────────────────────────────────────
 render_pdf_typst() {
   local NAME="$1"
   local QMD="$DOCS/${NAME}.qmd"
+
+  # Para anexos, regenerar siempre el qmd desde el md
+  if [ "$NAME" = "informe_anexos" ]; then
+    regenerate_anexos_qmd
+  fi
 
   if [ ! -f "$QMD" ]; then
     echo "  · $NAME · sin qmd · saltando PDF Typst"
