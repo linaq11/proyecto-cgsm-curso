@@ -210,30 +210,30 @@ using Pkg
 Pkg.add([&quot;GeoJSON&quot;, &quot;DataFrames&quot;, &quot;CSV&quot;, &quot;Statistics&quot;])</code></pre>
 <p>La autenticación con GEE se realiza mediante el flujo gcloud auth application-default login con quota project configurado, que genera credenciales almacenadas en ~/.config/gcloud/application_default_credentials.json. El contenedor requiere un mínimo de 8 GB de RAM asignados en Docker Desktop para ejecutar SamGeo con el backbone vit_b; con vit_h se requieren al menos 12 GB. Las composiciones RGB se remuestrean de 10 a 30 metros antes de la segmentación para reducir el consumo de memoria.</p>
 <h1 id="anexo-b-estructura-del-repositorio-github">Anexo B: Estructura del repositorio GitHub</h1>
-<p>El repositorio público está disponible en bajo licencia MIT. La versión anterior del proyecto (línea base marzo 2026 sobre AOI preliminar de 5.073 km²) permanece archivada en para fines de comparación histórica.<a href="https://github.com/linaq11/proyecto-cgsm-curso">https://github.com/linaq11/proyecto-cgsm-curso</a><a href="https://github.com/LinaQuinteroF/proyecto-cgsm">https://github.com/LinaQuinteroF/proyecto-cgsm</a></p>
-<pre><code>proyecto-cgsm-curso/├── notebooks/        30 notebooks: 23 serie principal + 7 legacy (trazabilidad)│                     orden de ejecución: 01 → 02 → 02b → 03_acotado →│                     04_acotado → 04b_acotado → 05_acotado → 06b → 07 → 08 →│                     09b → 10 → 11 → 11b → 12 → 12b → 12c → 13 → 14├── src/│   ├── python/       utils.py (9377 + DE-9IM), aoi_acotado.py, build_cubos.py,│   │                 make_dashboard_html.py, alertas_manglar.py, merge_cubo.py│   ├── R/            03_bfast_ndvi.R, 05_stars_cubo.R, 06_bfast_manglar_unificado.R,│   │                 08_correlacion_trilingual.R│   └── julia/        04_fragmentacion.jl (4326 legacy + 9377 vigente),│                     05_correlacion_trilingual.jl├── data/│   ├── raw/          AOI preliminar y acotado, RUNAP SFF + VPI, INVEMAR GBIF,│   │                 IDEAM El Banco / Ganadería Caribe│   └── processed/│       ├── cubo/     3 datacubes NetCDF CF-1.8 (40 / 275 / 119 MB)│       └── samgeo/   máscaras y GeoJSON por periodo├── outputs/│   ├── tables/       47 CSV con resultados numéricos│   ├── figures/      35 PNG (mapas, series, correlaciones, alertas)│   └── maps/         dashboard_CGSM_final.html└── docs/             informe_final.{qmd,html,pdf}, informe_anexos.{qmd,html,pdf}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</code></pre>
+<p>El repositorio público está disponible en https://github.com/linaq11/proyecto-cgsm-curso bajo licencia MIT. La versión anterior del proyecto (línea base marzo 2026 sobre AOI preliminar de 5.073 km²) permanece archivada en https://github.com/LinaQuinteroF/proyecto-cgsm para fines de comparación histórica.</p>
+<pre><code>proyecto-cgsm-curso/
+├── notebooks/        30 notebooks: 23 serie principal + 7 legacy (trazabilidad)
+│                     orden de ejecución: 01 → 02 → 02b → 03_acotado →
+│                     04_acotado → 04b_acotado → 05_acotado → 06b → 07 → 08 →
+│                     09b → 10 → 11 → 11b → 12 → 12b → 12c → 13 → 14
+├── src/
+│   ├── python/       utils.py (9377 + DE-9IM), aoi_acotado.py, build_cubos.py,
+│   │                 make_dashboard_html.py, alertas_manglar.py, merge_cubo.py
+│   ├── R/            03_bfast_ndvi.R, 05_stars_cubo.R, 06_bfast_manglar_unificado.R,
+│   │                 08_correlacion_trilingual.R
+│   └── julia/        04_fragmentacion.jl (4326 legacy + 9377 vigente),
+│                     05_correlacion_trilingual.jl
+├── data/
+│   ├── raw/          AOI preliminar y acotado, RUNAP SFF + VPI, INVEMAR GBIF,
+│   │                 IDEAM El Banco / Ganadería Caribe
+│   └── processed/
+│       ├── cubo/     3 datacubes NetCDF CF-1.8 (40 / 275 / 119 MB)
+│       └── samgeo/   máscaras y GeoJSON por periodo
+├── outputs/
+│   ├── tables/       47 CSV con resultados numéricos
+│   ├── figures/      35 PNG (mapas, series, correlaciones, alertas)
+│   └── maps/         dashboard_CGSM_final.html
+└── docs/             informe_final.{qmd,html,pdf}, informe_anexos.{qmd,html,pdf}</code></pre>
 <p>La serie vigente (notebooks 01–12 + 02b, 04b/c_acotado, 09b, 11b, 12b/c, 14) reproduce las cifras del cuerpo del informe sobre el AOI acotado de 835 km². La serie legacy (03, 04, 04b, 05, 06, 09 sin sufijo _acotado) opera sobre el AOI preliminar de 5.073 km² y se conserva sólo por trazabilidad histórica; no sostiene ninguna conclusión del informe. La guía de ejecución por etapa con dependencias entre notebooks se documenta en notebooks/README.md. Las composiciones trimestrales y anuales en GeoTIFF y los NetCDF de mayor tamaño no se versionan por restricciones de tamaño de GitHub: se regeneran ejecutando los notebooks en orden secuencial con acceso autenticado a GEE.</p>
 <h1 id="anexo-c-nota-metodológica-sobre-el-conteo-de-parches-julia-vs-python">Anexo C: Nota metodológica sobre el conteo de parches (Julia vs Python)</h1>
 <p>La diferencia entre los conteos de parches en Julia y Python se debe al tratamiento geométrico de polígonos con anillos interiores y geometrías multipartes. Mientras geopandas calcula el área neta descontando huecos internos, la implementación en Julia se utilizó para caracterizar unidades geométricas de paisaje y métricas de conectividad. Por esta razón, el informe distingue explícitamente entre conteos derivados de Julia (Tabla 5 del cuerpo del informe) para métricas de forma y aislamiento, y salidas geopandas (en outputs/tables/parches_geopandas.csv del repositorio) para indicadores de superficie efectiva.</p>
