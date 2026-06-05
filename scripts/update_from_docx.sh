@@ -79,26 +79,7 @@ regenerate_anexos_qmd() {
 
   if [ ! -f "$MD" ]; then return 0; fi
 
-  python3 -c "
-from pathlib import Path
-YAML = '''---
-title: \"Pipeline multilenguaje GeoAI para el monitoreo del manglar en la Ciénaga Grande de Santa Marta · Anexos\"
-author: \"Lina María Quintero Fonseca\"
-lang: es
-format:
-  typst:
-    toc: false
-    number-sections: false
-    fontsize: 11pt
-    margin:
-      x: 2.5cm
-      y: 2.5cm
----
-'''
-md = Path('$MD').read_text(encoding='utf-8')
-Path('$QMD').write_text(YAML + '\n' + md, encoding='utf-8')
-print(f'  ✓ qmd anexos regenerado ({len(md)} chars)')
-"
+  python3 "$PROJECT_ROOT/scripts/_regenerate_anexos_qmd.py"
 }
 
 # ──────────────────────────────────────────────────────────────────────
