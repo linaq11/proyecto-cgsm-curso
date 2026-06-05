@@ -212,7 +212,7 @@ El flujo metodológico completo se resume en la Figura 3, que integra las cinco 
 
 ## 7.9 Entorno de ejecución
 
-Todo el flujo se ejecutó dentro del contenedor Docker sig_unal v1.11, con control de versiones en Git y GitHub. La configuración del entorno, las versiones de los componentes y los comandos de autenticación de servicios externos se documentan en los anexos técnicos.
+Todo el flujo se ejecutó dentro del contenedor Docker sig_unal v1.11, con control de versiones en Git y GitHub. La configuración del entorno, las versiones de los componentes y los comandos de autenticación de servicios externos se documentan en los anexos.
 
 # 8. Resultados y discusión
 
