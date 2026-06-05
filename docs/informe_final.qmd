@@ -6,12 +6,11 @@ lang: es
 format:
   typst:
     toc: false
-    number-sections: true
+    number-sections: false
     fontsize: 11pt
     margin:
       x: 2.5cm
       y: 2.5cm
-    section-numbering: 1.1.a
 ---
 Universidad Nacional de Colombia Facultad de Ciencias Agrarias
 
