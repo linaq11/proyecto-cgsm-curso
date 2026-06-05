@@ -388,7 +388,7 @@ for spine in ax.spines.values():
 
 # Título + subtítulo posicionados con fig.text para evitar superposición
 # con el área del plot (ax.text con ax.transAxes podía caer dentro del axes).
-fig.text(0.02, 0.965, 'Alerta temprana por estación · CGSM',
+fig.text(0.02, 0.965, 'Estado del manglar · CGSM',
          fontsize=15, fontweight=700, color='#0f172a',
          ha='left', va='top')
 fig.text(0.02, 0.935,
