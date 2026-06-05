@@ -6,7 +6,7 @@ Este documento complementario reúne cinco anexos del proyecto Pipeline multilen
 -   **Anexo B** describe la estructura del repositorio GitHub con la serie vigente y la legacy de notebooks.
 -   **Anexo C explica la discrepancia metodológica en el conteo de parches entre las implementaciones de Julia y Python.**
 -   **Anexo E** contiene los fragmentos de código que materializan cada fase del pipeline.
--   **Anexo F** reúne las tablas de detalle movidas desde el cuerpo del informe.
+-   **Anexo F reúne las tablas de detalle.**
 
 (Nota: el Anexo D se conserva sin contenido para mantener la correspondencia con versiones previas y evitar modificar las referencias internas.)
 
@@ -260,7 +260,7 @@ La función `compute_metrics` agrega los parches segmentados de cada periodo, ca
         )
     end
 
-# Anexo F: Tablas detalladas movidas desde el cuerpo
+# Anexo F: Tablas detalladas
 
 Para mantener el cuerpo del informe centrado en la narrativa de los hallazgos, dos tablas de detalle metodológico se reubican en este anexo: el cruce estación por estación entre la señal SAR de septiembre 2020, la anomalía NDVI y la frecuencia de inundación histórica de la Global Flood Database (referida en la sección de Validación con datos NASA), y las nueve transiciones de superficie del JRC Global Surface Water 1984--2021 (referida en la sección de Dinámica hídrica).
 

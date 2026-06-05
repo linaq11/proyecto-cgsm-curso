@@ -184,7 +184,7 @@
 <li><strong>Anexo B</strong> describe la estructura del repositorio GitHub con la serie vigente y la legacy de notebooks.</li>
 <li><strong>Anexo C explica la discrepancia metodológica en el conteo de parches entre las implementaciones de Julia y Python.</strong></li>
 <li><strong>Anexo E</strong> contiene los fragmentos de código que materializan cada fase del pipeline.</li>
-<li><strong>Anexo F</strong> reúne las tablas de detalle movidas desde el cuerpo del informe.</li>
+<li><strong>Anexo F reúne las tablas de detalle.</strong></li>
 </ul>
 <p>(Nota: el Anexo D se conserva sin contenido para mantener la correspondencia con versiones previas y evitar modificar las referencias internas.)</p>
 <h1 id="anexo-a-configuración-del-entorno-docker">Anexo A: Configuración del entorno Docker</h1>
@@ -391,7 +391,7 @@ function compute_metrics(periodo, base_dir)
         nnd_mean   = mean(nnd) / 1e3,
     )
 end</code></pre>
-<h1 id="anexo-f-tablas-detalladas-movidas-desde-el-cuerpo">Anexo F: Tablas detalladas movidas desde el cuerpo</h1>
+<h1 id="anexo-f-tablas-detalladas">Anexo F: Tablas detalladas</h1>
 <p>Para mantener el cuerpo del informe centrado en la narrativa de los hallazgos, dos tablas de detalle metodológico se reubican en este anexo: el cruce estación por estación entre la señal SAR de septiembre 2020, la anomalía NDVI y la frecuencia de inundación histórica de la Global Flood Database (referida en la sección de Validación con datos NASA), y las nueve transiciones de superficie del JRC Global Surface Water 1984–2021 (referida en la sección de Dinámica hídrica).</p>
 <p><strong>Nota de homologación de estaciones complementarias.</strong> En la serie legacy desarrollada sobre el AOI preliminar de 5.073 km², dos estaciones complementarias del Complejo de Pajarales fueron registradas con la nomenclatura CP Pajarales y VIPIS. Durante la depuración metodológica hacia el AOI acotado de 835,3 km², estas estaciones fueron homologadas y reubicadas sobre cobertura de manglar denso verificada mediante NDVI &gt; 0,4 en composiciones Sentinel-2 de 2024. En la nomenclatura vigente del informe principal, CP Pajarales corresponde a CP Aguas Negras y VIPIS corresponde a CP Luna. Esta homologación no representa únicamente un cambio de etiqueta, sino también un ajuste espacial de coordenadas para garantizar consistencia con el AOI acotado y con la cobertura efectiva de manglar analizada. Las tablas de este anexo reportan la nomenclatura vigente y conservan la equivalencia legacy únicamente como nota de trazabilidad.</p>
 <table>
