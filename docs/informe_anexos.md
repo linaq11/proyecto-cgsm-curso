@@ -1,6 +1,6 @@
 # Presentación
 
-Este documento complementario reúne cinco anexos del proyecto Pipeline multilenguaje GeoAI para el monitoreo del manglar en la Ciénaga Grande de Santa Marta (2013--2025). Cada anexo desarrolla material de soporte que sustenta las decisiones metodológicas, la reproducibilidad técnica y la trazabilidad de los resultados reportados en el informe principal (informe_final_revisado.docx):
+Este documento complementario reúne cinco anexos del proyecto Pipeline multilenguaje GeoAI para el monitoreo del manglar en la Ciénaga Grande de Santa Marta (2013--2025). Cada anexo desarrolla material de soporte que sustenta las decisiones metodológicas, la reproducibilidad y la trazabilidad de los resultados reportados en el informe principal (informe_final_revisado.docx):
 
 -   **Anexo A** documenta la configuración del entorno Docker `sig_unal v1.11` con los paquetes adicionales de Python, R y Julia.
 -   **Anexo B** describe la estructura del repositorio GitHub con la serie vigente y la legacy de notebooks.
