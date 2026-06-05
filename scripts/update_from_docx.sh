@@ -111,6 +111,13 @@ TARGET="${1:-all}"
 case "$TARGET" in
   final)
     regenerate_from_docx "informe_final"
+    # NOTA: PDF de informe_final NO se regenera aquí por defecto. Lina lo
+    # exporta desde Word para preservar el layout aprobado.
+    # Para forzar el render Typst: bash scripts/update_from_docx.sh final-pdf
+    echo "  · informe_final.pdf · no se regenera (export manual desde Word)"
+    ;;
+  final-pdf)
+    regenerate_from_docx "informe_final"
     render_pdf_typst "informe_final"
     ;;
   anexos)
@@ -126,17 +133,26 @@ case "$TARGET" in
     ;;
   all)
     regenerate_from_docx "informe_final"
-    render_pdf_typst "informe_final"
+    echo "  · informe_final.pdf · no se regenera (export manual desde Word)"
     echo
     regenerate_from_docx "informe_anexos"
     echo "  · informe_anexos.pdf · no se regenera (export manual desde Word)"
     ;;
+  all-pdf)
+    regenerate_from_docx "informe_final"
+    render_pdf_typst "informe_final"
+    echo
+    regenerate_from_docx "informe_anexos"
+    render_pdf_typst "informe_anexos"
+    ;;
   *)
-    echo "Uso: $0 [final|anexos|anexos-pdf|all]"
-    echo "       final       · informe_final.docx -> html/md/pdf vía Typst"
+    echo "Uso: $0 [final|final-pdf|anexos|anexos-pdf|all|all-pdf]"
+    echo "       final       · informe_final.docx -> html/md (PDF manual desde Word)"
+    echo "       final-pdf   · igual a 'final' pero también regenera PDF vía Typst"
     echo "       anexos      · informe_anexos.docx -> html/md/qmd (PDF manual desde Word)"
     echo "       anexos-pdf  · igual a 'anexos' pero también regenera PDF vía Typst"
-    echo "       all         · final completo + anexos sin PDF"
+    echo "       all         · final + anexos, ambos sin PDF (export manual)"
+    echo "       all-pdf     · all + ambos PDFs regenerados vía Typst"
     exit 1
     ;;
 esac
