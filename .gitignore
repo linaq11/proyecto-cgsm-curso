@@ -57,3 +57,13 @@ notebooks/06_gpboost_humedales_bita.ipynb
 pipeline_cgsm_sintesis.svg
 !outputs/maps/dashboard_CGSM_final.html
 !outputs/maps/dashboard_CGSM_final.html
+
+# QA / scratch (local)
+_qa/
+**/_qa/
+**/Untitled.ipynb
+
+# Otras tareas del curso (no CGSM)
+docs/retos_arcpy_2_3.*
+docs/Retos*ArcPy.pdf
+docs/figures_pig/

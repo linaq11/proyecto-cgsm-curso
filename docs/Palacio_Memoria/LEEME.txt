@@ -1,0 +1,36 @@
+PALACIO DE LA MEMORIA - Pipeline multilenguaje CGSM
+Proyecto final Programacion en SIG - Lina Quintero Fonseca
+====================================================================
+
+COMO ABRIRLO
+------------
+Doble clic en  index.html  (o en  abrir-palacio.bat).
+Funciona sin internet ni servidor: abre directo en cualquier navegador.
+
+QUE ES
+------
+Una herramienta de estudio interactiva para volverte experta en tu
+proyecto: 16 salas que cubren cada paso, decision, metodo, variable,
+resultado, articulo, figura, tabla y fragmento de codigo.
+
+CONTROLES
+  ->  /  <-   cambiar de sala       /   enfocar el buscador
+  Clic en los nodos del "hilo" para saltar entre salas.
+  En Metodos y Decisiones: paneles "Por que esta decision" desplegables.
+  En Biblioteca / Glosario / Banco de preguntas: filtros + busqueda.
+  En Banco de preguntas: clic revela la respuesta; "Marcar dominada"
+    queda guardado en el navegador.
+  Autoevaluacion: tarjetas (flip / siguiente / mezclar).
+
+LAS 16 SALAS
+  Marco:     1 El hilo · 2 Problema y vacios · 3 Pregunta y objetivos ·
+             4 Area, tiempo y exploratorio
+  Metodo:    5 Fuentes de datos · 6 Pipeline multilenguaje ·
+             7 Metodos a fondo (porque cada metodo) · 8 Por que cada decision
+  Evidencia: 9 Resultados · 10 Codigo · 11 Figuras y tablas
+  Literatura:12 Biblioteca (26 articulos: aporte + conexion) ·
+             13 Como se relacionan · 14 Glosario y ecuaciones
+  Practica:  15 Banco de preguntas · 16 Autoevaluacion
+
+Contenido tomado de informe_final.docx, informe_anexos.docx y las figuras
+del repositorio. Repositorio: github.com/linaq11/proyecto-cgsm-curso

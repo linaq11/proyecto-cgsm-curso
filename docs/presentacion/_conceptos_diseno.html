@@ -1,0 +1,143 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#e7e9ec;font-family:Inter,sans-serif;padding:28px;color:#1a1a1a}
+h1.pg{font-family:Fraunces,serif;font-size:23px;font-weight:600}
+.sub{color:#666;font-size:12.5px;margin:4px 0 22px}
+.row{margin-bottom:24px}
+.lab{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.desc{color:#555;font-size:12px;margin-bottom:10px;max-width:1140px}
+.pair{display:flex;gap:16px}
+.slide{width:562px;height:316px;border-radius:14px;overflow:hidden;box-shadow:0 12px 32px -14px rgba(0,0,0,.45);position:relative;flex:none}
+.mono{font-family:'JetBrains Mono',monospace}.serif{font-family:Fraunces,serif}
+.pad{position:absolute;inset:0;padding:26px 30px;display:flex;flex-direction:column}
+.figph{flex:1;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:10px}
+.eb{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
+.stat .n{font-family:Fraunces,serif;font-weight:700;line-height:1}
+
+/* ============ A · DATACUBE ============ */
+.A-cv{background:radial-gradient(130% 120% at 85% -10%,#0e3a40,#071a1f 62%)}
+.A .ndvibar{height:7px;border-radius:6px;background:linear-gradient(90deg,#d1495b,#edae49,#1f9d57)}
+.cube{position:absolute;right:26px;top:64px;width:230px;height:150px}
+.cube .ly{position:absolute;left:0;width:210px;height:42px;border-radius:8px;border:1px solid rgba(255,255,255,.25);transform:skewX(-26deg)}
+.A-ct{background:#f3f7f6}
+.A-ct .rail{position:absolute;left:0;top:0;bottom:0;width:8px;background:linear-gradient(#0e7c86,#1f9d57)}
+.tl{display:flex;align-items:center;gap:8px;margin-top:auto;font-family:'JetBrains Mono',monospace;font-size:9px;color:#5b6b64}
+.tl .bar{flex:1;height:3px;background:#d5e0db;border-radius:3px;position:relative}
+.tl .bar::after{content:'';position:absolute;left:62%;top:-3px;width:9px;height:9px;border-radius:50%;background:#1f9d57}
+
+/* ============ B · MULTILENGUAJE ============ */
+.B-cv{background:linear-gradient(160deg,#11171f,#0a0d12)}
+.B .rails{position:absolute;left:0;top:0;bottom:0;width:14px;display:flex;flex-direction:column}
+.B .rails div{flex:1}
+.B-ct{background:#0e141b}
+.chip{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block}
+
+/* ============ C · EDITORIAL CARIBE ============ */
+.C-cv{background:#f6f1e7;color:#1c2b27}
+.C .frame{position:absolute;inset:14px;border:1px solid #c8553d44;pointer-events:none}
+.C .corner{position:absolute;font-family:'JetBrains Mono',monospace;font-size:8px;color:#9a7d52}
+.C-ct{background:#f6f1e7;color:#1c2b27}
+.hair{height:1px;background:#1c2b2722;margin:7px 0}
+.band{position:absolute;left:0;right:0;bottom:0;height:118px;overflow:hidden}
+.band img{width:100%;height:280px;object-fit:cover;object-position:center 38%}
+</style></head><body>
+<h1 class="pg serif">Tres conceptos de diseño para el deck del proyecto</h1>
+<div class="sub">Cada fila: portada (izq.) + slide de contenido (der.), con fuentes y paletas reales. Elige uno (o combinamos).</div>
+
+<!-- ===== A · DATACUBE ===== -->
+<div class="row">
+  <div class="lab" style="color:#0e7c86">A · Datacube — observación de la Tierra</div>
+  <div class="desc">El dato como protagonista: capas multisensor apiladas, eje temporal 2013–2025 y la rampa NDVI rojo→verde como ADN visual. Comunica método y teledetección.</div>
+  <div class="pair">
+    <div class="slide A-cv A"><div class="pad">
+      <div class="eb mono" style="color:#5ed0c2">S2 · S1 · ALOS-2 · ÍNDICES</div>
+      <div class="cube">
+        <div class="ly" style="top:0;background:rgba(31,157,87,.30)"></div>
+        <div class="ly" style="top:30px;left:14px;background:rgba(237,174,73,.28)"></div>
+        <div class="ly" style="top:60px;left:28px;background:rgba(42,111,151,.30)"></div>
+        <div class="ly" style="top:90px;left:42px;background:rgba(209,73,91,.30)"></div>
+      </div>
+      <div class="serif" style="font-size:30px;font-weight:600;color:#fff;margin-top:18px;max-width:62%;line-height:1.05">Pipeline multilenguaje del manglar</div>
+      <div style="color:#9ec6c0;font-size:11.5px;margin-top:8px;max-width:54%">Ciénaga Grande de Santa Marta · datacube óptico-radar 2013–2025</div>
+      <div class="ndvibar" style="margin-top:auto;width:46%"></div>
+      <div class="mono" style="font-size:9.5px;color:#6f928d;margin-top:8px">CGSM · 2013–2025 · Lina Quintero · UNAL</div>
+    </div></div>
+    <div class="slide A-ct A"><div class="pad" style="padding-left:34px">
+      <div class="A-ct rail"></div>
+      <div class="eb" style="color:#0e7c86">Resultados · Dinámica temporal</div>
+      <div class="serif" style="font-size:20px;font-weight:600;margin-top:5px">NDVI, anomalías y quiebres BFAST</div>
+      <div class="figph" style="background:#e7efea;border:1px dashed #bcd0c8;color:#86998f;margin:11px 0">[ serie NDVI 2018–2025 ]</div>
+      <div style="display:flex;gap:14px">
+        <div class="stat"><div class="n mono" style="font-size:21px;color:#1f9d57">929</div><div style="font-size:9.5px;color:#5b6b64">obs. NDVI</div></div>
+        <div class="stat"><div class="n mono" style="font-size:21px;color:#d1495b">0,60</div><div style="font-size:9.5px;color:#5b6b64">caída 2020</div></div>
+        <div class="stat"><div class="n mono" style="font-size:21px;color:#1f9d57">0,80</div><div style="font-size:9.5px;color:#5b6b64">recuperación</div></div>
+      </div>
+      <div class="tl"><span>2013</span><div class="bar"></div><span>2025</span></div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ===== B · MULTILENGUAJE ===== -->
+<div class="row">
+  <div class="lab" style="color:#a06cd5">B · Multilenguaje — orquestación de código</div>
+  <div class="desc">Expresa el alma del curso: Python · R · Julia como sistema de color, monoespaciada y rieles de lenguaje. Identidad fuerte de "proyecto de programación".</div>
+  <div class="pair">
+    <div class="slide B-cv B"><div class="pad" style="padding-left:34px">
+      <div class="rails"><div style="background:#4d9de0"></div><div style="background:#a06cd5"></div><div style="background:#3fb950"></div></div>
+      <div class="mono" style="font-size:10px;color:#6e7b8a"># pipeline · 8 fases · docker sig_unal:v1.11</div>
+      <div class="mono" style="font-size:30px;font-weight:700;margin-top:14px"><span style="color:#4d9de0">python</span><span style="color:#3a4658"> | </span><span style="color:#a06cd5">R</span><span style="color:#3a4658"> | </span><span style="color:#3fb950">julia</span></div>
+      <div class="serif" style="font-size:23px;color:#e6edf3;margin-top:14px;max-width:74%;line-height:1.1">Un flujo, tres lenguajes, un manglar monitoreado</div>
+      <div class="mono" style="font-size:9.5px;color:#5a6675;margin-top:auto">~/cgsm $ make monitor &nbsp; · &nbsp; Lina Quintero · UNAL</div>
+    </div></div>
+    <div class="slide B-ct B"><div class="pad" style="padding-left:34px">
+      <div class="rails"><div style="background:#4d9de0"></div><div style="background:#a06cd5"></div><div style="background:#3fb950"></div></div>
+      <div class="mono" style="font-size:10px;color:#6e7b8a"># resultados · validación</div>
+      <div class="serif" style="font-size:20px;color:#e6edf3;margin-top:5px">Umbrales vs. Random Forest</div>
+      <div style="display:flex;gap:8px;margin:12px 0">
+        <span class="chip" style="background:#4d9de022;color:#7ab8ec">python · GEE</span>
+        <span class="chip" style="background:#a06cd522;color:#c39bea">R · bfast</span>
+        <span class="chip" style="background:#3fb95022;color:#74d68a">julia · LibGEOS</span>
+      </div>
+      <div class="figph" style="background:#0a0f15;border:1px solid #20303f;color:#5a6675;flex:1">[ RF feature importance ]</div>
+      <div style="display:flex;gap:18px;margin-top:11px" class="mono">
+        <div><span style="font-size:20px;font-weight:700;color:#3fb950">0,889</span> <span style="font-size:9px;color:#6e7b8a">F1 RF</span></div>
+        <div><span style="font-size:20px;font-weight:700;color:#f59e0b">0,833</span> <span style="font-size:9px;color:#6e7b8a">techo</span></div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ===== C · EDITORIAL CARIBE ===== -->
+<div class="row">
+  <div class="lab" style="color:#c8553d">C · Editorial Caribe — lugar y ecosistema</div>
+  <div class="desc">Estética de revista científica (National Geographic): serif de alto contraste, imagen satelital a sangre, paleta cálida manglar-agua-coral. Comunica el ecosistema con belleza.</div>
+  <div class="pair">
+    <div class="slide C-cv C"><div class="pad">
+      <div class="frame"></div>
+      <div class="corner" style="top:20px;left:22px">10°59′N 74°24′W</div>
+      <div class="corner" style="top:20px;right:22px">SFF + VPI · 835 km²</div>
+      <div class="eb" style="color:#2f6b4f;letter-spacing:.18em">Ciénaga Grande de Santa Marta · Magdalena, Colombia</div>
+      <div class="serif" style="font-size:40px;font-weight:900;line-height:.98;margin-top:10px;max-width:78%">El manglar, monitoreado</div>
+      <div class="serif" style="font-style:italic;font-size:14px;color:#5a6b5f;margin-top:8px;max-width:60%">Un pipeline multilenguaje para 12 años de dinámica costera</div>
+      <div class="band"><img src="figures/prog/monitor.png" alt=""/></div>
+    </div></div>
+    <div class="slide C-ct C"><div class="pad">
+      <div class="eb" style="color:#c8553d;letter-spacing:.16em">Resultados · Cobertura</div>
+      <div class="serif" style="font-size:21px;font-weight:700;margin-top:4px">Contracción con consolidación</div>
+      <div style="display:flex;gap:16px;margin-top:10px;flex:1">
+        <div class="figph" style="flex:1.4;background:#ece6d8;border:1px solid #d8cdb6;color:#9a8a66">[ mapa cambio NDVI ]</div>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+          <div class="stat"><div class="n serif" style="font-size:24px;color:#2f6b4f">12.426→4.037</div><div style="font-size:10px;color:#6a6256">ha · cobertura</div></div>
+          <div class="hair"></div>
+          <div class="stat"><div class="n serif" style="font-size:24px;color:#2f6b4f">157→269</div><div style="font-size:10px;color:#6a6256">ha · parche medio</div></div>
+          <div class="hair"></div>
+          <div class="stat"><div class="n serif" style="font-size:24px;color:#c8553d">−2 σ</div><div style="font-size:10px;color:#6a6256">anomalía sep-2020</div></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</div>
+</body></html>

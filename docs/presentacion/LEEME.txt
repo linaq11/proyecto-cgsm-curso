@@ -1,0 +1,66 @@
+PRESENTACION - Proyecto final Programacion en SIG
+Pipeline multilenguaje para el monitoreo del manglar (CGSM)
+Lina Maria Quintero Fonseca - UNAL
+==================================================================
+
+QUE HAY EN ESTA CARPETA
+-----------------------
+  Presentacion_ProgSIG_CGSM.pptx   PowerPoint (14 diapositivas, con el
+                                   guion del orador en las Notas).
+  abrir-deck-web.bat               Abre la version web interactiva
+                                   (con cronometro de ensayo).
+  Deck_Web/                        Copia de la fuente del deck web (backup).
+  _qa/                             Imagenes PNG de cada diapositiva (vista rapida).
+
+
+OPCION 1 - POWERPOINT (la mas simple)
+-------------------------------------
+Doble clic en  Presentacion_ProgSIG_CGSM.pptx
+El guion de lo que debes decir en cada diapositiva esta en las
+"Notas del orador" (vista de Moderador en PowerPoint).
+
+
+OPCION 2 - DECK WEB INTERACTIVO
+-------------------------------
+Doble clic en  abrir-deck-web.bat
+- La PRIMERA vez instala dependencias (necesita Node.js). Tarda unos minutos.
+- Cuando la ventana negra diga "Ready", el navegador abre solo en
+  http://localhost:3000/prog  (si no, abrelo tu en esa direccion).
+- Deja la ventana negra abierta mientras presentas. Cerrar: Ctrl+C.
+
+CONTROLES (en el navegador)
+  ->/Espacio  siguiente      <-  anterior      Inicio/Fin  primera/ultima
+  N  notas del orador (guion en espanol)
+  R  iniciar/parar el CRONOMETRO DE ENSAYO (registra el tiempo por
+     diapositiva, total vs. la meta, y resumen con el boton "Tiempos")
+  G  vista general     T  cambiar color (verde/morado)     F  pantalla completa
+
+
+DISENO
+------
+Esta presentacion NO usa la plantilla institucional. Usa una piel "Monitor"
+coherente con el dashboard en vivo: contenido claro, portada y cierre oscuros,
+acento teal manglar + semaforo (verde/ambar/rojo). El credito UNAL queda
+discreto en portada y pie.
+
+CONTENIDO (15 diapositivas, ~1 min c/u)
+---------------------------------------
+  1  Portada
+  2  Contexto y problema (CGSM)
+  3  Vacio y pregunta de investigacion
+  4  Objetivos (general + 5 especificos)
+  5  Area de estudio (AOI acotado 835,3 km2)
+  6  Fuentes de datos (13 conjuntos, 6 categorias)
+  7  Pipeline multilenguaje (Python - R - Julia)   <- nucleo del proyecto
+  8  Metodos (5 fases + modulo climatico)
+  9  Resultados: NDVI y quiebres BFAST
+  10 Resultados: segmentacion y fragmentacion
+  11 Resultados: clima y SAR Sentinel-1
+  12 Resultados: validacion (umbrales vs. Random Forest)
+  13 Alertas tempranas y reproducibilidad
+  14 Monitor en vivo (dashboard publicado en GitHub Pages)
+  15 Conclusiones
+
+Las cifras y figuras provienen del informe_final.docx del proyecto.
+Repositorio: github.com/linaq11/proyecto-cgsm-curso
+Monitor en vivo: linaq11.github.io/proyecto-cgsm-curso/dashboard.html
