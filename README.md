@@ -2,10 +2,10 @@
 
 ![License](https://img.shields.io/badge/License-MIT-black)
 ![Stack](https://img.shields.io/badge/Stack-Python%20%C2%B7%20R%20%C2%B7%20Julia-blue)
-[![Dashboard en vivo](https://img.shields.io/badge/Dashboard-en%20vivo-success?logo=github)](https://linaq11.github.io/proyecto-cgsm-curso/dashboard.html)
-[![Informe PDF](https://img.shields.io/badge/Descargar-Informe%20PDF-red)](https://github.com/linaq11/proyecto-cgsm-curso/raw/main/docs/informe_final.pdf)
+[![Dashboard en vivo](https://img.shields.io/badge/Dashboard-en%20vivo-success?logo=github)](https://linaq11.github.io/cgsm-mangrove-monitoring/dashboard.html)
+[![Informe PDF](https://img.shields.io/badge/Descargar-Informe%20PDF-red)](https://github.com/linaq11/cgsm-mangrove-monitoring/raw/main/docs/informe_final.pdf)
 
-> 🌿 **Dashboard interactivo**: <https://linaq11.github.io/proyecto-cgsm-curso/dashboard.html>
+> 🌿 **Dashboard interactivo**: <https://linaq11.github.io/cgsm-mangrove-monitoring/dashboard.html>
 >
 > 🛰 **Datos NASA y observación terrestre**: Landsat 8/9 (NASA-USGS), SRTM v3 (NASA), índices ENSO ONI/SOI (NOAA CPC), Global Flood Database (Dartmouth, deriva de MODIS NASA), segmentación con [SamGeo](https://github.com/opengeos/segment-geospatial) (Qiusheng Wu). Tema afín a [Flood Early Warning · NASA Lifelines](https://nasalifelines.org/hfs-data-series/flood-early-warning-2/).
 
@@ -57,8 +57,8 @@ El proyecto se ejecuta dentro del contenedor Docker `sig_unal v1.11` que integra
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/linaq11/proyecto-cgsm-curso
-cd proyecto-cgsm-curso
+git clone https://github.com/linaq11/cgsm-mangrove-monitoring
+cd cgsm-mangrove-monitoring
 
 # Levantar el contenedor (requiere Docker Desktop)
 docker run -p 8889:8888 -p 8788:8787 \
@@ -72,7 +72,7 @@ docker run -p 8889:8888 -p 8788:8787 \
 ## Estructura del repositorio
 
 ```
-proyecto-cgsm-curso/
+cgsm-mangrove-monitoring/
 ├── data/                Datos crudos (AOI, admin, INVEMAR) y procesados (cubos, RGB)
 ├── docs/                Informe + anexos + dashboard ejecutivo servidos por GitHub Pages
 │   ├── dashboard.html                  Dashboard principal (open-design, self-contained)
